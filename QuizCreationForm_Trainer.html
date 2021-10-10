@@ -20,7 +20,9 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="#">
+                <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -31,14 +33,37 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Quick Find
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Home</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav me-2 mb-2 mb-lg-0">
+                    <li style="padding-right: 20px;" class="nav-item">
+                        <a class="nav-link" href="#">My Courses</a>
+                        <!--This will be a popup box which retrieves the list of learners pending acceptance-->
+                    </li>
+                    <li class="nav-item popUp" onclick="showNotif()">
+                        <a class="navbar-brand" href="#">
+                            <i class="bi bi-bell"></i>
+                        </a>
+                        <ul class="popUpText" id="HRPopUp"></ul>
+
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                        <a class="navbar-brand" href="#">
+                            <i class="bi bi-person-circle"></i>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -50,6 +75,7 @@
     </section>
     <br>
     <form>
+    <div class=container>
     <div class="sm-3">
         <input class="form-control form-control-lg" type="text" placeholder="Insert Quiz Name Here">
     </div>
@@ -83,6 +109,7 @@
     </div>
 <br>
     <div>
+        <b>1.</b>
         <input class="form-inline form-control-sm col-6" type="text" placeholder="Insert Question Here" style="margin-right:20px;">
         <span style="text-decoration: underline; cursor:pointer" >Edit</span>
         <select class="form-inline form-select-sm col-2" style="margin-left:150px;"aria-label="qntype"  >
@@ -116,6 +143,7 @@
                         </div>
             
     </div>
+    <b>2.</b>
     <input class="form-inline form-control-sm col-6" type="text" placeholder="Insert Question Here" style="margin-right:20px; margin-top:20px;">
         <span style="text-decoration: underline; cursor:pointer" >Edit</span>
         <select class="form-inline form-select-sm col-2" style="margin-left:150px;"aria-label="qntype"  >
@@ -141,9 +169,10 @@
     
       </div>
 <p></p>
-    <button type="submit" class="btn btn-primary align-right" style= "margin:50px; margin-left:1100px;">Create Quiz</button>
+    <button type="submit" class="btn btn-primary align-right" style= "margin:40px; margin-left:1000px;">Create Quiz</button>
 
     </form>
+</div>
     <div class=form
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
