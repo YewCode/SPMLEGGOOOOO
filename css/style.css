@@ -1,9 +1,9 @@
-.headerPad {
+.pageTitlePad {
     padding-left: 2ch;
     padding-top: 2ch;
 }
 
-#subHeader {
+.sectionPadding {
     padding-top: 10ch;
 }
 
@@ -14,6 +14,12 @@
 .popUp {
     position: relative;
     display: inline-block;
+}
+
+.underLineText {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
 }
 
 /* The actual popup (appears on top) */
