@@ -1,3 +1,15 @@
+.accordion{
+    margin-right: 100px;
+    margin-left: 20px
+}
+
+.rectangle{
+    background-color: #555;
+    max-height: auto;
+    max-width: auto;
+    margin-left: 100px;
+}
+
 .pageTitlePad {
     padding-left: 2ch;
     padding-top: 2ch;
