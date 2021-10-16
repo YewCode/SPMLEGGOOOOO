@@ -6,13 +6,27 @@ EngineerID int AUTO_INCREMENT PRIMARY KEY,
  `Name` varchar(100) not null,
  `Role` varchar(100) not null
 );
+insert into  Engineer (`name`, `role`)
+VALUES ('John Tan','Senior Engineer');
 
+insert into  Engineer (`name`, `role`)
+VALUES ('May Chan','Senior Engineer');
+
+insert into  Engineer (`name`, `role`)
+VALUES ('Alice Chong','Engineer');
+
+insert into  Engineer (`name`, `role`)
+VALUES ('Bob Chang','Engineer');
 
 CREATE TABLE `spmproject`.`Course` (
 CID int AUTO_INCREMENT PRIMARY KEY,
  `Course Name` varchar(100) not null,
  `Course Description` varchar(500) not null
 );
+insert into  course (`course name`, `course description`)
+VALUES 
+('Course for Printer Model 1','Printer model 1 manual and way of usage'),
+('Course for Printer Model 2','Printer model 2 manual and way of usage');
 
 CREATE TABLE `spmproject`.`Course_Trainer` (
 CID int,
@@ -21,6 +35,11 @@ primary key (EID,CID),
 foreign key (EID) references Engineer(EngineerID),
 foreign key (CID) references Course(CID)
 );
+insert into  course_trainer 
+Values (1,2);
+
+insert into  course_trainer 
+Values (2,3);
 
 CREATE TABLE `spmproject`.`Course_assigned` (
 CID int,
@@ -30,6 +49,8 @@ primary key (EID,CID),
 foreign key (EID) references Engineer(EngineerID),
 foreign key (CID) references Course(CID)
 );
+insert into  course_assigned 
+Values (2,4,'Pre-assign');
 
 CREATE TABLE `spmproject`.`Course_Enrolled` (
 CID int,
@@ -39,6 +60,23 @@ primary key (EID,CID),
 foreign key (EID) references Engineer(EngineerID),
 foreign key (CID) references Course(CID)
 );
+insert into  course_enrolled 
+Values (1,1,1);
+
+insert into  course_enrolled 
+Values (1,6,1);
+
+CREATE TABLE `spmproject`.`Course_EnrollmentPending` (
+CID int,
+EID int,
+Active int,
+primary key (EID,CID),
+foreign key (EID) references Engineer(EngineerID),
+foreign key (CID) references Course(CID)
+);
+insert into  Course_EnrollmentPending 
+Values (1,1,1);
+
 CREATE TABLE `spmproject`.`Course_Completed` (
 CID int,
 EID int,
@@ -46,6 +84,8 @@ primary key (EID,CID),
 foreign key (EID) references Engineer(EngineerID),
 foreign key (CID) references Course(CID)
 );
+insert into  course_Completed 
+Values (1,4);
 
 CREATE TABLE `spmproject`.`Class` (
 ClassID int ,
@@ -57,6 +97,11 @@ class_type varchar(50),
 PRIMARY KEY (CourseID,ClassID),
 FOREIGN KEY (CourseID) REFERENCES Course(CID)
 );
+insert into class 
+Values (1,1,20, '','', 'Online');
+
+insert into class 
+Values (2,1,30, '','', 'Online');
 
 CREATE TABLE `spmproject`.`Class_Trainer` (
 ClassID int,
@@ -64,16 +109,23 @@ EID int,
 CourseID int ,
 primary key (EID,ClassID,CourseID),
 foreign key (EID) references Engineer(EngineerID),
-foreign key (ClassID) references Class(ClassID),
-FOREIGN KEY (CourseID) REFERENCES Class(CID)
+foreign key (CourseID,ClassID) references Class (CourseID,ClassID),
+FOREIGN KEY (CourseID) REFERENCES Course (CID)
 );
+
+insert into class_trainer
+Values (1,2,1 );
+
+insert into class_trainer
+Values (2,2,1 );
 
 CREATE TABLE `spmproject`.`Class_Enrolled` (
 ClassID int,
 EID int,
-primary key (EID,ClassID),
+CourseID int,
+primary key (EID,ClassID,CourseID),
 foreign key (EID) references Engineer(EngineerID),
-foreign key (ClassID) references Class(ClassID)
+foreign key (CourseID ,ClassID) references Class(CourseID,ClassID)
 );
 
 CREATE TABLE `spmproject`.`Section` (
