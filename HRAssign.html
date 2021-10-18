@@ -13,6 +13,11 @@
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
 </head>
 
 <body onload="showLoadedContent()">
@@ -264,6 +269,15 @@
             }]
         }
 
+        /* Testing jQuery
+        var response = JSON.stringify(courses)
+        //console.log(response);
+
+        response = JSON.parse(response)
+        //console.log(response);
+        */
+
+
         // Combined function for Pending Enrollment and Classes of a specific course
         function showLoadedContent() {
             let enrollmentDisplay = document.getElementById('enrollmentDisplay')
@@ -329,6 +343,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
+    </script>
+
+    <script>
+        /* Testing jQuery
+        $(document).ready(function () {
+
+            // jQuery methods go here...
+            
+            for (let i = 0; i < 10; i++) {
+                let newContent = `<span>${i}</span>`;
+
+                $("#classDisplayRow").append(newContent);
+            }
+
+        });*/
     </script>
 </body>
 
