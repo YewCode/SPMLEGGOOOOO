@@ -6,21 +6,21 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/spmproject'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
- 
+
 db = SQLAlchemy(app)
- 
+
 class Engineer(db.Model):
     __tablename__ = 'engineer'
- 
+
     engineerid = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     role =db.Column(db.String(64), nullable=False)
- 
+
     def __init__(self, engineerid, name, role):
         self.engineerid = engineerid
         self.name = name
         self.role = role
- 
+
     def json(self):
         return {"engineerid": self.engineerid, "name": self.name, "role": self.role}
 
