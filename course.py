@@ -8,22 +8,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
  
 db = SQLAlchemy(app)
- 
-class Engineer(db.Model):
-    __tablename__ = 'engineer'
- 
-    engineerid = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
-    role =db.Column(db.String(64), nullable=False)
- 
-    def __init__(self, engineerid, name, role):
-        self.engineerid = engineerid
-        self.name = name
-        self.role = role
- 
-    def json(self):
-        return {"engineerid": self.engineerid, "name": self.name, "role": self.role}
-    
+   
 class Course(db.Model):
     __tablename__ = 'course'
  
@@ -110,46 +95,128 @@ class Course_Completed(db.Model):
     def json(self):
         return {"cid": self.cid, "eid": self.eid }
  
-
-@app.route("/engineer")
-def getAllEngineer():
-    pass
-    engineerlist = Engineer.query.all()
-    if len(engineerlist):
+@app.route("/course")
+def getCourse():
+    
+    courselist = Course.query.all()
+    if len(courselist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "engineers": [engineer.json() for engineer in engineerlist]
+                    "courses": [course.json() for course in courselist]
                 }
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "There are no engineers."
+            "message": "There are no courses."
+        }
+    ), 404
+
+@app.route("/course/<int: cid>")
+def getCourseByCid(cid):
+    
+    courselist = Course.query.filter_by(cid=cid)
+    if len(courselist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "courses": [course.json() for course in courselist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no courses."
         }
     ), 404
     
-@app.route("/engineer/<int:eid>")
-def getEngineerByEid(eid):
-    pass
-    engineerlist = Engineer.query.filter_by(engineerid=eid)
-    if len(engineerlist):
+
+@app.route("/course_trainer/cid/<int: cid>")
+def getCourseTrainerByCid(cid):
+    
+    coursetrainerlist = Course_Trainer.query.filter_by(cid=cid)
+    if len(coursetrainerlist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "engineers": [engineer.json() for engineer in engineerlist]
+                    "courses": [coursetrainer.json() for coursetrainer in coursetrainerlist]
                 }
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "There are no engineers."
+            "message": "There are no course trainer for course id: "+cid + '.' 
         }
     ), 404
+    
+@app.route("/course_trainer/eid/<int: eid>")
+def getCourseTrainerByEid(eid):
+    
+    coursetrainerlist = Course_Trainer.query.filter_by(eid=eid)
+    if len(coursetrainerlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "courses": [coursetrainer.json() for coursetrainer in coursetrainerlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no course trainer for course id: "+cid + '.' 
+        }
+    ), 404
+    
+@app.route("/Course_Assigned/cid/<int: cid>")
+def getCourseAssignedByCid(cid):
+    
+    coursetrainerlist = Course_Assigned.query.filter_by(cid=cid)
+    if len(coursetrainerlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "courses": [coursetrainer.json() for coursetrainer in coursetrainerlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no course trainer for course id: "+cid + '.' 
+        }
+    ), 404
+    
+@app.route("/Course_Assigned/eid/<int: eid>")
+def getCourseAssignedByEid(eid):
+    
+    coursetrainerlist = Course_Assigned.query.filter_by(eid=eid)
+    if len(coursetrainerlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "courses": [coursetrainer.json() for coursetrainer in coursetrainerlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no course trainer for course id: "+cid + '.' 
+        }
+    ), 404
+    
+
 
 
 
