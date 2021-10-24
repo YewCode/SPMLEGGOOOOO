@@ -15,9 +15,7 @@
         integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
 </head>
 
-<body>
-
-
+    <!-- This Nav Bar is for HR -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
@@ -50,7 +48,7 @@
                 </ul>
                 <ul class="navbar-nav me-2 mb-2 mb-lg-0">
                     <li style="padding-right: 20px;" class="nav-item">
-                        <a class="nav-link" href="#">My Courses</a>
+                        <a class="nav-link" href="#">Task List</a>
                         <!--This will be a popup box which retrieves the list of learners pending acceptance-->
                     </li>
                     <li class="nav-item popUp" onclick="showNotif()">
@@ -71,54 +69,74 @@
     </nav>
 
     <section id="header" class="pageTitlePad">
-        <h1>Class List</h1>
+        <h1>Assign Learners to Course For <u>Printer Model #1</u></h1>
     </section>
 
     <section id="subHeader" class="sectionPadding">
         <div class="container">
             <div class="row">
-                <div class="col-md-3 col-sm-12">
-                    <h4>Learner's Name</h4>
+                <div class="col-4">
+                    <h4>Engineer (Learners) Name: </h4>
                 </div>
 
                 <div class="col-md-3 col-sm-12">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Search for Learner"
+                        <input type="text" class="form-control" placeholder="Search for Name"
                             aria-label="Search for Course" aria-describedby="searchCourse">
-                        <button class="btn btn-outline-secondary" type="button" id="searchLearner"><i
+                        <button class="btn btn-outline-secondary" type="button" id="searchCourse"><i
                                 class="bi bi-search"></i></button>
                     </div>
-                    
-                </div>
-                <div class="col-md-3 col-sm-12" style="margin-left:200px;">
-                    <button type="button" class="btn btn-warning">Done</button>
-                    
                 </div>
 
-                <section id="subHeader" class="sectionPadding"></section>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-12">
-                            <h6>Name</h6>
-                            <h7>longgg nameee</h7>
-                        </div>
-                        <div class="col-md-3 col-sm-12">
-                            <h6>Progress</h6>
-                            <h7>80%</h7>
+            </div>
+        </div>
+    </section>
 
-                        </div>
+    <!-- This part should be looped (onclick function created)-->
 
-                    
-                        <div class="col-md-3 col-sm-12">
-                            <h6>-</h6>
-                            <h7 class="underLineText">Edit</h7>
-                        </div>
-                        
-                        
-                        </div>
-                </div>
-                </div>
-                    </section>
+    <div class="container">
+        <div class="row pt-3">
+            <div class="col-2">
+                Rachel Ang
+            </div>
+
+            <div class="col-2" id="select" ">
+                Unselected
+            </div>
+
+            <div class=" col-2">
+                <div>
+                
+                <input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="btn-check-outlined" onclick="selectName()">Check</label></div>
+
+            </div>
+        </div>
+        <!-- until here -->
+
+        <div style="margin-top:40px;">
+        <button type="submit" class="btn btn-primary align-right"
+            style="margin-left:800px;">Assign Learner</button>
+            <button type="button" class="btn btn-secondary">Cancel</button>
+        </div>
+        </div>
+
+
+            <script>
+                function selectName() {
+                    var x = document.getElementById("select");
+                    if (x.innerHTML === "Selected") { x.innerHTML = "Unselected"; }
+
+                    else {
+                        x.innerHTML = "Selected";
+                    }
+                }</script>
+
+            <!-- JavaScript Bundle with Popper -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ"
+                crossorigin="anonymous">
+                </script>
+</body>
 
 </html>
-                            
