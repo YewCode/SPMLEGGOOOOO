@@ -303,7 +303,7 @@ def getCourseEnrolledByEid(eid):
 def getListOfEnrolledAndUnenrolled(i_cid):
     
     returnlist = db.session.query(Engineer,Course_Enrolled).outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid).all()
-    print('returnlist ',returnlist)
+    # print('returnlist ',returnlist)
     if len(returnlist):
         
         
