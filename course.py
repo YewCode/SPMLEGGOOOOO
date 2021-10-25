@@ -1,6 +1,8 @@
 from flask import Flask,request,jsonify
 from flask_sqlalchemy import SQLAlchemy
 
+from engineer import Engineer
+
 
 app = Flask(__name__)
 
@@ -23,6 +25,8 @@ class Course(db.Model):
  
     def json(self):
         return {"cid": self.cid, "course_name": self.course_name, "course_desc": self.course_desc}
+    
+
     
 class Course_Trainer(db.Model):
     __tablename__ = 'course_trainer'
@@ -95,6 +99,8 @@ class Course_Completed(db.Model):
     def json(self):
         return {"cid": self.cid, "eid": self.eid }
  
+ 
+ #route
 @app.route("/course")
 def getCourse():
     
@@ -115,7 +121,7 @@ def getCourse():
         }
     ), 404
 
-@app.route("/course/<int: cid>")
+@app.route("/course/<int:cid>")
 def getCourseByCid(cid):
     
     courselist = Course.query.filter_by(cid=cid)
@@ -136,7 +142,7 @@ def getCourseByCid(cid):
     ), 404
     
 
-@app.route("/course_trainer/cid/<int: cid>")
+@app.route("/course_trainer/cid/<int:cid>")
 def getCourseTrainerByCid(cid):
     
     coursetrainerlist = Course_Trainer.query.filter_by(cid=cid)
@@ -156,7 +162,7 @@ def getCourseTrainerByCid(cid):
         }
     ), 404
     
-@app.route("/course_trainer/eid/<int: eid>")
+@app.route("/course_trainer/eid/<int:eid>")
 def getCourseTrainerByEid(eid):
     
     coursetrainerlist = Course_Trainer.query.filter_by(eid=eid)
@@ -176,7 +182,7 @@ def getCourseTrainerByEid(eid):
         }
     ), 404
     
-@app.route("/Course_Assigned/cid/<int: cid>")
+@app.route("/Course_Assigned/cid/<int:cid>")
 def getCourseAssignedByCid(cid):
     
     coursetrainerlist = Course_Assigned.query.filter_by(cid=cid)
@@ -192,11 +198,11 @@ def getCourseAssignedByCid(cid):
     return jsonify(
         {
             "code": 404,
-            "message": "There are no course trainer for course id: "+cid + '.' 
+            "message": "There are no course assigned for course id: "+cid + '.' 
         }
     ), 404
     
-@app.route("/Course_Assigned/eid/<int: eid>")
+@app.route("/Course_Assigned/eid/<int:eid>")
 def getCourseAssignedByEid(eid):
     
     coursetrainerlist = Course_Assigned.query.filter_by(eid=eid)
@@ -212,7 +218,48 @@ def getCourseAssignedByEid(eid):
     return jsonify(
         {
             "code": 404,
-            "message": "There are no course trainer for course id: "+cid + '.' 
+            "message": "There are no course assigned for engineer id: "+eid + '.' 
+        }
+    ), 404
+    
+@app.route("/Course_Enrolled/eid/<int:eid>")
+def getCourseEnrolledByEid(eid):
+    
+    coursetrainerlist = Course_Assigned.query.filter_by(eid=eid)
+    if len(coursetrainerlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "courses": [coursetrainer.json() for coursetrainer in coursetrainerlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no course enrolled for engineer id: "+eid + '.' 
+        }
+    ), 404
+    
+
+@app.route("/Engineer/getAllEid/<int:cid>")
+def getListOfEnrolledAndUnenrolled(cid):
+    
+    returnlist = db.session.query(Engineer).join(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid, isouter=True)
+    if len(returnlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": [result.json() for result in returnlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no results for cid: "+cid + '.' 
         }
     ), 404
     
