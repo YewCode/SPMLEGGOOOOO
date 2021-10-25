@@ -66,6 +66,10 @@ Values (1,1,1);
 insert into  course_enrolled 
 Values (1,6,1);
 
+insert into  course_enrolled 
+Values (2,1,1);
+
+
 CREATE TABLE `spmproject`.`Course_EnrollmentPending` (
 CID int,
 EID int,
@@ -150,14 +154,18 @@ PRIMARY KEY (ClassID,SectionID)-- ,
 );
 
 CREATE TABLE `spmproject`.`Quiz` (
-QuizID int AUTO_INCREMENT ,
-ClassID int ,
-SectionID int ,
+QuizID int AUTO_INCREMENT not null,
+CourseID int ,
+ClassID int not null,
+SectionID int not null,
+quiz_name varchar(50),
 Timelimit varchar(50) ,
-no_of_qns int,
 isHidden int,
+passing_requirements decimal(10,2),
+isGraded int,
+grades int,
 PRIMARY KEY (QuizID,ClassID,SectionID),
--- FOREIGN KEY (ClassID) REFERENCES Class(ClassID),
+FOREIGN KEY (CourseID,ClassID) REFERENCES Class(CourseID,ClassID),
 FOREIGN KEY (SectionID) REFERENCES Section(SectionID)
 );
 
@@ -166,6 +174,8 @@ QuizID int ,
 QnNum int ,
 Qn_type varchar(100) not null,
 Qn_Description varchar(250) ,
+options varchar(1000) ,
+answer varchar(100) not null,
 PRIMARY KEY (QuizID,QnNum),
 FOREIGN KEY (QuizID) REFERENCES Quiz(QuizID)
 );
@@ -181,6 +191,17 @@ PRIMARY KEY (cid,EngineerID),
 FOREIGN KEY (CID) REFERENCES Course(cid),
 FOREIGN KEY (EngineerID) REFERENCES Engineer(EngineerID)-- , 
 -- FOREIGN KEY (ClassID) REFERENCES Class(ClassID)
+);
+
+CREATE TABLE `spmproject`.`Answers` (
+EngineerID int ,
+QuizID int ,
+AttemptID int ,
+QnNum int,
+given_answer varchar(100),
+PRIMARY KEY (EngineerID,QuizID,AttemptID,QnNum),
+FOREIGN KEY (EngineerID) REFERENCES Engineer(EngineerID), 
+FOREIGN KEY (QuizID,QnNum) REFERENCES Question(QuizID,QnNum)
 );
 
 CREATE TABLE `spmproject`.`Progress` (

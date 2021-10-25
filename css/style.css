@@ -1,3 +1,21 @@
+.container-fluid {
+    position: relative;
+    text-align: left;
+    
+}
+.class-details {
+    position: absolute;
+    top: 20px;
+    left: 16px;
+}
+
+.class-progress {
+    position: absolute;
+    bottom: 60px;
+    left: 16px;
+
+}
+
 .accordion{
     margin-right: 100px;
     margin-left: 20px
