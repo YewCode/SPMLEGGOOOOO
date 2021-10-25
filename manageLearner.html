@@ -16,6 +16,9 @@
     <!-- Vue Dev -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
@@ -77,14 +80,61 @@
         <h1>Learner Assignment</h1>
     </section>
 
-    <section id="learnerList">
-        <div class="container">
-            
+    <section id="learnerList" class="sectionPadding">
+        <div id="app1" class="container">
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-3">
+                    <h3>Please select a course: </h3>
+                </div>
+                <div class="col-3 mt-2">
+                    <select class="w-75" name="courseDropDown" id="c_Dropdown">
+                        <option v-for="course in courses" value="course.coursename">{{course.coursename}}</option>
+                    </select>
+                </div>
+                <div class="col-3"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-hover">
+                        
+                    </table>
+                </div>
+            </div>
         </div>
     </section>
+
+
+    <script>
+        // Vue App 1
+        const app1 = new Vue({
+            el: "#app1",
+            data: {
+                courses: [],
+                changed: false,
+            },
+            methods: {
+                isChanged: function() {
+                    this.changed = !this.changed
+                }
+            },
+            mounted: function () {
+                axios.get('http://127.0.0.1:5004/course')
+                    .then(response => {
+                        this.courses = response.data.data.courses;
+                    })
+                    .catch(error => {
+                        alert(error);
+                    });
+            }
+        })
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
     </script>
 </body>
+
+    
 </html>

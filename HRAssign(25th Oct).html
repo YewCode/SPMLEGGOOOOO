@@ -17,7 +17,11 @@
     <!-- Vue Dev -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
 
@@ -80,132 +84,138 @@
         <h1>Engineer Assignment</h1>
     </section>
 
-    <section id="CourseHeader" class="sectionPadding">
-        <div class="container">
-            <div class="row pt-3">
-                <div class="col-10">
-                    <h1 id="CourseTitle">Test CourseName</h1>
-                    <!-- Use DOM Getter to retrive and display Course Title Info from DB-->
+    <!-- Start Vue Instance -->
+    <div id="pendingEApp">
+        <section id="CourseHeader" class="sectionPadding">
+            <div class="container">
+                <div class="row pt-3">
+                    <div class="col-10">
+                        <h1 id="CourseTitle">Test CourseName</h1>
+                        <!-- Use DOM Getter to retrive and display Course Title Info from DB-->
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-warning">Done</button>
+                        <!--This should be a redirection back to Course Main Page right?-->
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-warning">Done</button>
-                    <!--This should be a redirection back to Course Main Page right?-->
+                <div class="row pt-3">
+                    <div class="col-12">
+                        <h3>Description</h3>
+                    </div>
                 </div>
-            </div>
-            <div class="row pt-3">
-                <div class="col-12">
-                    <h3>Description</h3>
+                <div class="row pt-3">
+                    <div class="col-12">
+                        <p id="courseDesc">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit!
+                            Vero
+                            blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
+                            quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit
+                            amet
+                            consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
+                            tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos
+                            ut
+                            architecto dolorum quas libero?</p>
+                        <!-- Use DOM Getter to retrieve and display Course Description from DB-->
+                    </div>
                 </div>
-            </div>
-            <div class="row pt-3">
-                <div class="col-12">
-                    <p id="courseDesc">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit! Vero
-                        blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
-                        quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit amet
-                        consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
-                        tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos ut
-                        architecto dolorum quas libero?</p>
-                    <!-- Use DOM Getter to retrieve and display Course Description from DB-->
-                </div>
-            </div>
 
-        </div>
-    </section>
+            </div>
+        </section>
 
-    <section id="classAssignment" class="sectionPadding">
-        <div id="fixedAssignComponents" class="container">
-            <div class="row">
-                <div class="col-lg-8 col-sm-12">
-                    <h3>Class Assignment</h3>
-                </div>
-                <div class="col-lg-2 col-sm-6">
-                    <button id="addClass" type="button" class="btn btn-dark">Add Class</button>
-                    <!--Have not added logic to handle add-->
-                </div>
-                <div class="col-lg-2 col-sm-6">
-                    <button id="saveClass" type="button" class="btn btn-dark">Save Changes</button>
-                    <!--Have not added logic to handle save-->
+        <section id="classAssignment" class="sectionPadding">
+            <div id="fixedAssignComponents" class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-sm-12">
+                        <h3>Class Assignment</h3>
+                    </div>
+                    <div class="col-lg-2 col-sm-6">
+                        <button id="addClass" type="button" class="btn btn-dark">Add Class</button>
+                        <!--Have not added logic to handle add-->
+                    </div>
+                    <div class="col-lg-2 col-sm-6">
+                        <button id="saveClass" type="button" class="btn btn-dark">Save Changes</button>
+                        <!--Have not added logic to handle save-->
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="fetchedClassData" class="container">
-            <div class="row pt-3">
-                <div class="col-2">
-                    <b>Class ID</b>
+            <div id="fetchedClassData" class="container">
+                <div class="row pt-3">
+                    <div class="col-2">
+                        <b>Class ID</b>
+                    </div>
+                    <div class="col-2">
+                        <b>Start Date</b>
+                    </div>
+                    <div class="col-2">
+                        <b>End Date</b>
+                    </div>
+                    <div class="col-2">
+                        <b>Lesson Day</b>
+                    </div>
+                    <div class="col-2">
+                        <b>Trainer</b>
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-1"></div>
                 </div>
-                <div class="col-2">
-                    <b>Start Date</b>
-                </div>
-                <div class="col-2">
-                    <b>End Date</b>
-                </div>
-                <div class="col-2">
-                    <b>Lesson Day</b>
-                </div>
-                <div class="col-2">
-                    <b>Trainer</b>
-                </div>
-                <div class="col-1"></div>
-                <div class="col-1"></div>
+                <div id="classDisplayRow"></div>
+                <!-- Still required to code logic for modal box to appear for each edit and delete button -->
             </div>
-            <div id="classDisplayRow"></div>
-            <!-- Still required to code logic for modal box to appear for each edit and delete button -->
-        </div>
-    </section>
+        </section>
 
-    <section id="learnerAssignment" class="sectionPadding">
-        <div class="container">
-            <div class="row">
-                <div class="col-10">
-                    <h3>Learner Assignment</h3>
+        <section id="learnerAssignment" class="sectionPadding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-10">
+                        <h3>Learner Assignment</h3>
+                    </div>
+                    <div class="col-2">
+                        <button id="saveLearner" type="button" class="btn btn-dark">Save Changes</button>
+                        <!--Have not added logic to handle save-->
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button id="saveLearner" type="button" class="btn btn-dark">Save Changes</button>
-                    <!--Have not added logic to handle save-->
+                <div class="pt-3">
+                    <span>Total Vacancy:</span> &nbsp;&nbsp; <span id="vacancyDisplay">___</span><span>/100</span>
+                    <!--Have not added logic to handle vacancy display so ___ is shown now-->
+                </div>
+                <div class="pt-3">
+                    <button type="button" class="btn btn-dark" onclick="location.href='manageLearner.html'">Manage
+                        Learners</button>
                 </div>
             </div>
-            <div class="pt-3">
-                <span>Total Vacancy:</span> &nbsp;&nbsp; <span id="vacancyDisplay">___</span><span>/100</span>
-                <!--Have not added logic to handle vacancy display so ___ is shown now-->
-            </div>
-            <div class="pt-3">
-                <button type="button" class="btn btn-dark">Manage Learners</button>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="pendingEnrollment" class="sectionPadding">
-        <div class="container">
-            <div class="row">
-                <div class="col-10">
-                    <h3>Learners Pending Enrollment</h3>
+        <section id="pendingEnrollment" class="sectionPadding">
+            <div id="pendingEApp" class="container">
+                <div class="row">
+                    <div class="col-10">
+                        <h3>Learners Pending Enrollment</h3>
+                    </div>
+                    <div class="col-2">
+                        <button id="saveEnrollment" type="button" class="btn btn-dark">Save Changes</button>
+                        <!--Have not added logic to handle save-->
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button id="saveEnrollment" onclick="fetchEligibleLearners()" type="button"
-                        class="btn btn-dark">Save Changes</button>
-                    <!--Have not added logic to handle save-->
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-2">
-                    <b>ID No.</b>
-                </div>
-                <div class="col-2">
-                    <b>Name</b>
-                </div>
-                <div class="col-2">
-                    <b>Eligible (Y/N)</b>
+                <div class="row">
+                    <div class="col-2">
+                        <b>ID No.</b>
+                    </div>
+                    <div class="col-2">
+                        <b>Name</b>
+                    </div>
+                    <!-- <div class="col-2">
+                    <b>Eligible (Y/N)</b> -->
                     <!--IMPT!! IMO I think this can be removed because we are only showing those that are eligible-->
+                    <!-- </div> -->
+                    <div class="col-4">
+                        <b>Decision</b>
+                    </div>
+                    <div class="col-4"></div>
                 </div>
-                <div class="col-2">
-                    <b>Decision</b>
-                </div>
-                <div class="col-4"></div>
+                <div id="enrollmentDisplay" class="pt-3"></div>
             </div>
-            <div id="enrollmentDisplay" class="pt-3"></div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- Notifications Popup -->
     <script>
@@ -222,6 +232,25 @@
             }
             popup.classList.toggle("show");
         }
+
+        // Vue App
+        const app1 = new Vue({
+            el: "pendingEApp",
+            data: {
+                pendingList: [],
+                courseList: []
+            },
+            mounted: function () {
+                axios.get('http://127.0.0.1:5004/course')
+                    .then(response => {
+                        this.courses = response.data.data.courses;
+                    })
+                    .catch(error => {
+                        alert(error);
+                    });
+            }
+
+        })
 
         // Test Data for Pending Enrollment List
         var enrollmentData = {
@@ -270,34 +299,35 @@
             }]
         }
 
+
         // Combined function for Pending Enrollment and Classes of a specific course
         function showLoadedContent() {
-            let enrollmentDisplay = document.getElementById('enrollmentDisplay')
-            let i = 1
-            for (let personName in enrollmentData) {
-                enrollmentDisplay.innerHTML +=
-                    `<div class="row pt-3">
-                        <div class="col-2">
-                            ${i}
-                        </div>
-                        <div class="col-2">
-                            ${personName}
-                        </div>
-                        <div class="col-2">
-                            Yes
-                        </div>
-                        <div class="col-2">
-                            <select name="pendingList[]">
-                                <option value=""> </option>
-                                <option value="A">Approve</option>
-                                <option value="R">Reject</option>
-                            </select>
-                        </div>
-                        <div class="col-4"></div>
-                    </div>
-                    `
-                i++
-            }
+            // let enrollmentDisplay = document.getElementById('enrollmentDisplay')
+            // let i = 1
+            // for (let personName in enrollmentData) {
+            //     enrollmentDisplay.innerHTML +=
+            //         `<div class="row pt-3">
+            //             <div class="col-2">
+            //                 ${i}
+            //             </div>
+            //             <div class="col-2">
+            //                 ${personName}
+            //             </div>
+            //             <div class="col-2">
+            //                 Yes
+            //             </div>
+            //             <div class="col-2">
+            //                 <select name="pendingList[]">
+            //                     <option value=""> </option>
+            //                     <option value="A">Approve</option>
+            //                     <option value="R">Reject</option>
+            //                 </select>
+            //             </div>
+            //             <div class="col-4"></div>
+            //         </div>
+            //         `
+            //     i++
+            // }
             let classDisplayRow = document.getElementById('classDisplayRow');
             for (let className in courses) {
                 if (className == "Engineering 101") {
@@ -331,6 +361,7 @@
                 }
             }
         }
+
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"

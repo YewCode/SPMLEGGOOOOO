@@ -17,12 +17,17 @@
     <!-- Vue Dev -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
 
-<body onload="showLoadedContent()">
-
+<!-- <body onload="showLoadedContent()"> -->
+<body>
+    
     <!-- This Nav Bar is for HR -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -77,135 +82,165 @@
     </nav>
 
     <section id="header" class="pageTitlePad">
-        <h1>Engineer Assignment</h1>
+        <h1>Course Overview</h1>
     </section>
 
-    <section id="CourseHeader" class="sectionPadding">
-        <div class="container">
-            <div class="row pt-3">
-                <div class="col-10">
-                    <h1 id="CourseTitle">Test CourseName</h1>
-                    <!-- Use DOM Getter to retrive and display Course Title Info from DB-->
+    <!-- Start Vue Instance -->
+    <div id="App1">
+        <section id="CourseHeader" class="sectionPadding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <select @change="getCourseInfo" class="mx-auto form-select form-select-lg w-25 mb-4" v-model="chosenCourse" name="course" id="courseSelect">
+                            <option value=""></option>
+                            <option v-for="course in courseList" :value="course.coursename">{{course.coursename}}</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-warning">Done</button>
-                    <!--This should be a redirection back to Course Main Page right?-->
-                </div>
-            </div>
-            <div class="row pt-3">
-                <div class="col-12">
-                    <h3>Description</h3>
-                </div>
-            </div>
-            <div class="row pt-3">
-                <div class="col-12">
-                    <p id="courseDesc">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit! Vero
-                        blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
-                        quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit amet
-                        consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
-                        tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos ut
-                        architecto dolorum quas libero?</p>
-                    <!-- Use DOM Getter to retrieve and display Course Description from DB-->
-                </div>
-            </div>
+                <div v-if="chosenCourse !== '' ">
+                    <div class="row pt-3">
+                        <div class="col-12">
+                            <h1 id="CourseTitle">Currently displaying: <span style="color: goldenrod;">{{courseName}}</span></h1>
+                            <!-- Use DOM Getter to retrive and display Course Title Info from DB-->
+                        </div>
+                    </div>
+                    <div class="row pt-3">
+                        <div class="col-12">
+                            <h3>Course Description</h3>
+                        </div>
+                    </div>
+                    <div class="row pt-3">
+                        <div class="col-12">
+                            <p id="courseDesc">{{courseDes}}</p>
+                            <!-- Use DOM Getter to retrieve and display Course Description from DB-->
+                        </div>
+                    </div>
 
-        </div>
-    </section>
+                </div>
+                <div v-else class="text-center">
+                    <h2>Please select a valid course to show page contents</h2>
+                </div>
+            </div>
+        </section>
 
-    <section id="classAssignment" class="sectionPadding">
-        <div id="fixedAssignComponents" class="container">
-            <div class="row">
-                <div class="col-lg-8 col-sm-12">
-                    <h3>Class Assignment</h3>
-                </div>
-                <div class="col-lg-2 col-sm-6">
-                    <button id="addClass" type="button" class="btn btn-dark">Add Class</button>
-                    <!--Have not added logic to handle add-->
-                </div>
-                <div class="col-lg-2 col-sm-6">
-                    <button id="saveClass" type="button" class="btn btn-dark">Save Changes</button>
-                    <!--Have not added logic to handle save-->
+        <section v-if="chosenCourse !== '' " id="classAssignment" class="sectionPadding">
+            <div id="fixedAssignComponents" class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-sm-12">
+                        <h3>Classes Available</h3>
+                    </div>
+                    <div class="col-lg-2 col-sm-6">
+                        <button id="addClass" type="button" class="btn btn-dark">Add Class</button>
+                        <!--Have not added logic to handle add-->
+                    </div>
+                    <div class="col-lg-2 col-sm-6">
+                        <button id="saveClass" type="button" class="btn btn-dark">Save Changes</button>
+                        <!--Have not added logic to handle save-->
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="fetchedClassData" class="container">
-            <div class="row pt-3">
-                <div class="col-2">
-                    <b>Class ID</b>
+            <div class="container">
+                <div class="row pt-3">
+                    <div class="col-3">
+                        <b>Class ID</b>
+                    </div>
+                    <div class="col-3">
+                        <b>Class Time</b>
+                    </div>
+                    <div class="col-4">
+                        <b>Trainer</b>
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-1"></div>
                 </div>
-                <div class="col-2">
-                    <b>Start Date</b>
+                <!-- Using Vue to show classes available -->
+                <div v-for="classes in classList" class="row pt-4">
+                    <div class="col-3">
+                        {{classes.classid}}
+                    </div>
+                    <div class="col-3">
+                        {{classes.classtime}}
+                    </div>
+                    <div class="col-4">
+                        {{classes.trainerid}}
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-1"></div>
                 </div>
-                <div class="col-2">
-                    <b>End Date</b>
-                </div>
-                <div class="col-2">
-                    <b>Lesson Day</b>
-                </div>
-                <div class="col-2">
-                    <b>Trainer</b>
-                </div>
-                <div class="col-1"></div>
-                <div class="col-1"></div>
+                <!-- Still required to code logic for modal box to appear for each edit and delete button -->
             </div>
-            <div id="classDisplayRow"></div>
-            <!-- Still required to code logic for modal box to appear for each edit and delete button -->
-        </div>
-    </section>
+        </section>
+        <section v-else></section>
 
-    <section id="learnerAssignment" class="sectionPadding">
-        <div class="container">
-            <div class="row">
-                <div class="col-10">
-                    <h3>Learner Assignment</h3>
+        <section v-if="chosenCourse !== '' " id="learnerAssignment" class="sectionPadding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-10">
+                        <h3>Learner Assignment</h3>
+                    </div>
+                    <div class="col-2">
+                        <button id="saveLearner" type="button" class="btn btn-dark">Save Changes</button>
+                        <!--Have not added logic to handle save-->
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button id="saveLearner" type="button" class="btn btn-dark">Save Changes</button>
-                    <!--Have not added logic to handle save-->
+                <div class="pt-3">
+                    <span>Total Vacancy:</span> &nbsp;&nbsp; <span id="vacancyDisplay">___</span><span>/100</span>
+                    <!--Have not added logic to handle vacancy display so ___ is shown now-->
+                </div>
+                <div class="pt-3">
+                    <button type="button" class="btn btn-dark" onclick="location.href='manageLearner.html'">Manage
+                        Learners</button>
                 </div>
             </div>
-            <div class="pt-3">
-                <span>Total Vacancy:</span> &nbsp;&nbsp; <span id="vacancyDisplay">___</span><span>/100</span>
-                <!--Have not added logic to handle vacancy display so ___ is shown now-->
-            </div>
-            <div class="pt-3">
-                <button type="button" class="btn btn-dark" onclick="location.href='manageLearner.html'">Manage Learners</button>
-            </div>
-        </div>
-    </section>
+        </section>
+        <section v-else></section>
 
-    <section id="pendingEnrollment" class="sectionPadding">
-        <div class="container">
-            <div class="row">
-                <div class="col-10">
-                    <h3>Learners Pending Enrollment</h3>
+        <section v-if="chosenCourse !== '' " id="pendingEnrollment" class="sectionPadding">
+            <div id="pendingEApp" class="container">
+                <div class="row">
+                    <div class="col-10">
+                        <h3>Learners Pending Enrollment</h3>
+                    </div>
+                    <div class="col-2">
+                        <button id="saveEnrollment" type="button" class="btn btn-dark">Save Changes</button>
+                        <!--Have not added logic to handle save-->
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button id="saveEnrollment" onclick="fetchEligibleLearners()" type="button"
-                        class="btn btn-dark">Save Changes</button>
-                    <!--Have not added logic to handle save-->
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-2">
-                    <b>ID No.</b>
-                </div>
-                <div class="col-2">
-                    <b>Name</b>
-                </div>
-                <div class="col-2">
-                    <b>Eligible (Y/N)</b>
+                <div class="row">
+                    <div class="col-2">
+                        <b>ID No.</b>
+                    </div>
+                    <div class="col-2">
+                        <b>Name</b>
+                    </div>
+                    <!-- <div class="col-2">
+                    <b>Eligible (Y/N)</b> -->
                     <!--IMPT!! IMO I think this can be removed because we are only showing those that are eligible-->
+                    <!-- </div> -->
+                    <div class="col-4">
+                        <b>Decision</b>
+                    </div>
+                    <div class="col-4"></div>
                 </div>
-                <div class="col-2">
-                    <b>Decision</b>
+                <div v-for="person in pendingList" id="enrollmentDisplay" class="row pt-4">
+                    <div class="col-2">
+                        {{person.eid}}
+                    </div>
+                    <div class="col-2">
+                        Name Logic not done
+                    </div>
+                    <div class="col-4">
+                        <input type="checkbox" name="pendingToAccept" v-model="acceptList" :value="person.eid">
+                    </div>
                 </div>
-                <div class="col-4"></div>
+                <div class="pt-4">
+                    <b>Learners you are choosing to accept upon saving are: {{acceptList}}</b>
+                </div>
             </div>
-            <div id="enrollmentDisplay" class="pt-3"></div>
-        </div>
-    </section>
+        </section>
+        <section v-else></section>
+    </div>
 
     <!-- Notifications Popup -->
     <script>
@@ -222,6 +257,61 @@
             }
             popup.classList.toggle("show");
         }
+
+        // Vue App to display course details
+        const app1 = new Vue({
+            el: "#App1",
+            data: {
+                courseList: [],
+                chosenCourse: "",
+                courseName: "",
+                courseDes: "",
+                courseNo: "",
+                classList: [],
+                pendingList: [],
+                acceptList: []
+            },
+            methods: {
+                getCourseInfo: function() {
+                    if (this.chosenCourse !== '') {
+                        for (course of this.courseList) {
+                            
+                            if (course.coursename == this.chosenCourse) {
+                                this.courseNo = course.cid
+                                this.courseName = course.coursename;
+                                this.courseDes = course.description;
+                            }
+                        }
+                    }
+
+                    axios.get('http://127.0.0.1:5004/class/' + this.courseNo)
+                        .then(response => {
+                            this.classList = response.data.data.classList;
+                        })
+                        .catch(error => {
+                            alert(error);
+                        });
+
+                    axios.get('http://127.0.0.1:5004/pending/' + this.courseNo)
+                        .then(response => {
+                            this.pendingList = response.data.data.pending;
+                        })
+                        .catch(error => {
+                            alert(error);
+                        });
+                },
+            },
+            mounted: function () {
+                axios.get('http://127.0.0.1:5004/course')
+                    .then(response => {
+                        this.courseList = response.data.data.courses;
+                    })
+                    .catch(error => {
+                        alert(error);
+                    });
+            }
+
+        })
 
         // Test Data for Pending Enrollment List
         var enrollmentData = {
@@ -270,68 +360,6 @@
             }]
         }
 
-
-        // Combined function for Pending Enrollment and Classes of a specific course
-        function showLoadedContent() {
-            let enrollmentDisplay = document.getElementById('enrollmentDisplay')
-            let i = 1
-            for (let personName in enrollmentData) {
-                enrollmentDisplay.innerHTML +=
-                    `<div class="row pt-3">
-                        <div class="col-2">
-                            ${i}
-                        </div>
-                        <div class="col-2">
-                            ${personName}
-                        </div>
-                        <div class="col-2">
-                            Yes
-                        </div>
-                        <div class="col-2">
-                            <select name="pendingList[]">
-                                <option value=""> </option>
-                                <option value="A">Approve</option>
-                                <option value="R">Reject</option>
-                            </select>
-                        </div>
-                        <div class="col-4"></div>
-                    </div>
-                    `
-                i++
-            }
-            let classDisplayRow = document.getElementById('classDisplayRow');
-            for (let className in courses) {
-                if (className == "Engineering 101") {
-                    for (let classData of courses[className]) {
-                        //console.log(classData)
-                        classDisplayRow.innerHTML +=
-                            `<div class="row pt-3">
-                            <div class="col-2">
-                                ${classData.ClassNo}
-                            </div>
-                            <div class="col-2">
-                                ${classData.Start}
-                            </div>
-                            <div class="col-2">
-                                ${classData.End}
-                            </div>
-                            <div class="col-2">
-                                ${classData.LessonTime}
-                            </div>
-                            <div class="col-2">
-                                ${classData.Trainer}
-                            </div>
-                            <div class="col-1">
-                                <span class="underLineText">Edit</span>
-                            </div>
-                            <div class="col-1">
-                                <span class="underLineText">Delete</span>
-                            </div>
-                        </div>`
-                    }
-                }
-            }
-        }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
