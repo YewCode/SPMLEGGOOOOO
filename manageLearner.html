@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Manage Learner Page</title>
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
@@ -14,18 +13,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
 
+    <!-- Vue Dev -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-
 </head>
-
 <body>
-    <!-- Login Page Nav -->
+    <!-- This Nav Bar is for HR -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="images/LMS.png" width="50" height="24" class="d-inline-block align-text-top">
+                <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -52,37 +51,34 @@
                         </ul>
                     </li>
                 </ul>
+                <ul class="navbar-nav me-2 mb-2 mb-lg-0">
+                    <li style="padding-right: 20px;" class="nav-item">
+                        <a class="nav-link" href="#">Task List</a>
+                        <!--This will be a popup box which retrieves the list of learners pending acceptance-->
+                    </li>
+                    <li class="nav-item popUp" onclick="showNotif()">
+                        <a class="navbar-brand" href="#">
+                            <i class="bi bi-bell"></i>
+                        </a>
+                        <ul class="popUpText" id="HRPopUp"></ul>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="navbar-brand" href="#">
+                            <i class="bi bi-person-circle"></i>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
-
+    
     <section class="pageTitlePad">
-        <h1 style="text-align: center;">Welcome to LMS</h1>
+        <h1>Learner Assignment</h1>
     </section>
 
-    <section id="loginBody" class="sectionPadding">
-        <div class="container mx-auto my-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-3 col-sm-12 text-center">
-                    Enter Username:
-                </div>
-                <div class="col-lg-9 w-25">
-                    <input type="text" name="Username" id="User">
-                </div>
-            </div>
-            <div class="row justify-content-center my-4">
-                <div class="col-lg-3 col-sm-12 text-center">
-                    Enter Password:
-                </div>
-                <div class="col-lg-9 col-sm-12 w-25">
-                    <input type="text" name="Password" id="User">
-                </div>
-            </div>
-            <div class="text-center">
-                <div class="col-12">
-                    <button class="btn-primary">Log In</button>
-                </div>
-            </div>
+    <section id="learnerList">
+        <div class="container">
             
         </div>
     </section>
@@ -91,5 +87,4 @@
         integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
     </script>
 </body>
-
 </html>
