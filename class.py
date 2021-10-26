@@ -9,7 +9,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
  
 db = SQLAlchemy(app)
    
-class Class(db.Model):
+class Classes(db.Model):
     __tablename__ = 'class'
  
     classid = db.Column(db.Integer, primary_key=True)
@@ -36,7 +36,7 @@ class Class(db.Model):
                 "enddate": self.enddate,
                 "class_type": self.class_type
                 }
-class Class_Trainer(db.Model):
+class Classes_Trainer(db.Model):
     __tablename__ = 'class_trainer'
  
     classid = db.Column(db.Integer, primary_key=True)
@@ -73,7 +73,7 @@ class Class_Enrolled(db.Model):
 @app.route("/")
 def home():
     pass
-    classlist = Class.query.all()
+    classlist = Classes.query.all()
     if len(classlist):
         return jsonify(
             {
