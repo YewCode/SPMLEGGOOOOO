@@ -1,6 +1,5 @@
 #CREATE DATABASE `spmproject`;
 
-# CREATE SCHEMA `spmproject` ;
 use `spmproject` ;
 
 CREATE TABLE `spmproject`.`Engineer` (
@@ -29,12 +28,12 @@ VALUES ('Bob Chang','Engineer');
 
 CREATE TABLE `spmproject`.`Course` (
 CID int AUTO_INCREMENT PRIMARY KEY,
- `Course Name` varchar(100) not null,
- `Course Description` varchar(500) not null,
+ `courseName` varchar(100) not null,
+ `courseDescription` varchar(500) not null,
  `StartDate` date not null,
  `EndDate` date not null
 );
-INSERT INTO course (`course name`, `course description`, `startdate`, `enddate`)
+INSERT INTO course (`coursename`, `coursedescription`, `startdate`, `enddate`)
 VALUES ('Engineering 101', 'This is clearly a course all about electricity. Eventually you will become electricman.', '2021-11-23', '2022-11-23'),
 ('Thermodynamics', 'This is a module that every engineer hates but is absoultely useful in the long term, just ask around', '2021-11-05', '2022-11-05');
 

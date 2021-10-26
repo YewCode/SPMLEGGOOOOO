@@ -29,19 +29,23 @@ class Engineer(db.Model):
         return {"engineerid": self.engineerid, "name": self.name, "role": self.role}
 
 class Course(db.Model):
-    __tablename__ = 'course'
+    __tablename__ = 'Course'
  
     cid = db.Column(db.Integer, primary_key=True)
-    course_name = db.Column(db.String(100), nullable=False)
-    course_desc =db.Column(db.String(500), nullable=False)
+    coursename = db.Column(db.String(100), nullable=False)
+    coursedescription =db.Column(db.String(500), nullable=False)
+    startdate =db.Column(db.Date)
+    enddate =db.Column(db.Date)
  
-    def __init__(self, cid, course_name, course_desc):
+    def __init__(self, cid, coursename, coursedescription,startdate,enddate):
         self.cid = cid
-        self.course_name = course_name
-        self.course_desc = course_desc
+        self.coursename = coursename
+        self.coursedescription = coursedescription
+        self.startdate = startdate
+        self.enddate = enddate
  
     def json(self):
-        return {"cid": self.cid, "course_name": self.course_name, "course_desc": self.course_desc}
+        return {"cid": self.cid, "coursename": self.coursename, "coursedescription": self.coursedescription,"startdate":self.startdate ,"enddate":self.enddate}
     
 
     
@@ -217,7 +221,6 @@ def getEngineerByEid(eid):
 
 @app.route("/course")
 def getCourse():
-    
     courselist = Course.query.all()
     if len(courselist):
         return jsonify(
@@ -363,8 +366,6 @@ def getListOfEnrolledAndUnenrolled(i_cid):
     returnlist = db.session.query(Engineer,Course_Enrolled).outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid).all()
     # print('returnlist ',returnlist)
     if len(returnlist):
-        
-        
         return jsonify(
             {
                 "code": 200,

@@ -124,7 +124,7 @@ def getCourses():
         }
     ), 404
 
-@app.route("/pending/<courseid>")
+@app.route("/pending/<int:courseid>")
 def getPendingList(courseid):
     pendingList = Pending.query.filter_by(cid=courseid).all()
     if len(pendingList):
@@ -143,7 +143,7 @@ def getPendingList(courseid):
         }
     ), 404
 
-@app.route("/class/<courseid>")
+@app.route("/class/<int:courseid>")
 def getClassesByCourse(courseid):
     classList = Classes.query.filter_by(courseid=courseid).all() #Handle logic for getting trainer name
     if len(classList):
