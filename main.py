@@ -295,7 +295,7 @@ def getCourseTrainerByEid(eid):
     return jsonify(
         {
             "code": 404,
-            "message": "There are no course trainer for course id: "+str(cid) + '.' 
+            "message": "There are no course trainer for course id: "+str(eid) + '.' 
         }
     ), 404
     
