@@ -167,7 +167,7 @@ class Class_Enrolled(db.Model):
     def __init__(self, classid, courseid, eid):
         self.classid = classid
         self.courseid = courseid
-        self.courseid = courseid
+        self.eid = eid
         
     def json(self):
         return {"classid": self.classid,"courseid": self.courseid,"eid": self.eid}
@@ -362,8 +362,8 @@ def getCourseEnrolledByEid(eid):
 @app.route("/Engineer/getAllEid/<int:i_cid>")
 def getListOfEnrolledAndUnenrolled(i_cid):
     
-    returnlist = db.session.query(Engineer,Course_Enrolled).outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid).all()
-    # print('returnlist ',returnlist)
+    returnlist = db.session.query(Engineer,Course_Enrolled).\
+        outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid).all()
     if len(returnlist):
         return jsonify(
             {
@@ -380,9 +380,36 @@ def getListOfEnrolledAndUnenrolled(i_cid):
         }
     ), 404
     
-@app.route("/class/courseid/<int:courseid>")
-def getclassByCourseID(courseid):
-    classlist = Classes.query.all()
+@app.route("/class/courseid/<int:i_courseid>")
+def getclassByCourseID(i_courseid):
+    classlist = db.session.query(Classes,Engineer,Class_Trainer)\
+        .outerjoin(Class_Trainer, and_(Class_Trainer.courseid == Classes.courseid, Class_Trainer.classid == Classes.classid) )\
+            .outerjoin(Engineer, Engineer.engineerid == Class_Trainer.eid )\
+            .filter(Classes.courseid==i_courseid).all()            
+
+    print('returnlist ',classlist)
+    print('len ',len(classlist) )
+
+    if len(classlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "class": [ (classs.json(),en.json()) for (classs,en,ct) in classlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no classs."
+        }
+    ), 404
+    
+@app.route("/pending/<int:courseid>")#in progress (wq)
+def getPendingEnrollmentByCourseID(courseid):
+    pass
+    classlist = Class_Trainer.query.filter(eid=eid).all()
     if len(classlist):
         return jsonify(
             {
@@ -398,26 +425,6 @@ def getclassByCourseID(courseid):
             "message": "There are no classs."
         }
     ), 404
-    
-# @app.route("/class_trainer/eid/<int:eid>")
-# def getclasstrainerByEID(eid):
-#     pass
-#     classlist = Class_Trainer.query.filter(eid=eid).all()
-#     if len(classlist):
-#         return jsonify(
-#             {
-#                 "code": 200,
-#                 "data": {
-#                     "class": [ classs.json() for classs in classlist]
-#                 }
-#             }
-#         )
-#     return jsonify(
-#         {
-#             "code": 404,
-#             "message": "There are no classs."
-#         }
-#     ), 404
 
 
 

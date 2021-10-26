@@ -114,6 +114,9 @@ Values (1,1,20, 'Thursday 12:00pm');
 insert into class 
 Values (2,1,30, 'Thursday 3:15pm');
 
+insert into class 
+Values (1,2,30, 'Monday 8:15am');
+
 CREATE TABLE `spmproject`.`Class_Trainer` (
 ClassID int,
 EID int,
@@ -129,6 +132,9 @@ Values (1,2,1 );
 
 insert into class_trainer
 Values (2,2,1 );
+
+insert into class_trainer
+Values (1,3,2 );
 
 CREATE TABLE `spmproject`.`Class_Enrolled` (
 ClassID int,
