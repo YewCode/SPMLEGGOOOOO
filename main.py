@@ -406,23 +406,25 @@ def getclassByCourseID(i_courseid):
         }
     ), 404
     
-@app.route("/pending/<int:courseid>")#in progress (wq)
+@app.route("/pending/<int:courseid>")
 def getPendingEnrollmentByCourseID(courseid):
-    pass
-    classlist = Class_Trainer.query.filter(eid=eid).all()
-    if len(classlist):
+    pendinglist =  db.session.query(Course_EnrollmentPending,Engineer)\
+        .outerjoin(Engineer, Engineer.engineerid == Course_EnrollmentPending.eid)\
+            .filter(Course_EnrollmentPending.cid == courseid).all()
+            
+    if len(pendinglist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "class": [ classs.json() for classs in classlist]
+                    "result": [ engineer.json() for (pending,engineer) in pendinglist]
                 }
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "There are no classs."
+            "message": "There are no pending learners for course id "+ str(courseid)
         }
     ), 404
 
