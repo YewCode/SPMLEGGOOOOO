@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Feat 1</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+
+    <!-- Vue Dev -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+
+<!-- <body onload="showLoadedContent()"> -->
+<body>
+    
+    <!-- This Nav Bar is for HR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Quick Find
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Home</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav me-2 mb-2 mb-lg-0">
+                    <li style="padding-right: 20px;" class="nav-item">
+                        <a class="nav-link" href="#">Task List</a>
+                        <!--This will be a popup box which retrieves the list of learners pending acceptance-->
+                    </li>
+                    <li class="nav-item popUp" onclick="showNotif()">
+                        <a class="navbar-brand" href="#">
+                            <i class="bi bi-bell"></i>
+                        </a>
+                        <ul class="popUpText" id="HRPopUp"></ul>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="navbar-brand" href="#">
+                            <i class="bi bi-person-circle"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section id="header" class="pageTitlePad">
+        <h1>Course Overview</h1>
+    </section>
+
+    <!-- Start Vue Instance -->
+    <div id="App1">
+        <section id="CourseHeader" class="sectionPadding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <select @change="getCourseInfo" class="mx-auto form-select form-select-lg w-25 mb-4" v-model="chosenCourse" name="course" id="courseSelect">
+                            <option value=""></option>
+                            <option v-for="course in courseList" :value="course.coursename">{{course.coursename}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div v-if="chosenCourse !== '' ">
+                    <div class="row pt-3">
+                        <div class="col-12">
+                            <h1 id="CourseTitle">Currently displaying: <span style="color: goldenrod;">{{courseName}}</span></h1>
+                            <!-- Use DOM Getter to retrive and display Course Title Info from DB-->
+                        </div>
+                    </div>
+                    <div class="row pt-3">
+                        <div class="col-12">
+                            <h3>Course Description</h3>
+                        </div>
+                    </div>
+                    <div class="row pt-3">
+                        <div class="col-12">
+                            <p id="courseDesc">{{courseDes}}</p>
+                            <!-- Use DOM Getter to retrieve and display Course Description from DB-->
+                        </div>
+                    </div>
+
+                </div>
+                <div v-else class="text-center">
+                    <h2>Please select a valid course to show page contents</h2>
+                </div>
+            </div>
+        </section>
+
+        <section v-if="chosenCourse !== '' " id="classAssignment" class="sectionPadding">
+            <div id="fixedAssignComponents" class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-sm-12">
+                        <h3>Classes Available</h3>
+                    </div>
+                    <div class="col-lg-2 col-sm-6">
+                        <button id="addClass" type="button" class="btn btn-dark">Add Class</button>
+                        <!--Have not added logic to handle add-->
+                    </div>
+                    <div class="col-lg-2 col-sm-6">
+                        <button id="saveClass" type="button" class="btn btn-dark">Save Changes</button>
+                        <!--Have not added logic to handle save-->
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row pt-3">
+                    <div class="col-3">
+                        <b>Class ID</b>
+                    </div>
+                    <div class="col-3">
+                        <b>Class Time</b>
+                    </div>
+                    <div class="col-4">
+                        <b>Trainer</b>
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-1"></div>
+                </div>
+                <!-- Using Vue to show classes available -->
+                <div v-for="classes in classList" class="row pt-4">
+                    <div class="col-3">
+                        {{classes.classid}}
+                    </div>
+                    <div class="col-3">
+                        {{classes.classtime}}
+                    </div>
+                    <div class="col-4">
+                        {{classes.trainerid}}
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-1"></div>
+                </div>
+                <!-- Still required to code logic for modal box to appear for each edit and delete button -->
+            </div>
+        </section>
+        <section v-else></section>
+
+        <section v-if="chosenCourse !== '' " id="learnerAssignment" class="sectionPadding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-10">
+                        <h3>Learner Assignment</h3>
+                    </div>
+                    <div class="col-2">
+                        <button id="saveLearner" type="button" class="btn btn-dark">Save Changes</button>
+                        <!--Have not added logic to handle save-->
+                    </div>
+                </div>
+                <div class="pt-3">
+                    <span>Total Vacancy:</span> &nbsp;&nbsp; <span id="vacancyDisplay">___</span><span>/100</span>
+                    <!--Have not added logic to handle vacancy display so ___ is shown now-->
+                </div>
+                <div class="pt-3">
+                    <button type="button" class="btn btn-dark" onclick="location.href='manageLearner.html'">Manage
+                        Learners</button>
+                </div>
+            </div>
+        </section>
+        <section v-else></section>
+
+        <section v-if="chosenCourse !== '' && pendingList.length > 0" id="pendingEnrollment" class="sectionPadding">
+            <div id="pendingEApp" class="container">
+                <div class="row">
+                    <div class="col-10">
+                        <h3>Learners Pending Enrollment</h3>
+                    </div>
+                    <div class="col-2">
+                        <button id="saveEnrollment" type="button" class="btn btn-dark">Save Changes</button>
+                        <!--Have not added logic to handle save-->
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-2">
+                        <b>ID No.</b>
+                    </div>
+                    <div class="col-2">
+                        <b>Name</b>
+                    </div>
+                    <!-- <div class="col-2">
+                    <b>Eligible (Y/N)</b> -->
+                    <!--IMPT!! IMO I think this can be removed because we are only showing those that are eligible-->
+                    <!-- </div> -->
+                    <div class="col-4">
+                        <b>Decision</b>
+                    </div>
+                    <div class="col-4"></div>
+                </div>
+                <div v-for="person in pendingList" id="enrollmentDisplay" class="row pt-4">
+                    <div class="col-2">
+                        {{person.eid}}
+                    </div>
+                    <div class="col-2">
+                        Name Logic not done
+                    </div>
+                    <div class="col-4">
+                        <input type="checkbox" name="pendingToAccept" v-model="acceptList" :value="person.eid">
+                    </div>
+                </div>
+                <div class="pt-4">
+                    <b>Learners you are choosing to accept upon saving are: {{acceptList}}</b>
+                </div>
+            </div>
+        </section>
+        <section v-else></section>
+    </div>
+
+    <!-- Notifications Popup -->
+    <script>
+        // When the user clicks on <ul>, open the popup, this is supposed to grab a list of notifications from somewhere to propogate them
+        function showNotif() {
+            let notifications = ["Do this", "Do that", "Do this & that"];
+            var popup = document.getElementById("HRPopUp");
+            for (let ele in notifications) {
+                let listItem = document.createElement("li")
+                //console.log(notifications[ele])
+                let textNode = document.createTextNode(notifications[ele])
+                let item = listItem.appendChild(textNode)
+                popup.appendChild(listItem)
+            }
+            popup.classList.toggle("show");
+        }
+
+        // Vue App to display course details
+        const app1 = new Vue({
+            el: "#App1",
+            data: {
+                courseList: [],
+                chosenCourse: "",
+                courseName: "",
+                courseDes: "",
+                courseNo: "",
+                classList: [],
+                pendingList: [],
+                acceptList: []
+            },
+            methods: {
+                getCourseInfo: function() {
+                    if (this.chosenCourse !== '') {
+                        for (course of this.courseList) {
+                            
+                            if (course.coursename == this.chosenCourse) {
+                                this.courseNo = course.cid
+                                this.courseName = course.coursename;
+                                this.courseDes = course.description;
+                            }
+                        }
+                    }
+
+                    axios.get('http://127.0.0.1:5004/class/' + this.courseNo)
+                        .then(response => {
+                            this.classList = response.data.data.classList;
+                        })
+                        .catch(error => {
+                            alert(error);
+                        });
+
+                    axios.get('http://127.0.0.1:5004/pending/' + this.courseNo)
+                        .then(response => {
+                            this.pendingList = response.data.data.pending;
+                        })
+                        .catch(error => {
+                            this.pendingList = [];
+                        });
+                },
+            },
+            mounted: function () {
+                axios.get('http://127.0.0.1:5004/course')
+                    .then(response => {
+                        this.courseList = response.data.data.courses;
+                    })
+                    .catch(error => {
+                        alert(error);
+                    });
+            }
+
+        })
+
+        // Test Data for Pending Enrollment List
+        var enrollmentData = {
+            "Johnny English": [{
+                Eligibility: true,
+                Status: "Pending"
+            }],
+            "Simu Liu": [{
+                Eligibility: true,
+                Status: "Pending"
+            }],
+            "Jackie Chan": [{
+                Eligibility: true,
+                Status: "Pending"
+            }]
+        }
+
+        // Test Course Data to simulate
+        var courses = {
+            "Engineering 101": [{
+                ClassNo: "1",
+                Start: "08/10/2021",
+                End: "08/10/2022",
+                LessonTime: "Tuesday 7:30pm",
+                Trainer: "Rachel Ang"
+            }, {
+                ClassNo: "2",
+                Start: "08/10/2021",
+                End: "08/10/2022",
+                LessonTime: "Thursday 5:30pm",
+                Trainer: "Myat Thanda"
+            }],
+            "Thermodynamics": [{
+                ClassNo: "1",
+                Start: "08/11/2021",
+                End: "08/11/2022",
+                LessonTime: "Wednesday 1:30pm",
+                Trainer: "Ebenezer Phua"
+            }],
+            "Electrical Engineering": [{
+                ClassNo: "1",
+                Start: "10/11/2021",
+                End: "10/11/2022",
+                LessonTime: "Friday 3:30pm",
+                Trainer: "Cheah Yew Wei"
+            }]
+        }
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
+    </script>
+
+</body>
+
+</html>
