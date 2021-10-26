@@ -1,6 +1,7 @@
 from flask import Flask,request,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
+from sqlalchemy.sql import expression
 
 
 from sqlalchemy.sql.elements import *
@@ -97,7 +98,7 @@ class Course_EnrollmentPending(db.Model):
  
     cid = db.Column(db.Integer, primary_key=True)
     eid = db.Column(db.Integer, primary_key=True)
-    active = db.Column(db.String(100), nullable=False)
+    active = db.Column(db.Integer, nullable=False)
 
     def __init__(self, cid,eid,active):
         self.cid = cid
@@ -385,10 +386,7 @@ def getclassByCourseID(i_courseid):
     classlist = db.session.query(Classes,Engineer,Class_Trainer)\
         .outerjoin(Class_Trainer, and_(Class_Trainer.courseid == Classes.courseid, Class_Trainer.classid == Classes.classid) )\
             .outerjoin(Engineer, Engineer.engineerid == Class_Trainer.eid )\
-            .filter(Classes.courseid==i_courseid).all()            
-
-    print('returnlist ',classlist)
-    print('len ',len(classlist) )
+            .filter(Classes.courseid==i_courseid).all()           
 
     if len(classlist):
         return jsonify(
@@ -410,7 +408,7 @@ def getclassByCourseID(i_courseid):
 def getPendingEnrollmentByCourseID(courseid):
     pendinglist =  db.session.query(Course_EnrollmentPending,Engineer)\
         .outerjoin(Engineer, Engineer.engineerid == Course_EnrollmentPending.eid)\
-            .filter(Course_EnrollmentPending.cid == courseid).all()
+            .filter(and_(Course_EnrollmentPending.cid==courseid,Course_EnrollmentPending.active==1)).all()
             
     if len(pendinglist):
         return jsonify(
@@ -427,6 +425,32 @@ def getPendingEnrollmentByCourseID(courseid):
             "message": "There are no pending learners for course id "+ str(courseid)
         }
     ), 404
+    
+@app.route("/Course_Enrolled/eid/<int:eid>/cid/<int:cid>")
+def updateLearnersEnrollment(eid,cid):
+    courseenrolling = Course_Enrolled(cid,eid, 1)
+    print(courseenrolling)
+    pending = Course_EnrollmentPending.query\
+        .filter( and_(cid==cid,eid==eid,Course_EnrollmentPending.active==1) ).first()
+    pending.active = 0
+    try:
+        db.session.add(courseenrolling)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while creating the enrollment. " + str(e)
+            }
+        ), 500
+    
+    return jsonify(
+            {
+                "code": 200,
+                "enrolled":  courseenrolling.json()
+            }
+        ), 500
 
 
 
