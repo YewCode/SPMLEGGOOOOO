@@ -125,23 +125,22 @@ class Classes(db.Model):
  
     classid = db.Column(db.Integer, primary_key=True)
     courseid = db.Column(db.Integer, primary_key=True)
-    class_capacity = db.Column(db.Integer, primary_key=True)
+    capacity = db.Column(db.Integer, primary_key=True)
     classtime =db.Column(db.String(100), nullable=False)
  
-    def __init__(self, classid,courseid, class_name, class_capacity,classtime):
+    def __init__(self, classid,courseid, capacity,classtime):
         self.classid = classid
         self.courseid = courseid
-        self.class_name = class_name
-        self.class_capacity = class_capacity
+        self.capacity = capacity
         self.classtime = classtime
  
     def json(self):
         return {"classid": self.classid,
                 "courseid": self.courseid,
-                "class_capacity": self.class_capacity,
+                "capacity": self.capacity,
                 "classtime": self.classtime
                 }
-class Classes_Trainer(db.Model):
+class Class_Trainer(db.Model):
     __tablename__ = 'class_trainer'
  
     classid = db.Column(db.Integer, primary_key=True)
@@ -381,10 +380,9 @@ def getListOfEnrolledAndUnenrolled(i_cid):
         }
     ), 404
     
-@app.route("/class/cid/<int:cid>")
-def getclass(cid):
-    pass
-    classlist = Classes.query.filter(cid=cid).all()
+@app.route("/class/courseid/<int:courseid>")
+def getclassByCourseID(courseid):
+    classlist = Classes.query.all()
     if len(classlist):
         return jsonify(
             {
@@ -400,6 +398,26 @@ def getclass(cid):
             "message": "There are no classs."
         }
     ), 404
+    
+# @app.route("/class_trainer/eid/<int:eid>")
+# def getclasstrainerByEID(eid):
+#     pass
+#     classlist = Class_Trainer.query.filter(eid=eid).all()
+#     if len(classlist):
+#         return jsonify(
+#             {
+#                 "code": 200,
+#                 "data": {
+#                     "class": [ classs.json() for classs in classlist]
+#                 }
+#             }
+#         )
+#     return jsonify(
+#         {
+#             "code": 404,
+#             "message": "There are no classs."
+#         }
+#     ), 404
 
 
 
