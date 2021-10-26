@@ -1,3 +1,5 @@
+# CREATE DATABASE `spmproject`;
+
 # CREATE SCHEMA `spmproject` ;
 use `spmproject` ;
 
@@ -6,17 +8,24 @@ EngineerID int AUTO_INCREMENT PRIMARY KEY,
  `Name` varchar(100) not null,
  `Role` varchar(100) not null
 );
-insert into  Engineer (`name`, `role`)
+insert into  Engineer (name, role)
+VALUES ('Ben Lim','Engineer');
+
+insert into  Engineer (name, role)
 VALUES ('John Tan','Senior Engineer');
 
-insert into  Engineer (`name`, `role`)
+insert into  Engineer (name, role)
 VALUES ('May Chan','Senior Engineer');
 
-insert into  Engineer (`name`, `role`)
+insert into  Engineer (name, role)
+VALUES ('Tiffany Lim','Engineer');
+
+insert into  Engineer (name, role)
 VALUES ('Alice Chong','Engineer');
 
-insert into  Engineer (`name`, `role`)
+insert into  Engineer (name, role)
 VALUES ('Bob Chang','Engineer');
+
 
 CREATE TABLE `spmproject`.`Course` (
 CID int AUTO_INCREMENT PRIMARY KEY,
@@ -95,17 +104,15 @@ CREATE TABLE `spmproject`.`Class` (
 ClassID int ,
 CourseID int ,
 Capacity int not null,
-Start_Date datetime,
-End_Date datetime,
-class_type varchar(50),
+ClassTime varchar(50) not null,
 PRIMARY KEY (CourseID,ClassID),
 FOREIGN KEY (CourseID) REFERENCES Course(CID)
 );
 insert into class 
-Values (1,1,20, '','', 'Online');
+Values (1,1,20, 'Thursday 12:00pm');
 
 insert into class 
-Values (2,1,30, '','', 'Online');
+Values (2,1,30, 'Thursday 3:15pm');
 
 CREATE TABLE `spmproject`.`Class_Trainer` (
 ClassID int,

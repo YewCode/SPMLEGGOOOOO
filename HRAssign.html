@@ -284,25 +284,26 @@
                         }
                     }
 
-                    axios.get('http://127.0.0.1:5004/class/' + this.courseNo)
+                    axios.get('http://127.0.0.1:5000/class/' + this.courseNo)
                         .then(response => {
                             this.classList = response.data.data.classList;
                         })
                         .catch(error => {
-                            alert(error);
+                            console.log("Class API has not been added to main.py");
                         });
 
-                    axios.get('http://127.0.0.1:5004/pending/' + this.courseNo)
+                    axios.get('http://127.0.0.1:5000/pending/' + this.courseNo)
                         .then(response => {
                             this.pendingList = response.data.data.pending;
                         })
                         .catch(error => {
+                            console.log("Pending Enrolment API has not been added into main.py")
                             this.pendingList = [];
                         });
                 },
             },
             mounted: function () {
-                axios.get('http://127.0.0.1:5004/course')
+                axios.get('http://127.0.0.1:5000/course')
                     .then(response => {
                         this.courseList = response.data.data.courses;
                     })
