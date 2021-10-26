@@ -115,8 +115,65 @@ class Course_Completed(db.Model):
     def json(self):
         return {"cid": self.cid, "eid": self.eid }
  
+class Classes(db.Model):
+    __tablename__ = 'class'
  
+    classid = db.Column(db.Integer, primary_key=True)
+    courseid = db.Column(db.Integer, primary_key=True)
+    class_capacity = db.Column(db.Integer, primary_key=True)
+    classtime =db.Column(db.String(100), nullable=False)
+ 
+    def __init__(self, classid,courseid, class_name, class_capacity,classtime):
+        self.classid = classid
+        self.courseid = courseid
+        self.class_name = class_name
+        self.class_capacity = class_capacity
+        self.classtime = classtime
+ 
+    def json(self):
+        return {"classid": self.classid,
+                "courseid": self.courseid,
+                "class_capacity": self.class_capacity,
+                "classtime": self.classtime
+                }
+class Classes_Trainer(db.Model):
+    __tablename__ = 'class_trainer'
+ 
+    classid = db.Column(db.Integer, primary_key=True)
+    eid = db.Column(db.Integer, primary_key=True)
+    courseid = db.Column(db.Integer, primary_key=True)
+    
+ 
+    def __init__(self, classid, courseid, eid):
+        self.classid = classid
+        self.courseid = courseid
+        self.courseid = courseid
+        
+    def json(self):
+        return {"classid": self.classid,"courseid": self.courseid,"eid": self.eid}
+    
+class Class_Enrolled(db.Model):
+    __tablename__ = 'Class_Enrolled'
+ 
+    classid = db.Column(db.Integer, primary_key=True)
+    eid = db.Column(db.Integer, primary_key=True)
+    courseid = db.Column(db.Integer, primary_key=True)
+    
+ 
+    def __init__(self, classid, courseid, eid):
+        self.classid = classid
+        self.courseid = courseid
+        self.courseid = courseid
+        
+    def json(self):
+        return {"classid": self.classid,"courseid": self.courseid,"eid": self.eid}
 
+
+
+
+
+
+#all routes
 @app.route("/engineer")
 def getAllEngineer():
     pass
@@ -322,6 +379,25 @@ def getListOfEnrolledAndUnenrolled(i_cid):
         }
     ), 404
     
+@app.route("/class/cid/<int:cid>")
+def getclass(cid):
+    pass
+    classlist = Classes.query.filter(cid=cid).all()
+    if len(classlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "class": [ classs.json() for classs in classlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no classs."
+        }
+    ), 404
 
 
 
