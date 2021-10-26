@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/spmproject'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
  
 db = SQLAlchemy(app)
  
@@ -402,4 +403,4 @@ def getclass(cid):
 
 
 if __name__ == "__main__":
-    app.run( port="5000",debug=True)
+    app.run(port="5000",debug=True)
