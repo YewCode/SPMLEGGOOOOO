@@ -370,7 +370,7 @@ def getListOfEnrolledAndUnenrolled(i_cid):
             {
                 "code": 200,
                 "data": {
-                    "result": [({ 'engineer': engineer.json(), 'isenrolled': course_enrolled.json() if course_enrolled != None and course_enrolled.json()['cid'] == i_cid else ['unenrolled'] }) for (engineer,course_enrolled) in returnlist]
+                    "result": [({ 'engineer': engineer.json(), 'isenrolled': 'enrolled' if course_enrolled != None and course_enrolled.json()['cid'] == i_cid else 'unenrolled' }) for (engineer,course_enrolled) in returnlist]
                 }
             }
         )

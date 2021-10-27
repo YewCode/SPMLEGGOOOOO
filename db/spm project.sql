@@ -1,4 +1,4 @@
-CREATE DATABASE `spmproject`;
+#CREATE DATABASE `spmproject`;
 
 use `spmproject` ;
 
@@ -86,7 +86,8 @@ foreign key (EID) references Engineer(EngineerID),
 foreign key (CID) references Course(CID)
 );
 insert into  Course_EnrollmentPending 
-Values (1,1,1);
+Values (1,6,1);
+
 
 CREATE TABLE `spmproject`.`Course_Completed` (
 CID int,
