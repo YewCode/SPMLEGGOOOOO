@@ -1,6 +1,7 @@
 from flask import Flask,request,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
+from sqlalchemy.sql import expression
 
 
 from sqlalchemy.sql.elements import *
@@ -97,7 +98,7 @@ class Course_EnrollmentPending(db.Model):
  
     cid = db.Column(db.Integer, primary_key=True)
     eid = db.Column(db.Integer, primary_key=True)
-    active = db.Column(db.String(100), nullable=False)
+    active = db.Column(db.Integer, nullable=False)
 
     def __init__(self, cid,eid,active):
         self.cid = cid
@@ -167,7 +168,7 @@ class Class_Enrolled(db.Model):
     def __init__(self, classid, courseid, eid):
         self.classid = classid
         self.courseid = courseid
-        self.courseid = courseid
+        self.eid = eid
         
     def json(self):
         return {"classid": self.classid,"courseid": self.courseid,"eid": self.eid}
@@ -362,14 +363,14 @@ def getCourseEnrolledByEid(eid):
 @app.route("/Engineer/getAllEid/<int:i_cid>")
 def getListOfEnrolledAndUnenrolled(i_cid):
     
-    returnlist = db.session.query(Engineer,Course_Enrolled).outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid).all()
-    # print('returnlist ',returnlist)
+    returnlist = db.session.query(Engineer,Course_Enrolled).\
+        outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid).all()
     if len(returnlist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [(engineer.json(),course_enrolled.json() if course_enrolled != None and course_enrolled.json()['cid'] == i_cid else ['unenrolled'] ) for (engineer,course_enrolled) in returnlist]
+                    "result": [({ 'engineer': engineer.json(), 'isenrolled': course_enrolled.json() if course_enrolled != None and course_enrolled.json()['cid'] == i_cid else ['unenrolled'] }) for (engineer,course_enrolled) in returnlist]
                 }
             }
         )
@@ -380,15 +381,19 @@ def getListOfEnrolledAndUnenrolled(i_cid):
         }
     ), 404
     
-@app.route("/class/courseid/<int:courseid>")
-def getclassByCourseID(courseid):
-    classlist = Classes.query.all()
+@app.route("/class/courseid/<int:i_courseid>")
+def getclassByCourseID(i_courseid):
+    classlist = db.session.query(Classes,Engineer,Class_Trainer)\
+        .outerjoin(Class_Trainer, and_(Class_Trainer.courseid == Classes.courseid, Class_Trainer.classid == Classes.classid) )\
+            .outerjoin(Engineer, Engineer.engineerid == Class_Trainer.eid )\
+            .filter(Classes.courseid==i_courseid).all()           
+
     if len(classlist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "class": [ classs.json() for classs in classlist]
+                    "class": [ (classs.json(),en.json()) for (classs,en,ct) in classlist]
                 }
             }
         )
@@ -399,25 +404,53 @@ def getclassByCourseID(courseid):
         }
     ), 404
     
-# @app.route("/class_trainer/eid/<int:eid>")
-# def getclasstrainerByEID(eid):
-#     pass
-#     classlist = Class_Trainer.query.filter(eid=eid).all()
-#     if len(classlist):
-#         return jsonify(
-#             {
-#                 "code": 200,
-#                 "data": {
-#                     "class": [ classs.json() for classs in classlist]
-#                 }
-#             }
-#         )
-#     return jsonify(
-#         {
-#             "code": 404,
-#             "message": "There are no classs."
-#         }
-#     ), 404
+@app.route("/pending/<int:courseid>")
+def getPendingEnrollmentByCourseID(courseid):
+    pendinglist =  db.session.query(Course_EnrollmentPending,Engineer)\
+        .outerjoin(Engineer, Engineer.engineerid == Course_EnrollmentPending.eid)\
+            .filter(and_(Course_EnrollmentPending.cid==courseid,Course_EnrollmentPending.active==1)).all()
+            
+    if len(pendinglist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": [ engineer.json() for (pending,engineer) in pendinglist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no pending learners for course id "+ str(courseid)
+        }
+    ), 404
+    
+@app.route("/Course_Enrolled/eid/<int:eid>/cid/<int:cid>")
+def updateLearnersEnrollment(eid,cid):
+    courseenrolling = Course_Enrolled(cid,eid, 1)
+    print(courseenrolling)
+    pending = Course_EnrollmentPending.query\
+        .filter( and_(cid==cid,eid==eid,Course_EnrollmentPending.active==1) ).first()
+    pending.active = 0
+    try:
+        db.session.add(courseenrolling)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while creating the enrollment. " + str(e)
+            }
+        ), 500
+    
+    return jsonify(
+            {
+                "code": 200,
+                "enrolled":  courseenrolling.json()
+            }
+        ), 500
 
 
 

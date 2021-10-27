@@ -1,4 +1,4 @@
-#CREATE DATABASE `spmproject`;
+CREATE DATABASE `spmproject`;
 
 use `spmproject` ;
 
@@ -64,7 +64,7 @@ Values (2,4,'Pre-assign');
 CREATE TABLE `spmproject`.`Course_Enrolled` (
 CID int,
 EID int,
-Active int,
+`active` int,
 primary key (EID,CID),
 foreign key (EID) references Engineer(EngineerID),
 foreign key (CID) references Course(CID)
@@ -72,8 +72,6 @@ foreign key (CID) references Course(CID)
 insert into  course_enrolled 
 Values (1,1,1);
 
-insert into  course_enrolled 
-Values (1,6,1);
 
 insert into  course_enrolled 
 Values (2,1,1);
@@ -82,7 +80,7 @@ Values (2,1,1);
 CREATE TABLE `spmproject`.`Course_EnrollmentPending` (
 CID int,
 EID int,
-Active int,
+`active` int,
 primary key (EID,CID),
 foreign key (EID) references Engineer(EngineerID),
 foreign key (CID) references Course(CID)
@@ -114,6 +112,9 @@ Values (1,1,20, 'Thursday 12:00pm');
 insert into class 
 Values (2,1,30, 'Thursday 3:15pm');
 
+insert into class 
+Values (1,2,30, 'Monday 8:15am');
+
 CREATE TABLE `spmproject`.`Class_Trainer` (
 ClassID int,
 EID int,
@@ -129,6 +130,9 @@ Values (1,2,1 );
 
 insert into class_trainer
 Values (2,2,1 );
+
+insert into class_trainer
+Values (1,3,2 );
 
 CREATE TABLE `spmproject`.`Class_Enrolled` (
 ClassID int,
@@ -149,16 +153,20 @@ PRIMARY KEY (SectionID,ClassID,CourseID)
 );
 
 CREATE TABLE `spmproject`.`training_materials` (
-MaterialID int  ,
-ClassID int ,
-SectionID int ,
+MaterialID int auto_increment primary key,
 filename varchar(50) ,
 filedirectory varchar(250) ,
 isHidden int,
-PRIMARY KEY (ClassID,SectionID)-- ,
--- FOREIGN KEY (ClassID) REFERENCES Class(ClassID),
--- FOREIGN KEY (SectionID) REFERENCES Section(SectionID)
+ClassID int ,
+CourseID int ,
+SectionID int 
 );
+ALTER TABLE  `spmproject`.`training_materials`
+ADD FOREIGN KEY (CourseID,ClassID) REFERENCES Class(CourseID,ClassID);
+
+ALTER TABLE  `spmproject`.`training_materials`
+ADD FOREIGN KEY (SectionID) REFERENCES Section(SectionID);
+
 
 CREATE TABLE `spmproject`.`Quiz` (
 QuizID int AUTO_INCREMENT not null,
@@ -193,7 +201,7 @@ CID int  ,
 EngineerID int ,
 ClassID int NULL,
 isApproved int,
-Active int ,
+`active` int ,
 PRIMARY KEY (cid,EngineerID),
 FOREIGN KEY (CID) REFERENCES Course(cid),
 FOREIGN KEY (EngineerID) REFERENCES Engineer(EngineerID)-- , 
