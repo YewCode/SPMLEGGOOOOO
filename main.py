@@ -181,7 +181,6 @@ class Class_Enrolled(db.Model):
 #all routes
 @app.route("/engineer")
 def getAllEngineer():
-    pass
     engineerlist = Engineer.query.all()
     if len(engineerlist):
         return jsonify(
@@ -201,7 +200,6 @@ def getAllEngineer():
     
 @app.route("/engineer/<int:eid>")
 def getEngineerByEid(eid):
-    pass
     engineerlist = Engineer.query.filter_by(engineerid=eid).all()
     if len(engineerlist):
         return jsonify(
@@ -394,7 +392,7 @@ def getclassByCourseID(i_courseid):
             {
                 "code": 200,
                 "data": {
-                    "class": [ (classs.json(),en.json()) for (classs,en,ct) in classlist]
+                    "classes": [ ({"classdetails": classs.json(),"engineer": en.json()}) for (classs,en,ct) in classlist]
                 }
             }
         )
