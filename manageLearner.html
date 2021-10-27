@@ -80,14 +80,14 @@
 
     <section class="pageTitlePad">
         <div class="row">
-            <div class="col-10">
+            <div class="col-1" style="font-size: 4ch;">
+                <i style="cursor: pointer;" onclick="window.location.href='HRAssign.html'" class="bi bi-arrow-left-circle-fill"></i>
+            </div>
+            <div class="col-11">
                 <h1>Learner Assignment</h1>
             </div>
-            <div class="col-2">
-
-            </div>
         </div>
-        
+
     </section>
 
     <div id="app1">
@@ -124,7 +124,8 @@
                                 <td> {{person.engineer.name}} </td>
                                 <td> {{person.isenrolled}} </td>
                                 <td v-if="person.isenrolled == 'enrolled' "></td>
-                                <td v-else> <button type="button" class="btn-outline-primary" @click="hrAssignL(person.engineer.engineerid)">Enroll to Course</button> </td>
+                                <td v-else> <button type="button" class="btn-outline-primary"
+                                        @click="hrAssignL(person.engineer.engineerid)">Enroll to Course</button> </td>
                             </tr>
                         </table>
                     </div>
@@ -145,19 +146,21 @@
                 enrollmentList: []
             },
             methods: {
-                hrAssignL: function(id) {
+                hrAssignL: function (id) {
                     // alert(typeof(id));
-                    axios.get('http://127.0.0.1:5000/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo)
-                        .then(response => {
-                            if (response.data.code == 200) {
-                                console.log(response.data.enrolled);
-                                alert("Learner has been enrolled successfully");
-                                location.reload();
-                            }
-                        })
-                        .catch(error => {
-                            alert("Learner enrollment function failed")
-                        })
+                    let confirmation = confirm("Are you sure you want to enroll this learner?");
+
+                    if (confirmation == true) {
+                        axios.get('http://127.0.0.1:5000/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo);
+
+                        alert("Engineer has been enrolled successfully to " + this.courseName); // Works but if use catch method it returns code 500
+
+                        location.reload();
+                    }
+                    else {
+                        alert("Engineer was not enrolled into " + this.courseName);
+                    }
+
                 }
             },
             mounted: function () {
@@ -178,7 +181,7 @@
 
                 // Find parameter to retrieve value being passed over, in this case I want to get courseNum
                 let uri = window.location.href.split('?');
-                
+
                 // Returns index of the array where substring is found
                 let cNoIndex = uri.findIndex(item => item.includes("courseNum"));
 
