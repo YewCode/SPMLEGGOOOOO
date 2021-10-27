@@ -96,10 +96,6 @@
                     </div>
                 </div>
 
-                <div>
-                    {{enrollmentList}}
-                </div>
-
                 <div class="row">
                     <div class="col-12">
                         <table class="table table-hover">
@@ -110,9 +106,9 @@
                             </tr>
                             <tr v-for="person in enrollmentList">
                                 <!-- Add logic to handle enrolled and unenrolled-->
-                                <td>  </td>
-                                <td>  </td>
-                                <td>  </td>
+                                <td> {{person}} </td>
+                                <td> {{person.engineer.name}} </td>
+                                <td v-if="typeof(person.isenrolled)"> {{person.isenrolled}} </td>
                             </tr>
                         </table>
                     </div>
