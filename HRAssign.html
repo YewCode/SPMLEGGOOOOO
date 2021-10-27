@@ -154,15 +154,15 @@
                     <div class="col-1"></div>
                 </div>
                 <!-- Using Vue to show classes available -->
-                <div v-for="classes in classList" class="row pt-4">
+                <div v-for="(classes, i) in classList" class="row pt-4">
                     <div class="col-3">
-                        {{classes.classid}}
+                        {{classes[i].classid}}
                     </div>
                     <div class="col-3">
-                        {{classes.classtime}}
+                        {{classes[i].classtime}}
                     </div>
-                    <div class="col-4">
-                        {{classes.trainerid}}
+                    <div class="col-4"> 
+                        {{classes[i].name}} <!-- Need to change to single arrays to fetch names -->
                     </div>
                     <div class="col-1"></div>
                     <div class="col-1"></div>
@@ -225,13 +225,13 @@
                 </div>
                 <div v-for="person in pendingList" id="enrollmentDisplay" class="row pt-4">
                     <div class="col-2">
-                        {{person.eid}}
+                        {{person.engineerid}}
                     </div>
                     <div class="col-2">
-                        Name Logic not done
+                        {{person.name}}
                     </div>
                     <div class="col-4">
-                        <input type="checkbox" name="pendingToAccept" v-model="acceptList" :value="person.eid">
+                        <input type="checkbox" name="pendingToAccept" v-model="acceptList" :value="person.engineerid">
                     </div>
                 </div>
                 <div class="pt-4">
@@ -284,9 +284,10 @@
                         }
                     }
 
-                    axios.get('http://127.0.0.1:5000/class/' + this.courseNo)
+                    axios.get('http://127.0.0.1:5000/class/courseid/' + this.courseNo)
                         .then(response => {
-                            this.classList = response.data.data.classList;
+                            this.classList = response.data.data.class;
+                            console.log(this.classList)
                         })
                         .catch(error => {
                             console.log("Class API has not been added to main.py");
@@ -294,7 +295,7 @@
 
                     axios.get('http://127.0.0.1:5000/pending/' + this.courseNo)
                         .then(response => {
-                            this.pendingList = response.data.data.pending;
+                            this.pendingList = response.data.data.result;
                         })
                         .catch(error => {
                             console.log("Pending Enrolment API has not been added into main.py")
