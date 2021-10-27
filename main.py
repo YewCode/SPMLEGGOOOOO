@@ -67,20 +67,7 @@ class Course_Trainer(db.Model):
     def json(self):
         return {"cid": self.cid, "eid": self.eid }
     
-class Course_Assigned(db.Model):
-    __tablename__ = 'course_assigned'
- 
-    cid = db.Column(db.Integer, primary_key=True)
-    eid = db.Column(db.Integer, primary_key=True)
-    assignment_reason = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, cid,eid,assignment_reason):
-        self.cid = cid
-        self.eid = eid
-        self.assignment_reason = assignment_reason
- 
-    def json(self):
-        return {"cid": self.cid, "eid": self.eid, "assignment_reason":self.assignment_reason }
     
 class Course_Enrolled(db.Model):
     __tablename__ = 'Course_Enrolled'
@@ -300,51 +287,11 @@ def getCourseTrainerByEid(eid):
             "message": "There are no course trainer for course id: "+str(eid) + '.' 
         }
     ), 404
-    
-@app.route("/Course_Assigned/cid/<int:cid>")
-def getCourseAssignedByCid(cid):
-    
-    coursetrainerlist = Course_Assigned.query.filter_by(cid=cid).all()
-    if len(coursetrainerlist):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "courses": [coursetrainer.json() for coursetrainer in coursetrainerlist]
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no course assigned for course id: "+str(cid) + '.' 
-        }
-    ), 404
-    
-@app.route("/Course_Assigned/eid/<int:eid>")
-def getCourseAssignedByEid(eid):
-    
-    coursetrainerlist = Course_Assigned.query.filter_by(eid=eid).all()
-    if len(coursetrainerlist):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "courses": [coursetrainer.json() for coursetrainer in coursetrainerlist]
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no course assigned for engineer id: "+str(eid) + '.' 
-        }
-    ), 404
-    
+
 @app.route("/Course_Enrolled/eid/<int:eid>")
 def getCourseEnrolledByEid(eid):
     
-    coursetrainerlist = Course_Assigned.query.filter_by(eid=eid).all()
+    coursetrainerlist = Course_Enrolled.query.filter_by(eid=eid).all()
     if len(coursetrainerlist):
         return jsonify(
             {
@@ -429,10 +376,9 @@ def getPendingEnrollmentByCourseID(courseid):
         }
     ), 404
     
-@app.route("/Course_Enrolled/pending/eid/<int:eid>/cid/<int:cid>")
+@app.route("/Course_Enrolled/pending/eid/<int:eid>/cid/<int:cid>",methods=['GET','POST'])
 def approveLearnersEnrollment(eid,cid):
     courseenrolling = Course_Enrolled(cid,eid, 1)
-    print(courseenrolling)
     pending = Course_EnrollmentPending.query\
         .filter( and_(cid==cid,eid==eid,Course_EnrollmentPending.active==1) ).first()
     pending.active = 0
@@ -455,27 +401,30 @@ def approveLearnersEnrollment(eid,cid):
             }
         ), 500
     
-@app.route("/course_enrollmentpending/eid/<int:eid>/cid/<int:cid>")
-def selfEnrollCourse(eid,cid):
-    pending = Course_EnrollmentPending(cid,eid, 1)
+@app.route("/Course_Enrolled/assign/eid/<int:eid>/cid/<int:cid>",methods=['GET','POST'])
+def assignlearners(eid,cid):
+    courseenrolling = Course_Enrolled(cid,eid, 1)
+   
     try:
-        db.session.add(pending)
+        db.session.add(courseenrolling)
         db.session.commit()
     except Exception as e:
         print(e)
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred while adding learner to pending enrollment. " + str(e)
+                "message": "An error occurred while creating the enrollment. " + str(e)
             }
         ), 500
     
     return jsonify(
             {
                 "code": 200,
-                "enrolled":  pending.json()
+                "enrolled":  courseenrolling.json()
             }
         ), 500
+    
+
 
 
 

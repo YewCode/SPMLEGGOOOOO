@@ -50,17 +50,6 @@ Values (1,2);
 insert into  course_trainer 
 Values (2,3);
 
-CREATE TABLE `spmproject`.`Course_assigned` (
-CID int,
-EID int,
-Assignment_reason varchar(250),
-primary key (EID,CID),
-foreign key (EID) references Engineer(EngineerID),
-foreign key (CID) references Course(CID)
-);
-insert into  course_assigned 
-Values (2,4,'Pre-assign');
-
 CREATE TABLE `spmproject`.`Course_Enrolled` (
 CID int,
 EID int,
@@ -135,14 +124,7 @@ Values (2,2,1 );
 insert into class_trainer
 Values (1,3,2 );
 
-CREATE TABLE `spmproject`.`Class_Enrolled` (
-ClassID int,
-EID int,
-CourseID int,
-primary key (EID,ClassID,CourseID),
-foreign key (EID) references Engineer(EngineerID),
-foreign key (CourseID ,ClassID) references Class(CourseID,ClassID)
-);
+
 
 CREATE TABLE `spmproject`.`Section` (
 SectionID int ,
@@ -196,20 +178,7 @@ PRIMARY KEY (QuizID,QnNum),
 FOREIGN KEY (QuizID) REFERENCES Quiz(QuizID)
 );
 
-
-CREATE TABLE `spmproject`.`Enrollment` (
-CID int  ,
-EngineerID int ,
-ClassID int NULL,
-isApproved int,
-`active` int ,
-PRIMARY KEY (cid,EngineerID),
-FOREIGN KEY (CID) REFERENCES Course(cid),
-FOREIGN KEY (EngineerID) REFERENCES Engineer(EngineerID)-- , 
--- FOREIGN KEY (ClassID) REFERENCES Class(ClassID)
-);
-
-CREATE TABLE `spmproject`.`Answers` (
+CREATE TABLE `spmproject`.`quiz_attempt` (
 EngineerID int ,
 QuizID int ,
 AttemptID int ,
