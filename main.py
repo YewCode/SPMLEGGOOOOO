@@ -206,7 +206,7 @@ def getAllEngineer():
 @app.route("/engineer/<int:eid>")
 def getEngineerByEid(eid):
     pass
-    engineerlist = Engineer.query.filter_by(engineerid=eid)
+    engineerlist = Engineer.query.filter_by(engineerid=eid).all()
     if len(engineerlist):
         return jsonify(
             {
@@ -245,13 +245,13 @@ def getCourse():
 @app.route("/course/<int:cid>")
 def getCourseByCid(cid):
     
-    courselist = Course.query.filter_by(cid=cid)
-    if len(courselist):
+    courselist = Course.query.filter_by(cid=cid).first()
+    if courselist != None:
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "courses": [course.json() for course in courselist]
+                    "courses": courselist.json()
                 }
             }
         )
@@ -286,7 +286,7 @@ def getCourseTrainerByCid(cid):
 @app.route("/course_trainer/eid/<int:eid>")
 def getCourseTrainerByEid(eid):
     
-    coursetrainerlist = Course_Trainer.query.filter_by(eid=eid)
+    coursetrainerlist = Course_Trainer.query.filter_by(eid=eid).all()
     if len(coursetrainerlist):
         return jsonify(
             {
@@ -306,7 +306,7 @@ def getCourseTrainerByEid(eid):
 @app.route("/Course_Assigned/cid/<int:cid>")
 def getCourseAssignedByCid(cid):
     
-    coursetrainerlist = Course_Assigned.query.filter_by(cid=cid)
+    coursetrainerlist = Course_Assigned.query.filter_by(cid=cid).all()
     if len(coursetrainerlist):
         return jsonify(
             {
@@ -326,7 +326,7 @@ def getCourseAssignedByCid(cid):
 @app.route("/Course_Assigned/eid/<int:eid>")
 def getCourseAssignedByEid(eid):
     
-    coursetrainerlist = Course_Assigned.query.filter_by(eid=eid)
+    coursetrainerlist = Course_Assigned.query.filter_by(eid=eid).all()
     if len(coursetrainerlist):
         return jsonify(
             {
@@ -346,7 +346,7 @@ def getCourseAssignedByEid(eid):
 @app.route("/Course_Enrolled/eid/<int:eid>")
 def getCourseEnrolledByEid(eid):
     
-    coursetrainerlist = Course_Assigned.query.filter_by(eid=eid)
+    coursetrainerlist = Course_Assigned.query.filter_by(eid=eid).all()
     if len(coursetrainerlist):
         return jsonify(
             {
@@ -368,13 +368,14 @@ def getCourseEnrolledByEid(eid):
 def getListOfEnrolledAndUnenrolled(i_cid):
     
     returnlist = db.session.query(Engineer,Course_Enrolled).\
-        outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid).all()
+        outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid)\
+            .filter(or_(Course_Enrolled.cid==None ,Course_Enrolled.cid==i_cid) ).all()
     if len(returnlist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [({ 'engineer': engineer.json(), 'isenrolled': course_enrolled.json() if course_enrolled != None and course_enrolled.json()['cid'] == i_cid else ['unenrolled'] }) for (engineer,course_enrolled) in returnlist]
+                    "result": [({ 'engineer': engineer.json(), 'isenrolled': 'enrolled' if course_enrolled != None and course_enrolled.json()['cid'] == i_cid else 'unenrolled' }) for (engineer,course_enrolled) in returnlist]
                 }
             }
         )
@@ -430,8 +431,8 @@ def getPendingEnrollmentByCourseID(courseid):
         }
     ), 404
     
-@app.route("/Course_Enrolled/eid/<int:eid>/cid/<int:cid>")
-def updateLearnersEnrollment(eid,cid):
+@app.route("/Course_Enrolled/pending/eid/<int:eid>/cid/<int:cid>")
+def approveLearnersEnrollment(eid,cid):
     courseenrolling = Course_Enrolled(cid,eid, 1)
     print(courseenrolling)
     pending = Course_EnrollmentPending.query\
@@ -453,6 +454,28 @@ def updateLearnersEnrollment(eid,cid):
             {
                 "code": 200,
                 "enrolled":  courseenrolling.json()
+            }
+        ), 500
+    
+@app.route("/course_enrollmentpending/eid/<int:eid>/cid/<int:cid>")
+def selfEnrollCourse(eid,cid):
+    pending = Course_EnrollmentPending(cid,eid, 1)
+    try:
+        db.session.add(pending)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while adding learner to pending enrollment. " + str(e)
+            }
+        ), 500
+    
+    return jsonify(
+            {
+                "code": 200,
+                "enrolled":  pending.json()
             }
         ), 500
 
