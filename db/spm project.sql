@@ -37,6 +37,9 @@ INSERT INTO course (`coursename`, `coursedescription`, `startdate`, `enddate`)
 VALUES ('Engineering 101', 'This is clearly a course all about electricity. Eventually you will become electricman.', '2021-11-23', '2022-11-23'),
 ('Thermodynamics', 'This is a module that every engineer hates but is absoultely useful in the long term, just ask around', '2021-11-05', '2022-11-05');
 
+INSERT INTO course (`coursename`, `coursedescription`, `startdate`, `enddate`)
+VALUES ('Materials and Structures','This course focuses on the development and the optimization of materials, processes, and devices used for operations in extreme environments and special applications.','2021-11-10','2021-11-11');
+
 CREATE TABLE `spmproject`.`Course_Trainer` (
 CID int,
 EID int,
@@ -62,10 +65,32 @@ insert into  course_enrolled
 Values (1,1,1);
 
 insert into  course_enrolled 
-Values (1,6,1);
-
-insert into  course_enrolled 
 Values (2,1,1);
+
+CREATE TABLE `spmproject`.`qualification` (
+EID int,
+CID int,
+primary key (EID,CID),
+foreign key (EID) references Engineer(EngineerID),
+foreign key (CID) references Course(CID)
+);
+
+INSERT INTO qualification
+VALUES (3,1);
+
+INSERT INTO qualification
+VALUES (3,2);
+
+INSERT INTO qualification
+VALUES (2,2);
+
+CREATE TABLE `spmproject`.`prerequites` (
+prerequites_CID int ,
+postrequite_CID int,
+PRIMARY KEY (prerequites_CID,postrequite_CID),
+foreign key (prerequites_CID) references Course(CID),
+foreign key (postrequite_CID) references Course(CID)
+);
 
 
 CREATE TABLE `spmproject`.`Course_EnrollmentPending` (
