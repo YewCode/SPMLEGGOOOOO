@@ -1,4 +1,4 @@
-#CREATE DATABASE `spmproject`;
+# CREATE DATABASE `spmproject`;
 
 use `spmproject` ;
 
@@ -56,7 +56,7 @@ Values (2,3);
 CREATE TABLE `spmproject`.`Course_Enrolled` (
 CID int,
 EID int,
-`active` int,
+Active int,
 primary key (EID,CID),
 foreign key (EID) references Engineer(EngineerID),
 foreign key (CID) references Course(CID)
@@ -96,13 +96,13 @@ foreign key (postrequite_CID) references Course(CID)
 CREATE TABLE `spmproject`.`Course_EnrollmentPending` (
 CID int,
 EID int,
-`active` int,
+Active int,
 primary key (EID,CID),
 foreign key (EID) references Engineer(EngineerID),
 foreign key (CID) references Course(CID)
 );
 insert into  Course_EnrollmentPending 
-Values (1,6,1);
+Values (1,1,1);
 
 
 CREATE TABLE `spmproject`.`Course_Completed` (
@@ -128,9 +128,6 @@ Values (1,1,20, 'Thursday 12:00pm');
 
 insert into class 
 Values (2,1,30, 'Thursday 3:15pm');
-
-insert into class 
-Values (1,2,30, 'Monday 8:15am');
 
 CREATE TABLE `spmproject`.`Class_Trainer` (
 ClassID int,
@@ -163,20 +160,16 @@ PRIMARY KEY (SectionID,ClassID,CourseID)
 );
 
 CREATE TABLE `spmproject`.`training_materials` (
-MaterialID int auto_increment primary key,
+MaterialID int  ,
+ClassID int ,
+SectionID int ,
 filename varchar(50) ,
 filedirectory varchar(250) ,
 isHidden int,
-ClassID int ,
-CourseID int ,
-SectionID int 
+PRIMARY KEY (ClassID,SectionID)-- ,
+-- FOREIGN KEY (ClassID) REFERENCES Class(ClassID),
+-- FOREIGN KEY (SectionID) REFERENCES Section(SectionID)
 );
-ALTER TABLE  `spmproject`.`training_materials`
-ADD FOREIGN KEY (CourseID,ClassID) REFERENCES Class(CourseID,ClassID);
-
-ALTER TABLE  `spmproject`.`training_materials`
-ADD FOREIGN KEY (SectionID) REFERENCES Section(SectionID);
-
 
 CREATE TABLE `spmproject`.`Quiz` (
 QuizID int AUTO_INCREMENT not null,
