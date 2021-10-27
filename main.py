@@ -364,7 +364,8 @@ def getCourseEnrolledByEid(eid):
 def getListOfEnrolledAndUnenrolled(i_cid):
     
     returnlist = db.session.query(Engineer,Course_Enrolled).\
-        outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid).all()
+        outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid)\
+            .filter(or_(Course_Enrolled.cid==None ,Course_Enrolled.cid==i_cid) ).all()
     if len(returnlist):
         return jsonify(
             {
