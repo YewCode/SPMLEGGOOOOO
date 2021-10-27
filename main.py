@@ -2,6 +2,8 @@ from flask import Flask,request,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
 from sqlalchemy.sql import expression
+from flask_cors import CORS
+
 
 
 from sqlalchemy.sql.elements import *
@@ -13,6 +15,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
  
 db = SQLAlchemy(app)
+CORS(app)
+
  
 class Engineer(db.Model):
     __tablename__ = 'engineer'
