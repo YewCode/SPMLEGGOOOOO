@@ -154,15 +154,15 @@
                     <div class="col-1"></div>
                 </div>
                 <!-- Using Vue to show classes available -->
-                <div v-for="(classes, i) in classList" class="row pt-4">
+                <div v-for="classes in classList" class="row pt-4">
                     <div class="col-3">
-                        {{classes[i].classid}}
+                        {{classes.classdetails.classid}}
                     </div>
                     <div class="col-3">
-                        {{classes[i].classtime}}
+                        {{classes.classdetails.classtime}}
                     </div>
                     <div class="col-4"> 
-                        {{classes[i].name}} <!-- Need to change to single arrays to fetch names -->
+                        {{classes.engineer.name}}
                     </div>
                     <div class="col-1"></div>
                     <div class="col-1"></div>
@@ -286,8 +286,8 @@
 
                     axios.get('http://127.0.0.1:5000/class/courseid/' + this.courseNo)
                         .then(response => {
-                            this.classList = response.data.data.class;
-                            console.log(this.classList)
+                            this.classList = response.data.data.classes;
+                            // console.log(this.classList)
                         })
                         .catch(error => {
                             console.log("Class API has not been added to main.py");

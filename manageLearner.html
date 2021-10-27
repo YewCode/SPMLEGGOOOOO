@@ -145,14 +145,20 @@
                 enrollmentList: []
             },
             methods: {
-                // hrAssignL: function(id) {
-                //     // alert(typeof(id));
-                //     axios.get('http://127.0.0.1:5000/course_enrollmentpending/eid/' + id + '/cid/' + this.courseNo)
-                //         .then(response => {
-                //             console.log(response);
-                //             alert("")
-                //         })
-                // }
+                hrAssignL: function(id) {
+                    // alert(typeof(id));
+                    axios.get('http://127.0.0.1:5000/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo)
+                        .then(response => {
+                            if (response.data.code == 200) {
+                                console.log(response.data.enrolled);
+                                alert("Learner has been enrolled successfully");
+                                location.reload();
+                            }
+                        })
+                        .catch(error => {
+                            alert("Learner enrollment function failed")
+                        })
+                }
             },
             mounted: function () {
                 axios.get('http://127.0.0.1:5000/course')
