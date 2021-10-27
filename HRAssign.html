@@ -188,7 +188,7 @@
                     <!--Have not added logic to handle vacancy display so ___ is shown now-->
                 </div>
                 <div class="pt-3">
-                    <button type="button" class="btn btn-dark" onclick="location.href='manageLearner.html'">Manage
+                    <button type="button" class="btn btn-dark" @click="toManage()">Manage
                         Learners</button>
                 </div>
             </div>
@@ -269,7 +269,7 @@
                 courseNo: "",
                 classList: [],
                 pendingList: [],
-                acceptList: []
+                acceptList: [],
             },
             methods: {
                 getCourseInfo: function() {
@@ -301,6 +301,11 @@
                             this.pendingList = [];
                         });
                 },
+
+                // Passing courseNo information to manageLearner page
+                toManage: function() {
+                    window.location.href = "manageLearner.html?courseNum=" + this.courseNo;
+                }
             },
             mounted: function () {
                 axios.get('http://127.0.0.1:5000/course')
@@ -310,6 +315,7 @@
                     .catch(error => {
                         console.log("Course data not loading");
                     });
+                // console.log(this.courseList);
             }
 
         })
