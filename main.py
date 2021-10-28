@@ -381,7 +381,8 @@ def approveLearnersEnrollment(eid,cid):
     courseenrolling = Course_Enrolled(cid,eid, 1)
     pending = Course_EnrollmentPending.query\
         .filter( and_(cid==cid,eid==eid,Course_EnrollmentPending.active==1) ).first()
-    pending.active = 0
+    if pending != None:
+        pending.active = 0
     try:
         db.session.add(courseenrolling)
         db.session.commit()
