@@ -207,7 +207,7 @@
                         <h3>Learners Pending Enrollment</h3>
                     </div>
                     <div class="col-2">
-                        <button id="saveEnrollment" type="button" class="btn btn-dark">Save Changes</button>
+                        <button id="saveEnrollment" type="button" @click="approvePending" class="btn btn-dark">Approve Enrollment</button>
                         <!--Have not added logic to handle save-->
                     </div>
                 </div>
@@ -239,8 +239,8 @@
                         <input type="checkbox" name="pendingToAccept" v-model="acceptList" :value="person.engineerid">
                     </div>
                 </div>
-                <div class="pt-4">
-                    <b>Learners you are choosing to accept upon saving are: {{acceptList}}</b>
+                <div class="pt-4 text-center">
+                    <h4>Engineer ID of learners you are about to approve {{acceptList}}</h4>
                 </div>
             </div>
         </section>
@@ -314,6 +314,22 @@
                 // Passing courseNo information to manageLearner page
                 toManage: function () {
                     window.location.href = "manageLearner.html?courseNum=" + this.courseNo;
+                },
+                approvePending: function() {
+                    let pendingConfirm = confirm("Are you sure you want to approve the list of learners into " + this.courseName);
+
+                    if (pendingConfirm) {
+                        for (id of this.acceptList) {
+                            alert("You are adding " + id)
+                            axios.get('http://127.0.0.1/Course_Enrolled/pending/eid/' + id + '/cid/' + this.courseNo)
+                        }
+                        alert("Learners have been successfully enrolled into " + this.courseName);
+                        location.reload();
+                    }
+                    else {
+                        alert("Learners in pending list have not been enrolled.")
+                    }
+                    
                 }
             },
             mounted: function () {
