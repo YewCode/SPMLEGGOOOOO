@@ -427,6 +427,31 @@ def assignlearners(eid,cid):
                 "enrolled":  courseenrolling.json()
             }
         ), 500
+ 
+
+#create new pending
+@app.route("/pending/add/eid/<int:eid>/cid/<int:cid>",methods=['GET','POST'])
+def addPendingEnrollment(eid,cid):
+    pending = Course_EnrollmentPending(cid,eid, 1)
+    try:
+        db.session.add(pending)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while adding to pending :" + str(e)
+            }
+        ), 500
+    
+    return jsonify(
+            {
+                "code": 200,
+                "message":'added successfully',
+                "enrolled":  pending.json()
+            }
+        ), 500
     
 
 
