@@ -1,8 +1,10 @@
 import unittest 
 from main import *
-from django.test import Client
+from django.test import TestCase
+from django.test.utils import override_settings
 
-class testgetPendingEnrollment(unittest.TestCase):
+
+class testgetPendingEnrollment(TestCase):
     _charges = None
     def setUp(self):
         pass
@@ -10,7 +12,8 @@ class testgetPendingEnrollment(unittest.TestCase):
         pass
     
     def test_getAllLearnersPendingEnrollment(self):
-        apidata = self.client.get(f"http://127.0.0.1:5000/pending/{1}")
+        apidata = self.client.get(f"/pending/{1}")
+        print(apidata)
         self.assert200(apidata)
     
 
