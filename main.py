@@ -354,25 +354,25 @@ def getclassByCourseID(i_courseid):
         }
     ), 404
     
-@app.route("/pending/<int:courseid>")
-def getPendingEnrollmentByCourseID(courseid):
+@app.route("/pending/<int:i_courseid>")
+def getPendingEnrollmentByCourseID(i_courseid):
     pendinglist =  db.session.query(Course_EnrollmentPending,Engineer)\
-        .outerjoin(Engineer, Engineer.engineerid == Course_EnrollmentPending.eid)\
-            .filter(and_(Course_EnrollmentPending.cid==courseid,Course_EnrollmentPending.active==1)).all()
-            
-    if len(pendinglist):
+        .join(Engineer,Engineer.engineerid==Course_EnrollmentPending.eid)\
+            .filter(and_(Course_EnrollmentPending.cid==i_courseid,Course_EnrollmentPending.active==1)).first()
+    print('pending',pendinglist)
+    if len([pendinglist]):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [ engineer.json() for (pending,engineer) in pendinglist]
+                    "result": [ engineer.json() for (pending,engineer) in [pendinglist]]
                 }
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "There are no pending learners for course id "+ str(courseid)
+            "message": "There are no pending learners for course id "+ str(i_courseid)
         }
     ), 404
     
