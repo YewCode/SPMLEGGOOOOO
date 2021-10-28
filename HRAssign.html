@@ -26,8 +26,9 @@
 </head>
 
 <!-- <body onload="showLoadedContent()"> -->
+
 <body>
-    
+
     <!-- This Nav Bar is for HR -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -91,20 +92,24 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12">
-                        <select @change="getCourseInfo" class="mx-auto form-select form-select-lg w-25 mb-4" v-model="chosenCourse" name="course" id="courseSelect">
+                        <select @change="getCourseInfo" class="mx-auto form-select form-select-lg w-25 mb-4"
+                            v-model="chosenCourse" name="course" id="courseSelect">
                             <option value=""></option>
-                            <option v-for="course in courseList" :value="course.coursename">{{course.coursename}}</option>
+                            <option v-for="course in courseList" :value="course.coursename">{{course.coursename}}
+                            </option>
                         </select>
                     </div>
                 </div>
                 <div v-if="chosenCourse !== '' ">
                     <div class="row pt-3">
-                        <div class="col-12">
-                            <h1 id="CourseTitle">Currently displaying: <span style="color: goldenrod;">{{courseName}}</span></h1>
-                            <!-- Use DOM Getter to retrive and display Course Title Info from DB-->
+                        <div class="col-6">
+                            <h1 id="CourseTitle">Currently displaying:</h1>
+                        </div>
+                        <div class="col-6 text-end">
+                            <h1> {{courseName}} </h1>
                         </div>
                     </div>
-                    <div class="row pt-3">
+                    <div class="row pt-5">
                         <div class="col-12">
                             <h3>Course Description</h3>
                         </div>
@@ -112,7 +117,6 @@
                     <div class="row pt-3">
                         <div class="col-12">
                             <p id="courseDesc">{{courseDes}}</p>
-                            <!-- Use DOM Getter to retrieve and display Course Description from DB-->
                         </div>
                     </div>
 
@@ -140,34 +144,40 @@
                 </div>
             </div>
             <div class="container">
-                <div class="row pt-3">
-                    <div class="col-3">
-                        <b>Class ID</b>
+                <div v-if="classList.length > 0">
+                    <div class="row pt-3">
+                        <div class="col-3">
+                            <b>Class ID</b>
+                        </div>
+                        <div class="col-3">
+                            <b>Class Time</b>
+                        </div>
+                        <div class="col-4">
+                            <b>Trainer</b>
+                        </div>
+                        <div class="col-1"></div>
+                        <div class="col-1"></div>
                     </div>
-                    <div class="col-3">
-                        <b>Class Time</b>
+                    <!-- Using Vue to show classes available -->
+
+                    <div v-for="classes in classList" class="row pt-4">
+                        <div class="col-3">
+                            {{classes.classdetails.classid}}
+                        </div>
+                        <div class="col-3">
+                            {{classes.classdetails.classtime}}
+                        </div>
+                        <div class="col-4">
+                            {{classes.engineer.name}}
+                        </div>
+                        <div class="col-1"></div>
+                        <div class="col-1"></div>
                     </div>
-                    <div class="col-4">
-                        <b>Trainer</b>
-                    </div>
-                    <div class="col-1"></div>
-                    <div class="col-1"></div>
-                </div>
-                <!-- Using Vue to show classes available -->
-                <div v-for="classes in classList" class="row pt-4">
-                    <div class="col-3">
-                        {{classes.classdetails.classid}}
-                    </div>
-                    <div class="col-3">
-                        {{classes.classdetails.classtime}}
-                    </div>
-                    <div class="col-4"> 
-                        {{classes.engineer.name}}
-                    </div>
-                    <div class="col-1"></div>
-                    <div class="col-1"></div>
                 </div>
                 <!-- Still required to code logic for modal box to appear for each edit and delete button -->
+                <div v-else class="text-center pt-5">
+                    <h4>No classes have been added to this course yet.</h4>
+                </div>
             </div>
         </section>
         <section v-else></section>
@@ -175,12 +185,8 @@
         <section v-if="chosenCourse !== '' " id="learnerAssignment" class="sectionPadding">
             <div class="container">
                 <div class="row">
-                    <div class="col-10">
+                    <div class="col-12">
                         <h3>Learner Assignment</h3>
-                    </div>
-                    <div class="col-2">
-                        <button id="saveLearner" type="button" class="btn btn-dark">Save Changes</button>
-                        <!--Have not added logic to handle save-->
                     </div>
                 </div>
                 <div class="pt-3">
@@ -188,8 +194,7 @@
                     <!--Have not added logic to handle vacancy display so ___ is shown now-->
                 </div>
                 <div class="pt-3">
-                    <button type="button" class="btn btn-dark" @click="toManage()">Manage
-                        Learners</button>
+                    <button type="button" class="btn btn-dark" @click="toManage()">Manage Learners</button>
                 </div>
             </div>
         </section>
@@ -272,14 +277,14 @@
                 acceptList: [],
             },
             methods: {
-                getCourseInfo: function() {
+                getCourseInfo: function () {
                     if (this.chosenCourse !== '') {
                         for (course of this.courseList) {
-                            
+
                             if (course.coursename == this.chosenCourse) {
                                 this.courseNo = course.cid
                                 this.courseName = course.coursename;
-                                this.courseDes = course.description;
+                                this.courseDes = course.coursedescription;
                             }
                         }
                     }
@@ -287,10 +292,12 @@
                     axios.get('http://127.0.0.1:5000/class/courseid/' + this.courseNo)
                         .then(response => {
                             this.classList = response.data.data.classes;
-                            // console.log(this.classList)
                         })
                         .catch(error => {
-                            console.log("Class API has not been added to main.py");
+
+                            this.classList = []; // Error handling for no response retrieve not done
+
+
                         });
 
                     axios.get('http://127.0.0.1:5000/pending/' + this.courseNo)
@@ -298,13 +305,14 @@
                             this.pendingList = response.data.data.result;
                         })
                         .catch(error => {
-                            console.log("Pending Enrolment API has not been added into main.py")
-                            this.pendingList = [];
+
+                            this.pendingList = []; // Error handling for no response retrieved not done
+
                         });
                 },
 
                 // Passing courseNo information to manageLearner page
-                toManage: function() {
+                toManage: function () {
                     window.location.href = "manageLearner.html?courseNum=" + this.courseNo;
                 }
             },
@@ -320,8 +328,6 @@
             }
 
         })
-
-
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
