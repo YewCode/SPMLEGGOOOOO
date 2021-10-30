@@ -84,7 +84,11 @@
 
         <section id="subHeader" class="sectionPadding">
             <div class="container">
-                <div class="row" id="search">
+                <!-- To replace with session retrieved name once that has been set up -->
+                <div>
+                    <h3>Welcome XXX</h3> 
+                </div>
+                <!-- <div class="row" id="search">
                     <div class="col-md-4 col-sm-12">
                         <div class="input-group mb-3">
                             <input type="text" v-model="searchInput" class="form-control"
@@ -96,7 +100,7 @@
                     </div>
                 </div>
                 <br />
-                <br />
+                <br /> -->
                 <!--  loop this part -->
                 <div v-for="course in courseList" class="row py-3">
                     <div class="col-3">
@@ -138,7 +142,7 @@
                         this.courseList = response.data.data.courses;
                     })
                     .catch(error => {
-                        console.log("Course data not loaded properly from database");
+                        console.log("Course data not loaded properly from database"); // Logic to handle pre-requisite check not done yet because no session id is tracked
                     });
                 // console.log(this.courseList);
             }
