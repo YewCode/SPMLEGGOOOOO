@@ -100,6 +100,7 @@ CREATE TABLE IF NOT EXISTS `course` (
   `courseDescription` varchar(500) NOT NULL,
   `StartDate` date NOT NULL,
   `EndDate` date NOT NULL,
+  `courseImg` varchar(100),
   PRIMARY KEY (`CID`)
 );
 
@@ -107,10 +108,10 @@ CREATE TABLE IF NOT EXISTS `course` (
 -- Dumping data for table `course`
 --
 
-INSERT INTO `course` (`CID`, `courseName`, `courseDescription`, `StartDate`, `EndDate`) VALUES
-(1, 'Engineering 101', 'This is clearly a course all about electricity. Eventually you will become electricman.', '2021-11-23', '2022-11-23'),
-(2, 'Thermodynamics', 'This is a module that every engineer hates but is absoultely useful in the long term, just ask around', '2021-11-05', '2022-11-05'),
-(3, 'Materials and Structures', 'This course focuses on the development and the optimization of materials, processes, and devices used for operations in extreme environments and special applications.', '2021-11-10', '2021-11-11');
+INSERT INTO `course` (`CID`, `courseName`, `courseDescription`, `StartDate`, `EndDate`, `courseImg`) VALUES
+(1, 'Engineering 101', 'This is clearly a course all about electricity. Eventually you will become electricman.', '2021-11-23', '2022-11-23', 'electronics.jpg'),
+(2, 'Thermodynamics', 'This is a module that every engineer hates but is absoultely useful in the long term, just ask around', '2021-11-05', '2022-11-05', 'thermo.png'),
+(3, 'Materials and Structures', 'This course focuses on the development and the optimization of materials, processes, and devices used for operations in extreme environments and special applications.', '2021-11-10', '2021-11-11', 'materials.jpg');
 
 -- --------------------------------------------------------
 
