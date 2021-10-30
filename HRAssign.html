@@ -185,17 +185,14 @@
         <section v-if="chosenCourse !== '' " id="learnerAssignment" class="sectionPadding">
             <div class="container">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-10">
                         <h3>Learner Assignment</h3>
                     </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-dark" @click="toManage()">Manage Learners</button>
+                    </div>
                 </div>
-                <div class="pt-3">
-                    <span>Total Vacancy:</span> &nbsp;&nbsp; <span id="vacancyDisplay">___</span><span>/100</span>
-                    <!--Have not added logic to handle vacancy display so ___ is shown now-->
-                </div>
-                <div class="pt-3">
-                    <button type="button" class="btn btn-dark" @click="toManage()">Manage Learners</button>
-                </div>
+                
             </div>
         </section>
         <section v-else></section>

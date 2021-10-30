@@ -7,6 +7,8 @@
 -- Server version: 8.0.18
 -- PHP Version: 7.4.0
 
+
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
@@ -21,7 +23,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `spmproject`
 --
-
+#CREATE DATABASE spmproject;
 -- --------------------------------------------------------
 
 --
@@ -35,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `class` (
   `Capacity` int(11) NOT NULL,
   `ClassTime` varchar(50) NOT NULL,
   PRIMARY KEY (`CourseID`,`ClassID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+); 
 
 --
 -- Dumping data for table `class`
@@ -59,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `class_enrolled` (
   `CourseID` int(11) NOT NULL,
   PRIMARY KEY (`EID`,`ClassID`,`CourseID`),
   KEY `CourseID` (`CourseID`,`ClassID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -74,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `class_trainer` (
   `CourseID` int(11) NOT NULL,
   PRIMARY KEY (`EID`,`ClassID`,`CourseID`),
   KEY `CourseID` (`CourseID`,`ClassID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 --
 -- Dumping data for table `class_trainer`
@@ -99,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `course` (
   `StartDate` date NOT NULL,
   `EndDate` date NOT NULL,
   PRIMARY KEY (`CID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 --
 -- Dumping data for table `course`
@@ -122,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `course_completed` (
   `EID` int(11) NOT NULL,
   PRIMARY KEY (`EID`,`CID`),
   KEY `CID` (`CID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 --
 -- Dumping data for table `course_completed`
@@ -144,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `course_enrolled` (
   `active` int(11) DEFAULT NULL,
   PRIMARY KEY (`EID`,`CID`),
   KEY `CID` (`CID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 --
 -- Dumping data for table `course_enrolled`
@@ -169,14 +171,14 @@ CREATE TABLE IF NOT EXISTS `course_enrollmentpending` (
   `active` int(11) DEFAULT NULL,
   PRIMARY KEY (`EID`,`CID`),
   KEY `CID` (`CID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 --
 -- Dumping data for table `course_enrollmentpending`
 --
 
 INSERT INTO `course_enrollmentpending` (`CID`, `EID`, `active`) VALUES
-(1, 6, 1);
+(1, 4, 1);
 
 -- --------------------------------------------------------
 
@@ -190,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `course_trainer` (
   `EID` int(11) NOT NULL,
   PRIMARY KEY (`EID`,`CID`),
   KEY `CID` (`CID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 --
 -- Dumping data for table `course_trainer`
@@ -212,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `engineer` (
   `Name` varchar(100) NOT NULL,
   `Role` varchar(100) NOT NULL,
   PRIMARY KEY (`EngineerID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 --
 -- Dumping data for table `engineer`
@@ -238,7 +240,7 @@ CREATE TABLE IF NOT EXISTS `prerequites` (
   `postrequite_CID` int(11) NOT NULL,
   PRIMARY KEY (`prerequites_CID`,`postrequite_CID`),
   KEY `postrequite_CID` (`postrequite_CID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -256,7 +258,7 @@ CREATE TABLE IF NOT EXISTS `progress` (
   PRIMARY KEY (`SectionID`,`EngineerID`,`QuizID`),
   KEY `EngineerID` (`EngineerID`),
   KEY `QuizID` (`QuizID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -270,7 +272,7 @@ CREATE TABLE IF NOT EXISTS `qualification` (
   `CID` int(11) NOT NULL,
   PRIMARY KEY (`EID`,`CID`),
   KEY `CID` (`CID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 --
 -- Dumping data for table `qualification`
@@ -295,7 +297,7 @@ CREATE TABLE IF NOT EXISTS `question` (
   `options` varchar(1000) DEFAULT NULL,
   `answer` varchar(100) NOT NULL,
   PRIMARY KEY (`QuizID`,`QnNum`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -318,7 +320,7 @@ CREATE TABLE IF NOT EXISTS `quiz` (
   PRIMARY KEY (`QuizID`,`ClassID`,`SectionID`),
   KEY `CourseID` (`CourseID`,`ClassID`),
   KEY `SectionID` (`SectionID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -335,7 +337,7 @@ CREATE TABLE IF NOT EXISTS `quiz_attempt` (
   `given_answer` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`EngineerID`,`QuizID`,`AttemptID`,`QnNum`),
   KEY `QuizID` (`QuizID`,`QnNum`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -351,7 +353,7 @@ CREATE TABLE IF NOT EXISTS `section` (
   `SectionName` varchar(100) NOT NULL,
   `End_Date` datetime DEFAULT NULL,
   PRIMARY KEY (`SectionID`,`ClassID`,`CourseID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -371,7 +373,7 @@ CREATE TABLE IF NOT EXISTS `training_materials` (
   PRIMARY KEY (`MaterialID`),
   KEY `CourseID` (`CourseID`,`ClassID`),
   KEY `SectionID` (`SectionID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 --
 -- Constraints for dumped tables
