@@ -60,7 +60,6 @@
                 <ul class="navbar-nav me-2 mb-2 mb-lg-0">
                     <li style="padding-right: 20px;" class="nav-item">
                         <a class="nav-link" href="#">My Courses</a>
-                        <!--This will be a popup box which retrieves the list of learners pending acceptance-->
                     </li>
                     <li class="nav-item popUp" onclick="showNotif()">
                         <a class="navbar-brand" href="#">
@@ -78,51 +77,43 @@
             </div>
         </div>
     </nav>
-    <section id="header" class="pageTitlePad">
-        <h1>Learner Course View</h1>
-    </section>
+    <div id="courseApp">
+        <section id="header" class="pageTitlePad">
+            <h1>Courses available</h1>
+        </section>
 
-    <section id="subHeader" class="sectionPadding">
-        <div class="container">
-            <!-- need to fetch data here? -->
-            <div class="row" id="search">
-                <div class="col-md-4 col-sm-12">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Search for Course"
-                            aria-label="Search for Course" aria-describedby="searchCourse">
-                        <button class="btn btn-outline-secondary" type="button" id="searchCourse"><i
-                                class="bi bi-search"></i></button>
+        <section id="subHeader" class="sectionPadding">
+            <div class="container">
+                <div class="row" id="search">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="input-group mb-3">
+                            <input type="text" v-model="searchInput" class="form-control"
+                                placeholder="Search for Course" aria-label="Search for Course"
+                                aria-describedby="searchCourse">
+                            <button class="btn btn-outline-secondary" type="button" id="searchCourse"><i
+                                    class="bi bi-search"></i></button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <br/>
-            <br/>
-            <!--    loop this part -->
-            <div class="row">
-                <div class="col-md-3 col-sm-12">
-                    <div class="rect " style="height: 150px;width: 250px;background-color: #555;"></div>
-                </div>
-                <!-- NEed to loop this part too  -->
-                <div class="col-8">
-                    <h4>Course Name</h4>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit! Vero
-                        blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
-                        quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit amet
-                        consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
-                        tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos ut
-                        architecto dolorum quas libero?</p>
+                <br />
+                <br />
+                <!--  loop this part -->
+                <div v-for="course in courseList" class="row py-3">
+                    <div class="col-3">
+                        <!-- <div class="rect" style="height: 150px;width: 250px;background-color: #555;"></div> -->
+                        <img :src="course.courseimg" alt="images/placeholder.jpg" width="250px" height="200px">
+                    </div>
+                    <!-- Need to loop this part too  -->
+                    <div class="col-9">
+                        <h4> {{course.coursename}} </h4>
+                        <p> {{course.coursedescription}} </p>
                         <button type="button" class="btn btn-primary">Enroll Now</button>
+                    </div>
                 </div>
-                
-
 
             </div>
-        </div>
-    </section>
-
-    <section>
-
-    </section>
+        </section>
+    </div>
 
 
 
@@ -132,7 +123,27 @@
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
-        </script>
+    </script>
+
+    <script>
+        const app = new Vue({
+            el: "#courseApp",
+            data: {
+                courseList: [],
+                searchInput: ""
+            },
+            mounted: function () {
+                axios.get('http://127.0.0.1:5000/course')
+                    .then(response => {
+                        this.courseList = response.data.data.courses;
+                    })
+                    .catch(error => {
+                        console.log("Course data not loaded properly from database");
+                    });
+                // console.log(this.courseList);
+            }
+        })
+    </script>
 </body>
 
 
