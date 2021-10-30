@@ -176,7 +176,7 @@
                 </div>
                 <!-- Still required to code logic for modal box to appear for each edit and delete button -->
                 <div v-else class="text-center pt-5">
-                    <h4>No classes have been added to this course yet.</h4>
+                    <h4 style="color: goldenrod;">No classes have been added to this course yet.</h4>
                 </div>
             </div>
         </section>
@@ -192,52 +192,60 @@
                         <button type="button" class="btn btn-dark" @click="toManage()">Manage Learners</button>
                     </div>
                 </div>
-                
+
             </div>
         </section>
         <section v-else></section>
 
-        <section v-if="chosenCourse !== '' && pendingList.length > 0" id="pendingEnrollment" class="sectionPadding">
-            <div id="pendingEApp" class="container">
+        <section v-if="chosenCourse !== '' " id="pendingEnrollment" class="sectionPadding">
+            <div class="container">
                 <div class="row">
                     <div class="col-10">
                         <h3>Learners Pending Enrollment</h3>
                     </div>
-                    <div class="col-2">
-                        <button id="saveEnrollment" type="button" @click="approvePending" class="btn btn-dark">Approve Enrollment</button>
+                    <div class="col-2" v-if="pendingList.length > 0">
+                        <button id="saveEnrollment" type="button" @click="approvePending" class="btn btn-dark">Approve
+                            Enrollment</button>
                         <!--Have not added logic to handle save-->
                     </div>
+                    <div class="col-2" v-else></div>
                 </div>
 
-                <div class="row">
-                    <div class="col-2">
-                        <b>ID No.</b>
-                    </div>
-                    <div class="col-2">
-                        <b>Name</b>
-                    </div>
-                    <!-- <div class="col-2">
+                <div v-if="pendingList.length > 0">
+                    <div class="row">
+                        <div class="col-2">
+                            <b>ID No.</b>
+                        </div>
+                        <div class="col-2">
+                            <b>Name</b>
+                        </div>
+                        <!-- <div class="col-2">
                     <b>Eligible (Y/N)</b> -->
-                    <!--IMPT!! IMO I think this can be removed because we are only showing those that are eligible-->
-                    <!-- </div> -->
-                    <div class="col-4">
-                        <b>Decision</b>
+                        <!--IMPT!! IMO I think this can be removed because we are only showing those that are eligible-->
+                        <!-- </div> -->
+                        <div class="col-4">
+                            <b>Decision</b>
+                        </div>
+                        <div class="col-4"></div>
                     </div>
-                    <div class="col-4"></div>
+                    <div v-for="person in pendingList" id="enrollmentDisplay" class="row pt-4">
+                        <div class="col-2">
+                            {{person.engineerid}}
+                        </div>
+                        <div class="col-2">
+                            {{person.name}}
+                        </div>
+                        <div class="col-4">
+                            <input type="checkbox" name="pendingToAccept" v-model="acceptList" :value="person.engineerid">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 text-center">
+                        <h4>Engineer ID of learners you are about to approve {{acceptList}}</h4>
+                    </div>
                 </div>
-                <div v-for="person in pendingList" id="enrollmentDisplay" class="row pt-4">
-                    <div class="col-2">
-                        {{person.engineerid}}
-                    </div>
-                    <div class="col-2">
-                        {{person.name}}
-                    </div>
-                    <div class="col-4">
-                        <input type="checkbox" name="pendingToAccept" v-model="acceptList" :value="person.engineerid">
-                    </div>
-                </div>
-                <div class="pt-4 text-center">
-                    <h4>Engineer ID of learners you are about to approve {{acceptList}}</h4>
+                <div v-else class="text-center pt-4">
+                    <h4 style="color: goldenrod;">There are no learners pending enrolment at this time.</h4>
                 </div>
             </div>
         </section>
@@ -312,8 +320,9 @@
                 toManage: function () {
                     window.location.href = "manageLearner.html?courseNum=" + this.courseNo;
                 },
-                approvePending: function() {
-                    let pendingConfirm = confirm("Are you sure you want to approve the list of learners into " + this.courseName);
+                approvePending: function () {
+                    let pendingConfirm = confirm(
+                        "Are you sure you want to approve the list of learners into " + this.courseName);
 
                     if (pendingConfirm) {
                         for (id of this.acceptList) {
@@ -322,11 +331,10 @@
                         }
                         alert("Learners have been successfully enrolled into " + this.courseName);
                         location.reload();
-                    }
-                    else {
+                    } else {
                         alert("Learners in pending list have not been enrolled.")
                     }
-                    
+
                 }
             },
             mounted: function () {
