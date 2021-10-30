@@ -38,19 +38,21 @@ class Course(db.Model):
  
     cid = db.Column(db.Integer, primary_key=True)
     coursename = db.Column(db.String(100), nullable=False)
-    coursedescription =db.Column(db.String(500), nullable=False)
-    startdate =db.Column(db.Date)
-    enddate =db.Column(db.Date)
+    coursedescription = db.Column(db.String(500), nullable=False)
+    startdate = db.Column(db.Date, nullable=False)
+    enddate = db.Column(db.Date, nullable=False)
+    courseimg = db.Column(db.String(100))
  
-    def __init__(self, cid, coursename, coursedescription,startdate,enddate):
+    def __init__(self, cid, coursename, coursedescription, startdate, enddate, courseimg):
         self.cid = cid
         self.coursename = coursename
         self.coursedescription = coursedescription
         self.startdate = startdate
         self.enddate = enddate
+        self.courseimg = courseimg
  
     def json(self):
-        return {"cid": self.cid, "coursename": self.coursename, "coursedescription": self.coursedescription,"startdate":self.startdate ,"enddate":self.enddate}
+        return {"cid": self.cid, "coursename": self.coursename, "coursedescription": self.coursedescription,"startdate":self.startdate ,"enddate":self.enddate, "courseimg": self.courseimg}
     
 
     
