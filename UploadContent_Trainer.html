@@ -13,6 +13,15 @@
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+
+    <!-- Vue Dev -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -67,67 +76,178 @@
             </div>
         </div>
     </nav>
+    <div id="App1">
+        <section id="header" class="pageTitlePad">
+            <h1>Upload Training Materials</h1>
+            <h3>Section 1: Set Up Printer</h3>
+        </section>
 
-    <section id="header" class="pageTitlePad">
-        <h1>Upload Training Materials</h1>
-        <h3>Section 1: Set Up Printer</h3>
-    </section>
-
-    <section class="sectionPadding">
-        <div class="container">
-            <div class="row">
-               <div class="col-6">
-                   <h5>Upload URL</h5>
-                    <div class="input-group input-group-sm mb-3">
-                        
-                        <span class="input-group-text" id="inputGroup-sizing-sm" >URL: </span>
-                        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" 
-                        placeholder="Insert Traing Material link here. eg. Youtube">
-                      </div> 
-                    </div>
-
-                  <div class="col-3">
-                      <button type="button" class="row btn btn-primary">Add</button>
-                  </div>
-                </div>
-
-                <div class="row">
-                <div class="col-5">
-                    <label for="formFileMultiple" class="form-label" id="upload"><h5>Upload Files</h5></label>
-                    <input class="form-control" type="file" id="formFileMultiple" multiple>
-                    
-                  </div>
-                  <div class="col-sm-2" style="margin-top: 47px;">
-                      <button type="button" class="btn btn-primary">Add</button>
-                  </div>
-                    
-                </div>
-                </div>
-                
-                    
-<!-- Sample data to be deleted -->
-                <section id="subHeader" class="sectionPadding"></section>
-                <div class="container">
+        <section class="sectionPadding">
+            <div class="container">
+                <form method="POST" name="fileinfo">
                     <div class="row">
-                        <div class="col-md-3 col-sm-12">
-                            <h6>File Name</h6>
-                            <h7>longgg nameeeeeeeeeee</h7>
-                        </div>
-                        <div class="col-md-3 col-sm-12">
-                            <h6>Size</h6>
-                            <h7>100MB</h7>
+                        <div class="col-6">
+                            <h5>Upload URL</h5>
+                            <div class="input-group input-group-sm mb-3">
 
+                                <span class="input-group-text" id="inputGroup-sizing-sm">URL: </span>
+                                <input type="text" class="form-control" aria-label="Sizing example input"
+                                    aria-describedby="inputGroup-sizing-sm" name="link" v-model='onlinematerial'
+                                    placeholder="Insert Traing Material link here. eg. Youtube">
+                            </div>
                         </div>
 
-                    
-                        <div class="col-md-3 col-sm-12">
-                            <h6>.</h6>
-                            <h7 class="underLineText">Delete</h7>
+                        <div class="col-3">
+                            <button type="button" class="row btn btn-primary">Add</button>
                         </div>
                     </div>
-                            
+
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="formFileMultiple" class="form-label" id="upload">
+                                <h5>Upload Files</h5>
+                            </label>
+                            <input class="form-control" v-model='file' type="file" ref="documentfiles"
+                                id="formFileMultiple" multiple>
+
                         </div>
-                        
-                        <div class="col-md-3 col-sm-12" style="margin-left:900px;">
-                            <button type="button" class="btn btn-warning">Done</button>
-                            
+                        <div class="col-sm-2" style="margin-top: 47px;">
+                            <button type="button" class="btn btn-primary" @click='uploadfiles'>Add</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- Sample data to be deleted -->
+            <section id="subHeader" class="sectionPadding"></section>
+
+            <div class="container">
+                <div class="row">
+                    <table>
+                        <tr>
+                            <th class="col-md-3 col-sm-12">
+                                <h6>File Name</h6>
+                            </th>
+                            <th class="col-md-3 col-sm-12">
+                                <h6>Size</h6>
+                            </th>
+                            <th class="col-md-3 col-sm-12">
+                            </th>
+                        </tr>
+                        <tr v-for='(doc, index) in doclist'>
+                            <td>{{doc[0]}}</td>
+                            <td>{{doc[1]}}</td>
+                            <td>
+                                <button type="button" class="btn btn-link" @click="deleteRow(index)">Delete</button>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3 col-sm-12" style="margin-left:900px;">
+                <button type="button" class="btn btn-warning" @click='onSubmit'>Done</button>
+            </div>
+        </section>
+    </div>
+</body>
+<script>
+    function checkSize(bytes, decimals = 2) {
+
+        if (bytes === 0) return '0 Bytes';
+
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    async function processaddingproducts(url,filelist,onlinematerial) {
+        var formData = new FormData();
+        
+
+        formData.append("materials", filelist );
+        formData.append("link", onlinematerial );
+        console.log(formData)
+        const response = await fetch(url, {
+            body: formData,
+            method: "POST",
+            mode: 'no-cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            origin: ["http://127.0.0.1:8080", "http://127.0.0.1:5000"],
+            redirect: 'follow' // manual, *follow, error
+        });
+        console.log('call');
+        if (response.status >= 200 && response.status < 300) {
+
+            console.log('response ok');
+            data = await response.json();
+            console.log(data);
+            
+
+        } else {
+            alert("There has been an error, please refresh and try again");
+        }
+
+    }
+
+
+    var accepted_ext = ['doc', 'docx', 'pdf'];
+    const app1 = new Vue({
+        el: "#App1",
+        data: {
+            //define data
+            doclist: [],
+            file: '',
+            filelist:[],
+            onlinematerial: ''
+        },
+        methods: {
+            uploadfiles: function () {
+                const docs = this.$refs.documentfiles.files;
+                console.log(docs)
+                for (doc of docs) {
+                    console.log(doc)
+                    docname = doc['name'].split(/[.]+/);
+                    ext = docname[docname.length - 1];
+
+                    if (accepted_ext.includes(ext)) {
+                        console.log(checkSize(doc['size']));
+                        this.doclist.push([doc['name'], checkSize(doc['size'])])
+                        this.filelist.push(doc)
+                        console.log(this.filelist)
+
+                    } else {
+                        alert('Please insert a file with the right format (docx or pdf only) ')
+                        break
+                    }//end for
+                    this.file = '';
+
+                }//end upload file function
+            },
+            deleteRow: function (index) {
+                this.doclist.splice(index, 1);
+                this.filelist.splice(index, 1);
+            },
+            onSubmit: function () {
+                //when submit
+                console.log(this.doclist)
+                console.log(this.filelist)
+                url = 'http://127.0.0.1:5000/upload/materials';
+                processaddingproducts(url,this.filelist,this.onlinematerial);
+
+            }
+        },//end methods
+        // mounted: function () {
+        //     //    mounted
+        // }//end mounted
+    });
+</script>
