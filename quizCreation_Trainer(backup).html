@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Creation</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+
+    <!-- Vue Dev -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Quick Find
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Home</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav me-2 mb-2 mb-lg-0">
+                    <li style="padding-right: 20px;" class="nav-item">
+                        <a class="nav-link" href="#">My Courses</a>
+                        <!--This will be a popup box which retrieves the list of learners pending acceptance-->
+                    </li>
+                    <li class="nav-item popUp" onclick="showNotif()">
+                        <a class="navbar-brand" href="#">
+                            <i class="bi bi-bell"></i>
+                        </a>
+                        <ul class="popUpText" id="HRPopUp"></ul>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="navbar-brand" href="#">
+                            <i class="bi bi-person-circle"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section id="header" class="pageTitlePad">
+        <h1>Quiz Creation</h1>
+    </section>
+    <br>
+
+    <div id="quizApp">
+        <section id="quizForm" class="sectionPadding">
+            <form>
+                <div class=container>
+                    <div class="sm-3">
+                        <input class="form-control form-control-lg" type="text" placeholder="Insert Quiz Name Here"
+                            v-model="quizTitle">
+                        <h4> {{quizTitle}} </h4>
+                        <h4> {{selectedTime}} </h4>
+                        <h4> {{selectedCriteria}} </h4>
+                    </div>
+
+                    <section id="timeNCriteria" class="pt-4">
+                        <div class="row">
+                            <div class="form-inline col-6 text-center">
+                                <b>Time Limit: </b>
+                                <select class="form-inline form-select-sm" aria-label="timelimit"
+                                    v-model="selectedTime">
+                                    <option selected>Choose a Time Limit</option>
+                                    <option v-for="time in timeLimits" :value="time"> {{time}} </option>
+                                </select>
+                            </div>
+                            <div class="form-inline col-6 text-center">
+                                <b>Passing Score: </b>
+                                <select class="form-inline form-select-sm" aria-label="passingscore"
+                                    v-model="selectedCriteria">
+                                    <option selected>Choose a Passing Score</option>
+                                    <option v-for="grade in passingMarks" :value="grade"> {{grade}} </option>
+                                </select>
+
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <section id="questionForm" class="sectionPadding">
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <b>Please indicate if you want to add a t/f or mcq type question before clicking on the "Add Details" button to fill in the question and answer details.</b>
+                            </div>
+                        </div>
+                        <div class="row pt-5">
+                            <div class="col-6 text-center">
+                                <input type="radio" name="qType" value="mcq" v-model="selectedQType">MCQ &nbsp; &nbsp;
+                                <input type="radio" name="qType" value="tf" v-model="selectedQType">T/F
+                            </div>
+                            <div class="col-6 text-center">
+                                <button type="button" class="btn btn-outline-primary" @click="showForm">Add Details</button>
+                            </div>
+                        </div>
+
+                        <!-- This displays the type of form depending on the radio box selected -->
+                        <component :is="formComponent"></component>
+
+                    </section>
+
+                    <section id="questionDisplay" class="sectionPadding">
+                        <div class="row">
+
+                        </div>
+                    </section>
+            </form>
+        </section>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
+    </script>
+
+    <script>
+        Vue.component('mcq-template', {
+            props: ['qNo','title', 'optionA', 'optionB', 'optionC', 'correctAns'],
+
+            template: `
+            <div class="py-3">
+                <div class="row">
+                    <div class="col-10">
+                        <b>{{qNo}}. {{title}}</b>
+                    </div>
+
+                    <div class="col-2">
+                        <b>20%</b>
+                    </div>
+                </div>
+
+                <div class="form-check">
+                    <label>
+                        <input class="form-check-input" type="radio" :name="qNo" :id="qNo + _A" :value="optionA"> {{optionA}}
+                    </label>    
+                </div>
+
+                <div class="form-check">
+                    <label>
+                        <input class="form-check-input" type="radio" :name="qNo" :id="qNo + _B" :value="optionB"> {{optionB}}
+                    </label>    
+                </div>
+
+                <div class="form-check">
+                    <label>
+                        <input class="form-check-input" type="radio" :name="qNo" :id="qNo + _C" :value="optionC"> {{optionC}}
+                    </label>    
+                </div>
+
+            </div>
+            `
+            
+        })
+
+        Vue.component('mcq-form', {
+            data: function() {
+                return {
+                    mcqTitle: "",
+                    a: "",
+                    b: "",
+                    c: "",
+                    mcqAns: ""
+                }
+            },
+            // methods: {
+            //     addMCQ: function() {
+
+            //     }
+            // },
+            template: `
+            <div class="py-3">
+                <label for="mcqTitle" class="form-label">Question title:</label>
+                <input class="form-control" id="mcqTitle" type="text" v-model="mcqTitle">
+
+                <label for="option1" class="form-label">Option 1:</label>
+                <input class="form-control" id="option1" type="text" v-model="a">
+
+                <label for="option2" class="form-label">Option 2:</label>
+                <input class="form-control" id="option2" type="text" v-model="b">
+
+                <label for="option3" class="form-label">Option 3:</label>
+                <input class="form-control" id="option3" type="text" v-model="c">
+
+                <label for="mcqans" class="form-label">Answer (Please type out the entire answer and not just indicate the value):</label>
+                <input class="form-control" id="mcqans" type="text" v-model="mcqAns">
+
+                <button type="button" class="btn-success mt-3" @click="addMCQ">Done</button>
+            </div>
+            `
+        })
+
+        Vue.component('tf-form', {
+            data: function() {
+                return {
+                    tfTitle: "",
+                    tfAns: ""
+                }
+            },
+            // methods: {
+            //     addTF: function() {
+
+            //     }
+            // },
+            template: `
+            <div class="py-3">
+                <label for="tftitle" class="form-label">Question title:</label>
+                <input class="form-control" id="tftitle" type="text" v-model="tfTitle">
+
+                <label for="option1" class="form-label">Answer (Please type out True or False):</label>
+                <input class="form-control" id="option1" type="text" v-model="tfAns">
+
+                <button type="button" class="btn-success mt-3" @click="addTF">Done</button>
+            </div>
+            `
+        })
+
+        const app = new Vue({
+            el: "#quizApp",
+            data: {
+                quizTitle: "",
+                timeLimits: [10, 15],
+                passingMarks: [60, 80, 100],
+                selectedTime: "",
+                selectedCriteria: "",
+                selectedQType: "",
+                addCounter: 0,
+                formComponent: "",
+
+            },
+            methods: {
+                showForm: function() {
+                    this.addCounter += 1;
+                    if (this.selectedQType == "mcq") {
+                        this.formComponent = "mcq-form"
+                    }
+                    else {
+                        this.formComponent = "tf-form"
+                    }
+                }
+            },
+            // mounted: {
+            //     axios.get()
+            // }
+        })
+    </script>
+</body>
+
+
+</html>
