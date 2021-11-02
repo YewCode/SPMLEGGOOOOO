@@ -1,4 +1,5 @@
-from flask import Flask,request,jsonify
+from operator import add
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
 from sqlalchemy.sql import expression
@@ -8,45 +9,48 @@ import os
 import sys
 from os import environ
 from werkzeug.utils import secure_filename
-
 from sqlalchemy.sql.elements import *
+import time
+
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/spmproject'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
- 
+
 db = SQLAlchemy(app)
 CORS(app)
 
-uploads_dir = os.path.join( 'uploadfiles')
+uploads_dir = os.path.join('uploadfiles')
+
 
 class Engineer(db.Model):
     __tablename__ = 'engineer'
- 
+
     engineerid = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
-    role =db.Column(db.String(64), nullable=False)
- 
+    role = db.Column(db.String(64), nullable=False)
+
     def __init__(self, engineerid, name, role):
         self.engineerid = engineerid
         self.name = name
         self.role = role
- 
+
     def json(self):
         return {"engineerid": self.engineerid, "name": self.name, "role": self.role}
 
+
 class Course(db.Model):
     __tablename__ = 'Course'
- 
+
     cid = db.Column(db.Integer, primary_key=True)
     coursename = db.Column(db.String(100), nullable=False)
     coursedescription = db.Column(db.String(500), nullable=False)
     startdate = db.Column(db.Date, nullable=False)
     enddate = db.Column(db.Date, nullable=False)
     courseimg = db.Column(db.String(100))
- 
+
     def __init__(self, cid, coursename, coursedescription, startdate, enddate, courseimg):
         self.cid = cid
         self.coursename = coursename
@@ -54,126 +58,128 @@ class Course(db.Model):
         self.startdate = startdate
         self.enddate = enddate
         self.courseimg = courseimg
- 
-    def json(self):
-        return {"cid": self.cid, "coursename": self.coursename, "coursedescription": self.coursedescription,"startdate":self.startdate ,"enddate":self.enddate, "courseimg": self.courseimg}
-    
 
-    
+    def json(self):
+        return {"cid": self.cid, "coursename": self.coursename, "coursedescription": self.coursedescription, "startdate": self.startdate, "enddate": self.enddate, "courseimg": self.courseimg}
+
+
 class Course_Trainer(db.Model):
     __tablename__ = 'course_trainer'
- 
+
     cid = db.Column(db.Integer, primary_key=True)
     eid = db.Column(db.Integer, primary_key=True)
- 
-    def __init__(self, cid,eid):
+
+    def __init__(self, cid, eid):
         self.cid = cid
         self.eid = eid
- 
-    def json(self):
-        return {"cid": self.cid, "eid": self.eid }
-    
 
-    
+    def json(self):
+        return {"cid": self.cid, "eid": self.eid}
+
+
 class Course_Enrolled(db.Model):
     __tablename__ = 'Course_Enrolled'
- 
+
     cid = db.Column(db.Integer, primary_key=True)
     eid = db.Column(db.Integer, primary_key=True)
     active = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, cid,eid,active):
+    def __init__(self, cid, eid, active):
         self.cid = cid
         self.eid = eid
         self.active = active
- 
+
     def json(self):
-        return {"cid": self.cid, "eid": self.eid, "active":self.active }
+        return {"cid": self.cid, "eid": self.eid, "active": self.active}
+
 
 class Course_EnrollmentPending(db.Model):
     __tablename__ = 'Course_EnrollmentPending'
- 
+
     cid = db.Column(db.Integer, primary_key=True)
     eid = db.Column(db.Integer, primary_key=True)
     active = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, cid,eid,active):
+    def __init__(self, cid, eid, active):
         self.cid = cid
         self.eid = eid
         self.active = active
- 
+
     def json(self):
-        return {"cid": self.cid, "eid": self.eid, "active":self.active }
-    
+        return {"cid": self.cid, "eid": self.eid, "active": self.active}
+
+
 class Course_Completed(db.Model):
     __tablename__ = 'course_completed'
- 
+
     cid = db.Column(db.Integer, primary_key=True)
     eid = db.Column(db.Integer, primary_key=True)
- 
-    def __init__(self, cid,eid):
+
+    def __init__(self, cid, eid):
         self.cid = cid
         self.eid = eid
- 
+
     def json(self):
-        return {"cid": self.cid, "eid": self.eid }
- 
+        return {"cid": self.cid, "eid": self.eid}
+
+
 class Classes(db.Model):
     __tablename__ = 'class'
- 
+
     classid = db.Column(db.Integer, primary_key=True)
     courseid = db.Column(db.Integer, primary_key=True)
     capacity = db.Column(db.Integer, primary_key=True)
-    classtime =db.Column(db.String(100), nullable=False)
- 
-    def __init__(self, classid,courseid, capacity,classtime):
+    classtime = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, classid, courseid, capacity, classtime):
         self.classid = classid
         self.courseid = courseid
         self.capacity = capacity
         self.classtime = classtime
- 
+
     def json(self):
         return {"classid": self.classid,
                 "courseid": self.courseid,
                 "capacity": self.capacity,
                 "classtime": self.classtime
                 }
+
+
 class Class_Trainer(db.Model):
     __tablename__ = 'class_trainer'
- 
+
     classid = db.Column(db.Integer, primary_key=True)
     eid = db.Column(db.Integer, primary_key=True)
     courseid = db.Column(db.Integer, primary_key=True)
-    
- 
+
     def __init__(self, classid, courseid, eid):
         self.classid = classid
         self.courseid = courseid
         self.courseid = courseid
-        
+
     def json(self):
-        return {"classid": self.classid,"courseid": self.courseid,"eid": self.eid}
-    
+        return {"classid": self.classid, "courseid": self.courseid, "eid": self.eid}
+
+
 class Class_Enrolled(db.Model):
     __tablename__ = 'Class_Enrolled'
- 
+
     classid = db.Column(db.Integer, primary_key=True)
     eid = db.Column(db.Integer, primary_key=True)
     courseid = db.Column(db.Integer, primary_key=True)
-    
- 
+
     def __init__(self, classid, courseid, eid):
         self.classid = classid
         self.courseid = courseid
         self.eid = eid
-        
+
     def json(self):
-        return {"classid": self.classid,"courseid": self.courseid,"eid": self.eid}
+        return {"classid": self.classid, "courseid": self.courseid, "eid": self.eid}
 
 
 class Material (db.Model):
     __tablename__ = 'training_materials'
- 
+
     materialid = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(50))
     url = db.Column(db.String(250))
@@ -181,8 +187,8 @@ class Material (db.Model):
     classid = db.Column(db.Integer)
     courseid = db.Column(db.Integer)
     sectionid = db.Column(db.Integer)
- 
-    def __init__(self,materialid,filename,url,isHidden, classid, courseid, sectionid):
+
+    def __init__(self, materialid, filename, url, isHidden, classid, courseid, sectionid):
         self.materialid = materialid
         self.filename = filename
         self.url = url
@@ -190,7 +196,7 @@ class Material (db.Model):
         self.classid = classid
         self.courseid = courseid
         self.sectionid = sectionid
-        
+
     def json(self):
         return {
             "materialid": self.materialid,
@@ -200,14 +206,11 @@ class Material (db.Model):
             "classid": self.classid,
             "courseid": self.courseid,
             "sectionid": self.sectionid,
-            }
+        }
+    def getMaterialId(self):
+        return self.materialid
 
-
-
-
-
-
-#all routes
+# all routes
 @app.route("/engineer")
 def getAllEngineer():
     engineerlist = Engineer.query.all()
@@ -226,7 +229,8 @@ def getAllEngineer():
             "message": "There are no engineers."
         }
     ), 404
-    
+
+
 @app.route("/engineer/<int:eid>")
 def getEngineerByEid(eid):
     engineerlist = Engineer.query.filter_by(engineerid=eid).all()
@@ -245,6 +249,7 @@ def getEngineerByEid(eid):
             "message": "There are no engineers."
         }
     ), 404
+
 
 @app.route("/course")
 def getCourse():
@@ -265,9 +270,10 @@ def getCourse():
         }
     ), 404
 
+
 @app.route("/course/<int:cid>")
 def getCourseByCid(cid):
-    
+
     courselist = Course.query.filter_by(cid=cid).first()
     if courselist != None:
         return jsonify(
@@ -284,11 +290,11 @@ def getCourseByCid(cid):
             "message": "There are no courses."
         }
     ), 404
-    
+
 
 @app.route("/course_trainer/cid/<int:cid>")
 def getCourseTrainerByCid(cid):
-    
+
     coursetrainerlist = Course_Trainer.query.filter_by(cid=cid)
     if len(coursetrainerlist):
         return jsonify(
@@ -302,13 +308,14 @@ def getCourseTrainerByCid(cid):
     return jsonify(
         {
             "code": 404,
-            "message": "There are no course trainer for course id: "+str(cid) + '.' 
+            "message": "There are no course trainer for course id: "+str(cid) + '.'
         }
     ), 404
-    
+
+
 @app.route("/course_trainer/eid/<int:eid>")
 def getCourseTrainerByEid(eid):
-    
+
     coursetrainerlist = Course_Trainer.query.filter_by(eid=eid).all()
     if len(coursetrainerlist):
         return jsonify(
@@ -322,13 +329,14 @@ def getCourseTrainerByEid(eid):
     return jsonify(
         {
             "code": 404,
-            "message": "There are no course trainer for course id: "+str(eid) + '.' 
+            "message": "There are no course trainer for course id: "+str(eid) + '.'
         }
     ), 404
 
+
 @app.route("/Course_Enrolled/eid/<int:eid>")
 def getCourseEnrolledByEid(eid):
-    
+
     coursetrainerlist = Course_Enrolled.query.filter_by(eid=eid).all()
     if len(coursetrainerlist):
         return jsonify(
@@ -342,46 +350,47 @@ def getCourseEnrolledByEid(eid):
     return jsonify(
         {
             "code": 404,
-            "message": "There are no course enrolled for engineer id: "+str(eid) + '.' 
+            "message": "There are no course enrolled for engineer id: "+str(eid) + '.'
         }
     ), 404
-    
+
 
 @app.route("/Engineer/getAllEid/<int:i_cid>")
 def getListOfEnrolledAndUnenrolled(i_cid):
-    
-    returnlist = db.session.query(Engineer,Course_Enrolled).\
+
+    returnlist = db.session.query(Engineer, Course_Enrolled).\
         outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid)\
-            .filter(or_(Course_Enrolled.cid==None ,Course_Enrolled.cid==i_cid) ).all()
+        .filter(or_(Course_Enrolled.cid == None, Course_Enrolled.cid == i_cid)).all()
     if len(returnlist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [({ 'engineer': engineer.json(), 'isenrolled': 'enrolled' if course_enrolled != None and course_enrolled.json()['cid'] == i_cid else 'unenrolled' }) for (engineer,course_enrolled) in returnlist]
+                    "result": [({'engineer': engineer.json(), 'isenrolled': 'enrolled' if course_enrolled != None and course_enrolled.json()['cid'] == i_cid else 'unenrolled'}) for (engineer, course_enrolled) in returnlist]
                 }
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "There are no results for cid: "+str(i_cid) + '.' 
+            "message": "There are no results for cid: "+str(i_cid) + '.'
         }
     ), 404
-    
+
+
 @app.route("/class/courseid/<int:i_courseid>")
 def getclassByCourseID(i_courseid):
-    classlist = db.session.query(Classes,Engineer,Class_Trainer)\
-        .outerjoin(Class_Trainer, and_(Class_Trainer.courseid == Classes.courseid, Class_Trainer.classid == Classes.classid) )\
-            .outerjoin(Engineer, Engineer.engineerid == Class_Trainer.eid )\
-            .filter(Classes.courseid==i_courseid).all()           
+    classlist = db.session.query(Classes, Engineer, Class_Trainer)\
+        .outerjoin(Class_Trainer, and_(Class_Trainer.courseid == Classes.courseid, Class_Trainer.classid == Classes.classid))\
+        .outerjoin(Engineer, Engineer.engineerid == Class_Trainer.eid)\
+        .filter(Classes.courseid == i_courseid).all()
 
     if len(classlist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "classes": [ ({"classdetails": classs.json(),"engineer": en.json()}) for (classs,en,ct) in classlist]
+                    "classes": [({"classdetails": classs.json(), "engineer": en.json()}) for (classs, en, ct) in classlist]
                 }
             }
         )
@@ -391,86 +400,89 @@ def getclassByCourseID(i_courseid):
             "message": "There are no classs."
         }
     ), 404
-    
+
+
 @app.route("/pending/<int:i_courseid>")
 def getPendingEnrollmentByCourseID(i_courseid):
-    pendinglist =  db.session.query(Course_EnrollmentPending,Engineer)\
-        .join(Engineer,Engineer.engineerid==Course_EnrollmentPending.eid)\
-            .filter(and_(Course_EnrollmentPending.cid==i_courseid,Course_EnrollmentPending.active==1)).first()
-    print('pending',pendinglist)
+    pendinglist = db.session.query(Course_EnrollmentPending, Engineer)\
+        .join(Engineer, Engineer.engineerid == Course_EnrollmentPending.eid)\
+        .filter(and_(Course_EnrollmentPending.cid == i_courseid, Course_EnrollmentPending.active == 1)).first()
+    print('pending', pendinglist)
     if len([pendinglist]):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [ engineer.json() for (pending,engineer) in [pendinglist]]
+                    "result": [engineer.json() for (pending, engineer) in [pendinglist]]
                 }
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "There are no pending learners for course id "+ str(i_courseid)
+            "message": "There are no pending learners for course id " + str(i_courseid)
         }
     ), 404
-    
-@app.route("/Course_Enrolled/pending/eid/<int:eid>/cid/<int:cid>",methods=['GET','POST'])
-def approveLearnersEnrollment(eid,cid):
-    courseenrolling = Course_Enrolled(cid,eid, 1)
-    pending = Course_EnrollmentPending.query\
-        .filter( and_(cid==cid,eid==eid,Course_EnrollmentPending.active==1) ).first()
-    if pending != None:
-        pending.active = 0
-    try:
-        db.session.add(courseenrolling)
-        db.session.commit()
-    except Exception as e:
-        print(e)
-        return jsonify(
-            {
-                "code": 500,
-                "message": "An error occurred while creating the enrollment. " + str(e)
-            }
-        ), 500
-    
-    return jsonify(
-            {
-                "code": 200,
-                "enrolled":  courseenrolling.json()
-            }
-        )
-    
-@app.route("/Course_Enrolled/assign/eid/<int:eid>/cid/<int:cid>",methods=['GET','POST'])
-def assignlearners(eid,cid):
-    courseenrolling = Course_Enrolled(cid,eid, 1)
-    pending = Course_EnrollmentPending.query\
-        .filter( and_(cid==cid,eid==eid,Course_EnrollmentPending.active==1) ).first()
-    if pending != None:
-        pending.active = 0
-    try:
-        db.session.add(courseenrolling)
-        db.session.commit()
-    except Exception as e:
-        print(e)
-        return jsonify(
-            {
-                "code": 500,
-                "message": "An error occurred while creating the enrollment. " + str(e)
-            }
-        ), 500
-    
-    return jsonify(
-            {
-                "code": 200,
-                "enrolled":  courseenrolling.json()
-            }
-        )
- 
 
-#create new pending
-@app.route("/pending/add/eid/<int:eid>/cid/<int:cid>",methods=['GET','POST'])
-def addPendingEnrollment(eid,cid):
-    pending = Course_EnrollmentPending(cid,eid, 1)
+
+@app.route("/Course_Enrolled/pending/eid/<int:eid>/cid/<int:cid>", methods=['GET', 'POST'])
+def approveLearnersEnrollment(eid, cid):
+    courseenrolling = Course_Enrolled(cid, eid, 1)
+    pending = Course_EnrollmentPending.query\
+        .filter(and_(cid == cid, eid == eid, Course_EnrollmentPending.active == 1)).first()
+    if pending != None:
+        pending.active = 0
+    try:
+        db.session.add(courseenrolling)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while creating the enrollment. " + str(e)
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "enrolled":  courseenrolling.json()
+        }
+    )
+
+
+@app.route("/Course_Enrolled/assign/eid/<int:eid>/cid/<int:cid>", methods=['GET', 'POST'])
+def assignlearners(eid, cid):
+    courseenrolling = Course_Enrolled(cid, eid, 1)
+    pending = Course_EnrollmentPending.query\
+        .filter(and_(cid == cid, eid == eid, Course_EnrollmentPending.active == 1)).first()
+    if pending != None:
+        pending.active = 0
+    try:
+        db.session.add(courseenrolling)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while creating the enrollment. " + str(e)
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "enrolled":  courseenrolling.json()
+        }
+    )
+
+
+# create new pending
+@app.route("/pending/add/eid/<int:eid>/cid/<int:cid>", methods=['GET', 'POST'])
+def addPendingEnrollment(eid, cid):
+    pending = Course_EnrollmentPending(cid, eid, 1)
     try:
         db.session.add(pending)
         db.session.commit()
@@ -482,37 +494,64 @@ def addPendingEnrollment(eid,cid):
                 "message": "An error occurred while adding to pending :" + str(e)
             }
         ), 500
-    
-    return jsonify(
-            {
-                "code": 200,
-                "message":'added successfully',
-                "enrolled":  pending.json()
-            }
-        )
-    
-#upload materials
-@app.route("/upload/materials",methods=['GET','POST'])
-def uploadMaterials():
-    link = request.form.get('link')
-    materiallist = request.form.get('materials')
-    print(materiallist)
-    print(link)
-    for material in materiallist:
-        print(material)
-        material.save(os.path.join(uploads_dir, material.name))
-    
-    
-    return jsonify(
-            {
-                "code": 200,
-                "message": 'post is sent',
-                'link':link,
-                'materials': materiallist  
-            }
-        ), 201
 
+    return jsonify(
+        {
+            "code": 200,
+            "message": 'added successfully',
+            "enrolled":  pending.json()
+        }
+    )
+
+# upload material
+
+
+@app.route("/upload/material", methods=['GET', 'POST'])
+def uploadMaterials():
+    formData = request.form
+    formDict = formData.to_dict()
+    material1 = request.files
+    name = formDict['name']
+    # create unique file name
+    fileext = name.split('.')[-1]
+    namewoext = name.split('.')[:-1]
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    finalfilename = str(timestr)+'_'+' '.join(namewoext) +'.'+fileext 
+    # save file
+    material1['material'].save(os.path.join(uploads_dir,secure_filename(finalfilename) ))
+    
+    addtodb = Material(0,finalfilename,None,False,1,1,1)
+        
+    try:
+        db.session.add(addtodb)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while adding material :" + str(e)
+            }
+        ), 500
+
+    newlyadded = db.session.query(Material).order_by(Material.materialid.desc()).first()
+    if newlyadded != None:
+        return jsonify(
+            {
+                "code": 200,
+                "message": 'added successfully',
+                "enrolled":  newlyadded.json()
+            }
+        ),201
+
+# retrieve materials
+
+
+@app.route("/retrieve/materials/<int:courseid>")
+def retrieveMaterials(courseid):
+    # pending = Course_EnrollmentPending(cid,eid, 1)
+    pass
 
 
 if __name__ == "__main__":
-    app.run(port="5000",debug=True)
+    app.run(port="5000", debug=True)

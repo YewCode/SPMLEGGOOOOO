@@ -84,7 +84,7 @@
 
         <section class="sectionPadding">
             <div class="container">
-                <form method="POST" name="fileinfo">
+                <form method="POST" name="fileinfo" enctype=multipart/form-data >
                     <div class="row">
                         <div class="col-6">
                             <h5>Upload URL</h5>
@@ -107,8 +107,8 @@
                             <label for="formFileMultiple" class="form-label" id="upload">
                                 <h5>Upload Files</h5>
                             </label>
-                            <input class="form-control" v-model='file' type="file" ref="documentfiles"
-                                id="formFileMultiple" multiple>
+                            <input class="form-control" v-model='files' type="file" ref="documentfiles"
+                                id="formFileMultiple" name="files" multiple>
 
                         </div>
                         <div class="col-sm-2" style="margin-top: 47px;">
@@ -169,23 +169,21 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
-    async function processaddingproducts(url,filelist,onlinematerial) {
+    async function processaddingproducts(url,docfile) {
         var formData = new FormData();
         
-
-        formData.append("materials", filelist );
-        formData.append("link", onlinematerial );
-        console.log(formData)
+        formData.append("material", docfile );
+        formData.append("name", docfile.name );
+        
         const response = await fetch(url, {
             body: formData,
             method: "POST",
             mode: 'no-cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             credentials: 'same-origin', // include, *same-origin, omit
-            origin: ["http://127.0.0.1:8080", "http://127.0.0.1:5000"],
+            origin: ["http://127.0.0.1:8080", "http://localhost","http://127.0.0.1:5000"],
             redirect: 'follow' // manual, *follow, error
         });
-        console.log('call');
         if (response.status >= 200 && response.status < 300) {
 
             console.log('response ok');
@@ -194,6 +192,7 @@
             
 
         } else {
+            console.log(response);
             alert("There has been an error, please refresh and try again");
         }
 
@@ -241,8 +240,12 @@
                 //when submit
                 console.log(this.doclist)
                 console.log(this.filelist)
-                url = 'http://127.0.0.1:5000/upload/materials';
-                processaddingproducts(url,this.filelist,this.onlinematerial);
+                onlinematerial_url = 'http://127.0.0.1:5000/upload/material';
+                for (docfile of this.filelist){
+                    console.log(docfile);
+                    processaddingproducts(onlinematerial_url,docfile);
+                }
+                
 
             }
         },//end methods
