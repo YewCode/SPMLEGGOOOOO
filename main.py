@@ -209,7 +209,104 @@ class Material (db.Model):
         }
     def getMaterialId(self):
         return self.materialid
+    
+class Quiz (db.Model):
+    __tablename__ = 'quiz'
+    
+    quizid = db.Column(db.Integer, primary_key=True)
+    courseid = db.Column(db.Integer)
+    classid = db.Column(db.Integer)
+    sectionid = db.Column(db.Integer)
+    quiz_name = db.Column(db.String(50))
+    timelimit = db.Column(db.String(50))
+    isHidden = db.Column(db.Integer)
+    passing_requirements = db.Column(db.Float(precision=2))
+    isGraded = db.Column(db.Integer)
 
+    def __init__(self, quizid, courseid,classid, sectionid,quiz_name,timelimit, isHidden, passing_requirements, isGraded):
+        self.quizid = quizid
+        self.courseid = courseid
+        self.classid = classid
+        self.sectionid = sectionid
+        self.quiz_name = quiz_name
+        self.timelimit = timelimit
+        self.isHidden = isHidden
+        self.passing_requirements = passing_requirements
+        self.isGraded = isGraded
+
+    def json(self):
+        return {
+            "quizid": self.quizid,
+            "courseid": self.courseid,
+            "classid": self.classid,
+            "sectionid": self.sectionid,
+            "quiz_name": self.quiz_name,
+            "timelimit": self.timelimit,
+            "isHidden": self.isHidden,
+            "passing_requirements": self.passing_requirements,
+            "isGraded": self.isGraded   
+        }
+        
+class Question (db.Model):
+    __tablename__ = 'question'
+
+    quizid = db.Column(db.Integer)
+    QnNum = db.Column(db.Integer)
+    Qn_type = db.Column(db.String(100))
+    Qn_Description = db.Column(db.String(250))
+    options = db.Column(db.String(1000))
+    answer = db.Column(db.String(100))
+    
+
+    def __init__(self, quizid, courseid, sectionid,quiz_name,timelimit, isHidden, passing_requirements, isGraded):
+        self.quizid = quizid
+        self.courseid = courseid
+        self.sectionid = sectionid
+        self.quiz_name = quiz_name
+        self.timelimit = timelimit
+        self.isHidden = isHidden
+        self.passing_requirements = passing_requirements
+        self.isGraded = isGraded
+
+    def json(self):
+        return {
+            "quizid": self.quizid,
+            "courseid": self.courseid,
+            "sectionid": self.sectionid,
+            "quiz_name": self.quiz_name,
+            "timelimit": self.timelimit,
+            "isHidden": self.isHidden,
+            "passing_requirements": self.passing_requirements,
+            "isGraded": self.isGraded   
+        }
+        
+class Quiz_Attempt (db.Model):
+    __tablename__ = 'quiz_attempt'
+    
+# EngineerID, QuizID, AttemptID, QnNum, given_answer
+    engineerid = db.Column(db.Integer, primary_key=True)
+    quizid = db.Column(db.Integer)
+    attemptID = db.Column(db.Integer)
+    qnNum = db.Column(db.Integer)
+    given_answer = db.Column(db.String(250))
+    
+
+    def __init__(self, engineerid, quizid, attemptID,qnNum,given_answer):
+        self.engineerid = engineerid
+        self.quizid = quizid
+        self.attemptID = attemptID
+        self.qnNum = qnNum
+        self.given_answer = given_answer
+        
+    def json(self):
+        return {
+            "engineerid": self.engineerid,
+            "quizid": self.quizid,
+            "attemptID": self.attemptID,
+            "qnNum": self.qnNum,
+            "given_answer": self.given_answer
+        }
+        
 # all routes
 @app.route("/engineer")
 def getAllEngineer():
@@ -545,12 +642,41 @@ def uploadMaterials():
         ),201
 
 # retrieve materials
-
-
 @app.route("/retrieve/materials/<int:courseid>")
 def retrieveMaterials(courseid):
     # pending = Course_EnrollmentPending(cid,eid, 1)
     pass
+
+
+# add Quiz questions
+@app.route("/quiz/add",methods=['POST'])
+def addNewQuiz():
+    # QuizID, CourseID, ClassID, SectionID, quiz_name, Timelimit, isHidden, passing_requirements, isGraded, grades
+    formdata = request.form
+    formdict = request.to_dict()
+    print(formdict)
+    newQuiz = Quiz(0,formdict['courseid'],formdict['classid'],formdict['sectionid'],formdict['quizname'],\
+        formdict['timelimit'],formdict['isHidden'],formdict['passingreq'],formdict['graded'])
+    try:
+        db.session.add(newQuiz)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while adding material :" + str(e)
+            }
+        ), 500
+    return jsonify(
+            {
+                "code": 200,
+                "message": 'added successfully',
+                "enrolled":  newQuiz.json()
+            }
+        ),201
+
+
 
 
 if __name__ == "__main__":
