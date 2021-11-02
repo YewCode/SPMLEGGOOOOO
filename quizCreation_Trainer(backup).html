@@ -93,6 +93,7 @@
                         <h4> {{selectedTime}} </h4>
                         <h4> {{selectedCriteria}} </h4>
                     </div>
+
                     <section id="timeNCriteria" class="pt-4">
                         <div class="row">
                             <div class="form-inline col-6 text-center">
@@ -116,10 +117,10 @@
                         </div>
                     </section>
 
-                    <section class="sectionPadding">
+                    <section id="questionForm" class="sectionPadding">
                         <div class="row">
                             <div class="col-12 text-center">
-                                <b>To add questions, please select a question type by clicking the appropriate radio boxes before clicking the "Add Question" button</b>
+                                <b>Please indicate if you want to add a t/f or mcq type question before clicking on the "Add Details" button to fill in the question and answer details.</b>
                             </div>
                         </div>
                         <div class="row pt-5">
@@ -128,44 +129,19 @@
                                 <input type="radio" name="qType" value="tf" v-model="selectedQType">T/F
                             </div>
                             <div class="col-6 text-center">
-                                <button type="button" class="btn btn-outline-primary" @click="addQn">Add Question</button>
+                                <button type="button" class="btn btn-outline-primary" @click="showForm">Add Details</button>
                             </div>
                         </div>
 
                         <!-- This displays the type of form depending on the radio box selected -->
                         <component :is="formComponent"></component>
 
-                        <b>2.</b>
-                        <input class="form-inline form-control-sm col-6" type="text" placeholder="Insert Question Here"
-                            style="margin-right:20px; margin-top:20px;">
-                        <span style="text-decoration: underline; cursor:pointer">Edit</span>
-                        <select class="form-inline form-select-sm col-2" style="margin-left:150px;" aria-label="qntype">
-                            <option selected>Question Type</option>
-                            <option value="multiple">Multiple Select</option>
-                            <option value="tf">True/False</option>
-                        </select>
-                        <div class="form-check" style="margin-top:10px;">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="True">
-                            <label class="form-check-label" for="flexRadioDefault1">
-                                True
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="False">
-                            <label class="form-check-label" for="flexRadioDefault2">
-                                False
-                            </label>
-                        </div>
-                        <p></p>
-                        <div class="d-grid gap-2 col-6 mx-auto">
-                            <button class="btn btn-primary" type="button" style="margin-right:20px;">Add
-                                Question</button>
+                    </section>
+
+                    <section id="questionDisplay" class="sectionPadding">
+                        <div class="row">
 
                         </div>
-                        <p></p>
-                        <div><button type="submit" class="btn btn-primary align-right"
-                                style="margin:40px; margin-left:900px;">Create Quiz</button></div>
-
                     </section>
             </form>
         </section>
@@ -225,9 +201,29 @@
                     mcqAns: ""
                 }
             },
+            // methods: {
+            //     addMCQ: function() {
+
+            //     }
+            // },
             template: `
             <div class="py-3">
-                <h2>This is a mcq component</h2>
+                <label for="mcqTitle" class="form-label">Question title:</label>
+                <input class="form-control" id="mcqTitle" type="text" v-model="mcqTitle">
+
+                <label for="option1" class="form-label">Option 1:</label>
+                <input class="form-control" id="option1" type="text" v-model="a">
+
+                <label for="option2" class="form-label">Option 2:</label>
+                <input class="form-control" id="option2" type="text" v-model="b">
+
+                <label for="option3" class="form-label">Option 3:</label>
+                <input class="form-control" id="option3" type="text" v-model="c">
+
+                <label for="mcqans" class="form-label">Answer (Please type out the entire answer and not just indicate the value):</label>
+                <input class="form-control" id="mcqans" type="text" v-model="mcqAns">
+
+                <button type="button" class="btn-success mt-3" @click="addMCQ">Done</button>
             </div>
             `
         })
@@ -239,9 +235,20 @@
                     tfAns: ""
                 }
             },
+            // methods: {
+            //     addTF: function() {
+
+            //     }
+            // },
             template: `
             <div class="py-3">
-                <h2>This is a t/f component</h2>
+                <label for="tftitle" class="form-label">Question title:</label>
+                <input class="form-control" id="tftitle" type="text" v-model="tfTitle">
+
+                <label for="option1" class="form-label">Answer (Please type out True or False):</label>
+                <input class="form-control" id="option1" type="text" v-model="tfAns">
+
+                <button type="button" class="btn-success mt-3" @click="addTF">Done</button>
             </div>
             `
         })
@@ -249,7 +256,6 @@
         const app = new Vue({
             el: "#quizApp",
             data: {
-                rowData: [],
                 quizTitle: "",
                 timeLimits: [10, 15],
                 passingMarks: [60, 80, 100],
@@ -257,11 +263,11 @@
                 selectedCriteria: "",
                 selectedQType: "",
                 addCounter: 0,
-                formComponent: ""
+                formComponent: "",
 
             },
             methods: {
-                addQn: function() {
+                showForm: function() {
                     this.addCounter += 1;
                     if (this.selectedQType == "mcq") {
                         this.formComponent = "mcq-form"
@@ -270,7 +276,10 @@
                         this.formComponent = "tf-form"
                     }
                 }
-            }
+            },
+            // mounted: {
+            //     axios.get()
+            // }
         })
     </script>
 </body>
