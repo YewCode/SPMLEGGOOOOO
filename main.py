@@ -4,7 +4,10 @@ from sqlalchemy import *
 from sqlalchemy.sql import expression
 from flask_cors import CORS
 
-
+import os
+import sys
+from os import environ
+from werkzeug.utils import secure_filename
 
 from sqlalchemy.sql.elements import *
 
@@ -17,7 +20,8 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 db = SQLAlchemy(app)
 CORS(app)
 
- 
+uploads_dir = os.path.join( 'uploadfiles')
+
 class Engineer(db.Model):
     __tablename__ = 'engineer'
  
@@ -165,6 +169,38 @@ class Class_Enrolled(db.Model):
         
     def json(self):
         return {"classid": self.classid,"courseid": self.courseid,"eid": self.eid}
+
+
+class Material (db.Model):
+    __tablename__ = 'training_materials'
+ 
+    materialid = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(50))
+    url = db.Column(db.String(250))
+    isHidden = db.Column(db.Integer)
+    classid = db.Column(db.Integer)
+    courseid = db.Column(db.Integer)
+    sectionid = db.Column(db.Integer)
+ 
+    def __init__(self,materialid,filename,url,isHidden, classid, courseid, sectionid):
+        self.materialid = materialid
+        self.filename = filename
+        self.url = url
+        self.isHidden = isHidden
+        self.classid = classid
+        self.courseid = courseid
+        self.sectionid = sectionid
+        
+    def json(self):
+        return {
+            "materialid": self.materialid,
+            "filename": self.filename,
+            "url": self.url,
+            "isHidden": self.isHidden,
+            "classid": self.classid,
+            "courseid": self.courseid,
+            "sectionid": self.sectionid,
+            }
 
 
 
@@ -402,7 +438,7 @@ def approveLearnersEnrollment(eid,cid):
                 "code": 200,
                 "enrolled":  courseenrolling.json()
             }
-        ), 500
+        )
     
 @app.route("/Course_Enrolled/assign/eid/<int:eid>/cid/<int:cid>",methods=['GET','POST'])
 def assignlearners(eid,cid):
@@ -428,7 +464,7 @@ def assignlearners(eid,cid):
                 "code": 200,
                 "enrolled":  courseenrolling.json()
             }
-        ), 500
+        )
  
 
 #create new pending
@@ -453,9 +489,28 @@ def addPendingEnrollment(eid,cid):
                 "message":'added successfully',
                 "enrolled":  pending.json()
             }
-        ), 500
+        )
     
-
+#upload materials
+@app.route("/upload/materials",methods=['GET','POST'])
+def uploadMaterials():
+    link = request.form.get('link')
+    materiallist = request.form.get('materials')
+    print(materiallist)
+    print(link)
+    for material in materiallist:
+        print(material)
+        material.save(os.path.join(uploads_dir, material.name))
+    
+    
+    return jsonify(
+            {
+                "code": 200,
+                "message": 'post is sent',
+                'link':link,
+                'materials': materiallist  
+            }
+        ), 201
 
 
 
