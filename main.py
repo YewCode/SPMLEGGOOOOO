@@ -251,33 +251,30 @@ class Question (db.Model):
     __tablename__ = 'question'
 
     quizid = db.Column(db.Integer)
-    QnNum = db.Column(db.Integer)
-    Qn_type = db.Column(db.String(100))
-    Qn_Description = db.Column(db.String(250))
+    qnNum = db.Column(db.Integer)
+    qn_type = db.Column(db.String(100))
+    qn_Description = db.Column(db.String(250))
     options = db.Column(db.String(1000))
     answer = db.Column(db.String(100))
     
 
-    def __init__(self, quizid, courseid, sectionid,quiz_name,timelimit, isHidden, passing_requirements, isGraded):
+    def __init__(self, quizid, qnNum, qn_type,qn_Description,options, answer):
         self.quizid = quizid
-        self.courseid = courseid
-        self.sectionid = sectionid
-        self.quiz_name = quiz_name
-        self.timelimit = timelimit
-        self.isHidden = isHidden
-        self.passing_requirements = passing_requirements
-        self.isGraded = isGraded
+        self.qnNum = qnNum
+        self.qn_type = qn_type
+        self.qn_Description = qn_Description
+        self.options = options
+        self.answer = answer
+        
 
     def json(self):
         return {
             "quizid": self.quizid,
-            "courseid": self.courseid,
-            "sectionid": self.sectionid,
-            "quiz_name": self.quiz_name,
-            "timelimit": self.timelimit,
-            "isHidden": self.isHidden,
-            "passing_requirements": self.passing_requirements,
-            "isGraded": self.isGraded   
+            "qnNum": self.qnNum,
+            "qn_type": self.qn_type,
+            "qn_Description": self.qn_Description,
+            "options": self.options,
+            "answer": self.answer   
         }
         
 class Quiz_Attempt (db.Model):
@@ -648,12 +645,11 @@ def retrieveMaterials(courseid):
     pass
 
 
-# add Quiz questions
+# add new Quiz 
 @app.route("/quiz/add",methods=['POST'])
 def addNewQuiz():
-    # QuizID, CourseID, ClassID, SectionID, quiz_name, Timelimit, isHidden, passing_requirements, isGraded, grades
     formdata = request.form
-    formdict = request.to_dict()
+    formdict = formdata.to_dict()
     print(formdict)
     newQuiz = Quiz(0,formdict['courseid'],formdict['classid'],formdict['sectionid'],formdict['quizname'],\
         formdict['timelimit'],formdict['isHidden'],formdict['passingreq'],formdict['graded'])
@@ -665,7 +661,7 @@ def addNewQuiz():
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred while adding material :" + str(e)
+                "message": "An error occurred while adding quiz :" + str(e)
             }
         ), 500
     return jsonify(
@@ -676,8 +672,34 @@ def addNewQuiz():
             }
         ),201
 
-
-
-
+#add new quiz questions
+@app.route("/quiz/questions/add/<int:quizid>",methods=['GET','POST'])
+def addNewQuestions(quizid):
+    # QuizID, QnNum, Qn_type, Qn_Description, options, answer
+    formdata = request.form
+    formdict = formdata.to_dict()
+    print(formdict)
+    newquestion = Question(quizid,formdata['qnNum'],formdata['qn_type'],formdata['qn_description'],\
+        formdata['options'],formdata['answer'])
+    try:
+        db.session.add(newquestion)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while adding question :" + str(e)
+            }
+        ), 500
+    return jsonify(
+            {
+                "code": 200,
+                "message": 'added successfully',
+                "enrolled":  newquestion.json()
+            }
+        ),201
+    
+    
 if __name__ == "__main__":
     app.run(port="5000", debug=True)
