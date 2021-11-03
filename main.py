@@ -215,8 +215,8 @@ class Quiz (db.Model):
     
     quizid = db.Column(db.Integer, primary_key=True)
     courseid = db.Column(db.Integer)
-    classid = db.Column(db.Integer)
-    sectionid = db.Column(db.Integer)
+    classid = db.Column(db.Integer,primary_key=True)
+    sectionid = db.Column(db.Integer,primary_key=True)
     quiz_name = db.Column(db.String(50))
     timelimit = db.Column(db.String(50))
     isHidden = db.Column(db.Integer)
@@ -250,7 +250,7 @@ class Quiz (db.Model):
 class Question (db.Model):
     __tablename__ = 'question'
 
-    quizid = db.Column(db.Integer)
+    quizid = db.Column(db.Integer,primary_key=True)
     qnNum = db.Column(db.Integer)
     qn_type = db.Column(db.String(100))
     qn_Description = db.Column(db.String(250))
@@ -641,8 +641,23 @@ def uploadMaterials():
 # retrieve materials
 @app.route("/retrieve/materials/<int:courseid>")
 def retrieveMaterials(courseid):
-    # pending = Course_EnrollmentPending(cid,eid, 1)
-    pass
+    result = Material.query().filter(courseid==courseid).order_by(Material.sectionid.desc()).all()
+    if result != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": [material.json() for material in result]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no results for cid: "+str(courseid) + '.'
+        }
+    ), 404
+    
 
 
 # add new Quiz 
