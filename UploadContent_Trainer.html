@@ -84,7 +84,7 @@
 
         <section class="sectionPadding">
             <div class="container">
-                <form method="POST" name="fileinfo" enctype=multipart/form-data >
+                <form method="POST" name="fileinfo" enctype=multipart/form-data>
                     <div class="row">
                         <div class="col-6">
                             <h5>Upload URL</h5>
@@ -92,13 +92,13 @@
 
                                 <span class="input-group-text" id="inputGroup-sizing-sm">URL: </span>
                                 <input type="text" class="form-control" aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-sm" name="link" v-model='onlinematerial'
-                                    placeholder="Insert Traing Material link here. eg. Youtube">
+                                    aria-describedby="inputGroup-sizing-sm"   placeholder="Insert Training Material link here. eg. Youtube"
+                                   v-model='onlinematerial' >
                             </div>
                         </div>
 
                         <div class="col-3">
-                            <button type="button" class="row btn btn-primary">Add</button>
+                            <button type="button" class="row btn btn-primary" @click='uploadlink'>Add</button>
                         </div>
                     </div>
 
@@ -107,8 +107,8 @@
                             <label for="formFileMultiple" class="form-label" id="upload">
                                 <h5>Upload Files</h5>
                             </label>
-                            <input class="form-control" v-model='files' type="file" ref="documentfiles"
-                                id="formFileMultiple" name="files" multiple>
+                            <input class="form-control" v-model='file' type="file" ref="documentfiles"
+                                id="formFileMultiple" multiple v-on:change='testfunc'>
 
                         </div>
                         <div class="col-sm-2" style="margin-top: 47px;">
@@ -144,7 +144,22 @@
                             </td>
                         </tr>
                     </table>
-
+                    <br />
+                    <table>
+                        <tr>
+                            <th class="col-md-6 col-sm-12">
+                                <h6>Link</h6>
+                            </th>
+                            <th class="col-md-6 col-sm-12">
+                                <h6>Preview</h6>
+                            </th>
+                           
+                        <tr v-for='(link, i) in linklist'>
+                            <td>{{ link }}</td>
+                            <td><iframe width="420" height="315" :src="link">
+                                </iframe></td>
+                        </tr>
+                    </table>
                 </div>
 
             </div>
@@ -169,19 +184,19 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
-    async function processaddingproducts(url,docfile) {
+    async function processaddingproducts(url, docfile) {
         var formData = new FormData();
-        
-        formData.append("material", docfile );
-        formData.append("name", docfile.name );
-        
+
+        formData.append("material", docfile);
+        formData.append("name", docfile.name);
+
         const response = await fetch(url, {
             body: formData,
             method: "POST",
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             credentials: 'same-origin', // include, *same-origin, omit
-            origin: ["http://127.0.0.1:8080", "http://localhost","http://127.0.0.1:5000"],
+            origin: ["http://127.0.0.1:8080", "http://localhost", "http://127.0.0.1:5000"],
             redirect: 'follow' // manual, *follow, error
         });
         if (response.status >= 200 && response.status < 300) {
@@ -189,7 +204,7 @@
             console.log('response ok');
             data = await response.json();
             console.log(data);
-            
+
 
         } else {
             console.log(response);
@@ -197,19 +212,19 @@
         }
 
     }
-    
-    async function processaddlink (url,link) {
+
+    async function processaddlink(url, link) {
         var formData = new FormData();
-        
-        formData.append("link", link );
-        
+
+        formData.append("link", link);
+
         const response = await fetch(url, {
             body: formData,
             method: "POST",
-            mode: 'no-cors', // no-cors, *cors, same-origin
+            mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             credentials: 'same-origin', // include, *same-origin, omit
-            origin: ["http://127.0.0.1:8080", "http://localhost","http://127.0.0.1:5000"],
+            origin: ["http://127.0.0.1:8080", "http://localhost", "http://127.0.0.1:5000"],
             redirect: 'follow' // manual, *follow, error
         });
         if (response.status >= 200 && response.status < 300) {
@@ -217,7 +232,7 @@
             console.log('response ok');
             data = await response.json();
             console.log(data);
-            
+
 
         } else {
             console.log(response);
@@ -227,15 +242,16 @@
     }
 
 
-    var accepted_ext = ['doc', 'docx', 'pdf'];
+    var accepted_ext = ['doc', 'docx', 'pdf','DOC','DOCX','PDF'];
     const app1 = new Vue({
         el: "#App1",
         data: {
             //define data
             doclist: [],
             file: '',
-            filelist:[],
-            onlinematerial: ''
+            filelist: [],
+            onlinematerial: '',
+            linklist: []
         },
         methods: {
             uploadfiles: function () {
@@ -260,6 +276,17 @@
 
                 }//end upload file function
             },
+            uploadlink:function(){
+                console.log('click upload link');
+                console.log(this.onlinematerial);
+                if (this.onlinematerial != ''){
+                    this.linklist.push(this.onlinematerial);
+                }
+                
+            },
+            testfunc :function(){
+                console.log('test')
+            },
             deleteRow: function (index) {
                 this.doclist.splice(index, 1);
                 this.filelist.splice(index, 1);
@@ -269,11 +296,11 @@
                 console.log(this.doclist)
                 console.log(this.filelist)
                 onlinematerial_url = 'http://127.0.0.1:5000/upload/material';
-                for (docfile of this.filelist){
+                for (docfile of this.filelist) {
                     console.log(docfile);
-                    processaddingproducts(onlinematerial_url,docfile);
+                    processaddingproducts(onlinematerial_url, docfile);
                 }
-                
+
 
             }
         },//end methods

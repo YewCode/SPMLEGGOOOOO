@@ -164,21 +164,6 @@ class Class_Trainer(db.Model):
         return {"classid": self.classid, "courseid": self.courseid, "eid": self.eid}
 
 
-class Class_Enrolled(db.Model):
-    __tablename__ = 'Class_Enrolled'
-
-    classid = db.Column(db.Integer, primary_key=True)
-    eid = db.Column(db.Integer, primary_key=True)
-    courseid = db.Column(db.Integer, primary_key=True)
-
-    def __init__(self, classid, courseid, eid):
-        self.classid = classid
-        self.courseid = courseid
-        self.eid = eid
-
-    def json(self):
-        return {"classid": self.classid, "courseid": self.courseid, "eid": self.eid}
-
 
 class Material (db.Model):
     __tablename__ = 'training_materials'
@@ -257,7 +242,7 @@ class Question (db.Model):
     __tablename__ = 'question'
 
     quizid = db.Column(db.Integer,primary_key=True)
-    qnNum = db.Column(db.Integer)
+    qnNum = db.Column(db.Integer,primary_key=True)
     qn_type = db.Column(db.String(100))
     qn_Description = db.Column(db.String(250))
     options = db.Column(db.String(1000))
@@ -554,7 +539,9 @@ def approveLearnersEnrollment(eid, cid):
 # assign learner
 @app.route("/Course_Enrolled/assign/eid/<int:eid>/cid/<int:cid>/class/<int:classid>", methods=['GET', 'POST'])
 def assignlearners(eid, cid,classid):
-    courseenrolling = Course_Enrolled(cid, eid, 1)
+    # created the course enrolled row
+    courseenrolling = Course_Enrolled(cid, eid, 1,classid)
+    # check against pending
     pending = Course_EnrollmentPending.query\
         .filter(and_(cid == cid, eid == eid,classid==classid, Course_EnrollmentPending.active == 1)).first()
     if pending != None:
@@ -604,8 +591,6 @@ def addPendingEnrollment(eid, cid):
     )
 
 # upload material
-
-
 @app.route("/upload/material", methods=['GET', 'POST'])
 def uploadMaterials():
     formData = request.form
@@ -640,6 +625,36 @@ def uploadMaterials():
             {
                 "code": 200,
                 "message": 'added successfully',
+                "enrolled":  newlyadded.json()
+            }
+        ),201
+        
+# upload link
+@app.route("/upload/link", methods=['GET', 'POST'])
+def uploadLink():
+    formData = request.form
+    formDict = formData.to_dict()
+    link = formDict['link']
+    addtodb = Material(0,None,link,False,1,1,1)
+        
+    try:
+        db.session.add(addtodb)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while adding link :" + str(e)
+            }
+        ), 500
+
+    newlyadded = db.session.query(Material).order_by(Material.materialid).first()
+    if newlyadded != None:
+        return jsonify(
+            {
+                "code": 200,
+                "message": 'link added successfully',
                 "enrolled":  newlyadded.json()
             }
         ),201
@@ -741,24 +756,24 @@ def retrieveQuiz(quizid):
     ), 404
     
 #retreive quiz question
-# @app.route("/quiz/question/retrieve/<int:quizid>")
-# def retrieveQuestion(quizid):
-#     result = db.session.query(Question).filter(quizid==quizid).all()
-#     if result != None:
-#         return jsonify(
-#             {
-#                 "code": 200,
-#                 "data": {
-#                     "result": [ quiz.json() for quiz in result]
-#                 }
-#             }
-#         )
-#     return jsonify(
-#         {
-#             "code": 404,
-#             "message": "There are no results for quiz id: "+str(quizid) + '.'
-#         }
-#     ), 404
+@app.route("/quiz/question/retrieve/<int:quizid>")
+def retrieveQuestion(quizid):
+    result = db.session.query(Question).filter(quizid==quizid).all()
+    if result != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": [ quiz.json() for quiz in result]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no results for quiz id: "+str(quizid) + '.'
+        }
+    ), 404
         
     
 if __name__ == "__main__":
