@@ -178,6 +178,34 @@
         const response = await fetch(url, {
             body: formData,
             method: "POST",
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            origin: ["http://127.0.0.1:8080", "http://localhost","http://127.0.0.1:5000"],
+            redirect: 'follow' // manual, *follow, error
+        });
+        if (response.status >= 200 && response.status < 300) {
+
+            console.log('response ok');
+            data = await response.json();
+            console.log(data);
+            
+
+        } else {
+            console.log(response);
+            alert("There has been an error, please refresh and try again");
+        }
+
+    }
+    
+    async function processaddlink (url,link) {
+        var formData = new FormData();
+        
+        formData.append("link", link );
+        
+        const response = await fetch(url, {
+            body: formData,
+            method: "POST",
             mode: 'no-cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             credentials: 'same-origin', // include, *same-origin, omit

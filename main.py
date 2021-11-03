@@ -1,5 +1,6 @@
 from operator import add
 from flask import Flask, request, jsonify
+from flask.globals import session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
 from sqlalchemy.sql import expression
@@ -83,14 +84,16 @@ class Course_Enrolled(db.Model):
     cid = db.Column(db.Integer, primary_key=True)
     eid = db.Column(db.Integer, primary_key=True)
     active = db.Column(db.String(100), nullable=False)
+    classid = db.Column(db.Integer, primary_key=True)
 
-    def __init__(self, cid, eid, active):
+    def __init__(self, cid, eid, active,classid):
         self.cid = cid
         self.eid = eid
         self.active = active
+        self.classid = classid
 
     def json(self):
-        return {"cid": self.cid, "eid": self.eid, "active": self.active}
+        return {"cid": self.cid, "eid": self.eid, "active": self.active,"classid":classid}
 
 
 class Course_EnrollmentPending(db.Model):
@@ -209,6 +212,9 @@ class Material (db.Model):
         }
     def getMaterialId(self):
         return self.materialid
+    
+    def getSectionId(self):
+        return self.sectionid
     
 class Quiz (db.Model):
     __tablename__ = 'quiz'
@@ -545,12 +551,12 @@ def approveLearnersEnrollment(eid, cid):
         }
     )
 
-
-@app.route("/Course_Enrolled/assign/eid/<int:eid>/cid/<int:cid>", methods=['GET', 'POST'])
-def assignlearners(eid, cid):
+# assign learner
+@app.route("/Course_Enrolled/assign/eid/<int:eid>/cid/<int:cid>/class/<int:classid>", methods=['GET', 'POST'])
+def assignlearners(eid, cid,classid):
     courseenrolling = Course_Enrolled(cid, eid, 1)
     pending = Course_EnrollmentPending.query\
-        .filter(and_(cid == cid, eid == eid, Course_EnrollmentPending.active == 1)).first()
+        .filter(and_(cid == cid, eid == eid,classid==classid, Course_EnrollmentPending.active == 1)).first()
     if pending != None:
         pending.active = 0
     try:
@@ -628,7 +634,7 @@ def uploadMaterials():
             }
         ), 500
 
-    newlyadded = db.session.query(Material).order_by(Material.materialid.desc()).first()
+    newlyadded = db.session.query(Material).order_by(Material.materialid).first()
     if newlyadded != None:
         return jsonify(
             {
@@ -641,13 +647,13 @@ def uploadMaterials():
 # retrieve materials
 @app.route("/retrieve/materials/<int:courseid>")
 def retrieveMaterials(courseid):
-    result = Material.query().filter(courseid==courseid).order_by(Material.sectionid.desc()).all()
+    result = db.session.query(Material).filter(Material.courseid==courseid).order_by(Material.sectionid.desc()).all()
     if result != None:
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [material.json() for material in result]
+                    "result": [('Sectionid ',material.getSectionId(),material.json()) for material in result]
                 }
             }
         )
@@ -714,7 +720,46 @@ def addNewQuestions(quizid):
                 "enrolled":  newquestion.json()
             }
         ),201
+#retreive quiz 
+@app.route("/quiz/retrieve/<int:quizid>")
+def retrieveQuiz(quizid):
+    result = db.session.query(Quiz).filter(quizid==quizid).first()
+    if result != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": result.json()
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no results for quiz id: "+str(quizid) + '.'
+        }
+    ), 404
     
+#retreive quiz question
+# @app.route("/quiz/question/retrieve/<int:quizid>")
+# def retrieveQuestion(quizid):
+#     result = db.session.query(Question).filter(quizid==quizid).all()
+#     if result != None:
+#         return jsonify(
+#             {
+#                 "code": 200,
+#                 "data": {
+#                     "result": [ quiz.json() for quiz in result]
+#                 }
+#             }
+#         )
+#     return jsonify(
+#         {
+#             "code": 404,
+#             "message": "There are no results for quiz id: "+str(quizid) + '.'
+#         }
+#     ), 404
+        
     
 if __name__ == "__main__":
     app.run(port="5000", debug=True)
