@@ -104,11 +104,6 @@
                     </div>
                 </div>
 
-                <div class="input-group mb-3 w-50 mx-auto">
-                    <input type="text" class="form-control" placeholder="Search for Learner">
-                    <button class="btn btn-outline-secondary" type="button" @click><i class="bi bi-search"></i></button>
-                </div>
-
                 <div class="row">
                     <div class="col-12">
                         <table class="table table-hover">
@@ -116,6 +111,7 @@
                                 <th>EID</th>
                                 <th>Name</th>
                                 <th>Status</th>
+                                <th>Class ID</th>
                                 <th>Enroll?</th>
                             </tr>
                             <tr v-for="person in enrollmentList">
@@ -123,6 +119,13 @@
                                 <td> {{person.engineer.engineerid}} </td>
                                 <td> {{person.engineer.name}} </td>
                                 <td> {{person.isenrolled}} </td>
+                                <td v-if="person.isenrolled == 'enrolled' "> </td>
+                                <td v-else>
+                                    <select name="classSelect" @change="updateClass">
+                                        <option value=""></option>
+                                        <option v-for="classes in classList" :value="classes.classdetails.classid"> {{classes.classdetails.classid}} </option>
+                                    </select> 
+                                </td>
                                 <td v-if="person.isenrolled == 'enrolled' "></td>
                                 <td v-else> <button type="button" class="btn-outline-primary"
                                         @click="hrAssignL(person.engineer.engineerid)">Enroll to Course</button> </td>
@@ -143,15 +146,17 @@
                 courseList: [],
                 courseNo: "",
                 courseName: "",
-                enrollmentList: []
+                enrollmentList: [],
+                classList: [],
+                chosenClass: ""
             },
             methods: {
                 hrAssignL: function (id) {
                     // alert(typeof(id));
-                    let confirmation = confirm("Are you sure you want to enroll this learner?");
+                    let confirmation = confirm("Are you sure you want to enroll this learner into class id" + this.chosenClass);
 
                     if (confirmation == true) {
-                        axios.get('http://127.0.0.1:5000/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo);
+                        axios.get('http://127.0.0.1:5000/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo); // For now this assigns engineer to course, need to handle api for class
 
                         alert("Engineer has been enrolled successfully to " + this.courseName); // Works but if use catch method it returns code 500
 
@@ -160,8 +165,10 @@
                     else {
                         alert("Engineer was not enrolled into " + this.courseName);
                     }
-
-                }
+                },
+                updateClass: function(classid) {
+                    this.chosenClass = classid;
+                },  
             },
             mounted: function () {
                 axios.get('http://127.0.0.1:5000/course')
@@ -195,6 +202,14 @@
                     .catch(error => {
                         alert("Error retreiving course enrollment status")
                     });
+
+                axios.get('http://127.0.0.1:5000/class/courseid/' + this.courseNo)
+                    .then(response=> {
+                        this.classList = response.data.data.classes;
+                    })
+                    .catch(error => {
+                        alert("Error retrieving classes for " + this.courseName);
+                    })
             }
         });
     </script>
