@@ -104,12 +104,21 @@
                     </div>
                 </div>
 
-                <div class="text-center">
-                    <label for="selectclass form-label">Class ID:</label>
-                    <select style="width: 50px;" id="selectclass" name="selectedClass" v-model="chosenClass">
-                        <option value=""> </option>
-                        <option v-for="classes in classList" :value="classes.classdetails.classid"> {{classes.classdetails.classid}} </option>
-                    </select>
+                <div class="row my-3">
+                    <div class="col-3"></div>
+                    <div class="col-3 text-center">
+                        <label for="selectclass form-label">Class ID:</label>
+                        <select style="width: 50px;" id="selectclass" name="selectedClass" @change="updateCap" v-model="chosenClass">
+                            <option value=""> </option>
+                            <option v-for="classes in classList" :value="classes.classdetails.classid"> {{classes.classdetails.classid}} </option>
+                        </select>
+                    </div>
+                    <div class="col-3 text-center">
+                        <b v-if="classCapacity !== '' "> {{classCapacity}} Slots </b>
+                        <b v-else></b>
+                    </div>
+                    <div class="col-3"></div>
+
                 </div>
 
                 <div class="row">
@@ -149,26 +158,35 @@
                 courseName: "",
                 enrollmentList: [],
                 classList: [],
-                chosenClass: ""
+                chosenClass: "",
+                classCapacity: ""
             },
             methods: {
                 hrAssignL: function (id) {
                     // alert(typeof(id));
-                    let confirmation = confirm("Are you sure you want to enroll this learner into class id" + this.chosenClass);
+                    let confirmation = confirm("Are you sure you want to enroll this learner into Class ID " + this.chosenClass + "?");
 
                     if (confirmation == true) {
-                        axios.get('http://127.0.0.1:5000/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo); // For now this assigns engineer to course, need to handle api for class
+                        axios.get('/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo + '/class/' + this.chosenClass); // For now this assigns engineer to course, need to handle api for class
 
                         alert("Engineer has been enrolled successfully to " + this.courseName); // Works but if use catch method it returns code 500
 
                         location.reload();
                     }
                     else {
-                        alert("Engineer was not enrolled into " + this.courseName);
+                        alert("Engineer " + id + " was not enrolled into " + this.courseName);
                     }
                 },
-                updateClass: function(classid) {
-                    this.chosenClass = classid;
+                updateCap: function() {
+                    if (this.chosenClass == "") {
+                        this.classCapacity = "";
+                    }
+                    for (classes of this.classList) {
+                        if (this.chosenClass == classes.classdetails.classid) {
+                            this.classCapacity = classes.classdetails.capacity;
+                        }
+                    }
+
                 },  
             },
             mounted: function () {

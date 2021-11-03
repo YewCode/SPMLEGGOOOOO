@@ -93,7 +93,7 @@ class Course_Enrolled(db.Model):
         self.classid = classid
 
     def json(self):
-        return {"cid": self.cid, "eid": self.eid, "active": self.active,"classid":classid}
+        return {"cid": self.cid, "eid": self.eid, "active": self.active,"classid": self.classid}
 
 
 class Course_EnrollmentPending(db.Model):
