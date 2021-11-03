@@ -104,6 +104,14 @@
                     </div>
                 </div>
 
+                <div class="text-center">
+                    <label for="selectclass form-label">Class ID:</label>
+                    <select style="width: 50px;" id="selectclass" name="selectedClass" v-model="chosenClass">
+                        <option value=""> </option>
+                        <option v-for="classes in classList" :value="classes.classdetails.classid"> {{classes.classdetails.classid}} </option>
+                    </select>
+                </div>
+
                 <div class="row">
                     <div class="col-12">
                         <table class="table table-hover">
@@ -111,7 +119,6 @@
                                 <th>EID</th>
                                 <th>Name</th>
                                 <th>Status</th>
-                                <th>Class ID</th>
                                 <th>Enroll?</th>
                             </tr>
                             <tr v-for="person in enrollmentList">
@@ -120,12 +127,6 @@
                                 <td> {{person.engineer.name}} </td>
                                 <td> {{person.isenrolled}} </td>
                                 <td v-if="person.isenrolled == 'enrolled' "> </td>
-                                <td v-else>
-                                    <select name="classSelect" @change="updateClass">
-                                        <option value=""></option>
-                                        <option v-for="classes in classList" :value="classes.classdetails.classid"> {{classes.classdetails.classid}} </option>
-                                    </select> 
-                                </td>
                                 <td v-if="person.isenrolled == 'enrolled' "></td>
                                 <td v-else> <button type="button" class="btn-outline-primary"
                                         @click="hrAssignL(person.engineer.engineerid)">Enroll to Course</button> </td>
