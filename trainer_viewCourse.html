@@ -130,8 +130,7 @@
                                     <div class="row">
                                         <div class="col-8"></div>
                                         <div class="col-3">
-                                            <a class="btn btn-outline-dark"
-                                                :href=" uploadurl+ '?courseNum='+courseNo+'&classNum='+classNo+'&sectionNum='+section.sectionid"
+                                            <a class="btn btn-outline-dark" :href=" uploadurl+ '?courseNum='+courseNo+'&classNum='+classNo+'&sectionNum='+section.sectionid"
                                                 class="btn btn-primary">Upload</a>
                                         </div>
                                     </div>
@@ -139,35 +138,33 @@
                                         <h6>Materials</h6>
                                         <!-- loop materials -->
                                         <!-- {{materiallist[section.sectionName]}} -->
-                                        <div v-for='materialdict of materiallist[section.sectionName]'>
+                                         <div v-for='materialdict of materiallist[section.sectionName]'>
 
                                             <div v-if='showFile(materialdict.filename)'>
-                                                <a
-                                                    :href="'uploadfiles/'+ 'materialdict.filename'">{{renameFilename(materialdict.filename)}}</a><br /><br /><br />
+                                                <a  :href="'uploadfiles/'+ 'materialdict.filename'">{{renameFilename(materialdict.filename)}}</a><br/><br/><br/>
                                             </div>
-                                            <div v-else-if='showURL(materialdict.url)'>
-                                                <iframe width="420" height="315" :src="materialdict.url"
-                                                    title="YouTube video player" frameborder="0"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                    allowfullscreen>
-                                                </iframe><br /><br /><br />
+                                            <div v-else-if='showURL(materialdict.url)' >
+                                                <iframe width="420" height="315" :src="materialdict.url" title="YouTube video player"
+                                                 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                  allowfullscreen>
+                                                </iframe><br/><br/><br/>
                                             </div>
-                                            <div v-else>
+                                            <div v-else >
                                                 <a :href="materialdict.url">{{materialdict.url}}</a>
                                             </div>
 
-                                        </div>
-
+                                    </div>
+                                    
                                         <h6>Quiz</h6>
                                         <div style="color: #555;">No Quizzes Release Yet 
 
-                                    </div>
-
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
+    </div>
 
 
 
