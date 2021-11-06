@@ -802,7 +802,7 @@ def retrieveCompletedByEid(eid):
             {
                 "code": 200,
                 "data": {
-                    "result": [ pre.json() for (coursecompleted,pre) in result]
+                    "result": [ ({"prereqs": pre.json(), "completed": coursecompleted.json()}) for (coursecompleted,pre) in result]
                 }
             }
         )

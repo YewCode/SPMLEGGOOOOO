@@ -90,8 +90,7 @@
                 </div>
 
                 <div>
-
-                    {{availableCourses}}
+                    {{completedList}}
                 </div>
 
                 <!--  loop this part -->
@@ -130,8 +129,8 @@
                 eID: "",
                 eDetails: [],
                 eName: "",
-                completedList: [],
-                availableList: []
+                completedList: [], // checks if learner has completed a course and returns the associated (pre-req_cid, for_cid) based on eid
+                availableList: [] // returns the courses that should be viewable by eid
             },
             computed: {
                 getName: function () {
@@ -142,16 +141,19 @@
                     return this.eName;
                 },
 
-                availableCourses: function() {
-                    for (c of this.courseList) {
-                        for (c_Comp of this.completedList) {
-                            if (c_Comp.prerequisites_cid != c.cid) {
-                                this.availableList.push(c.cid)
-                            }
-                        }
-                    }
-                    return this.availableList;
-                }
+                // Check if course pre-reqs are completed for now this does not show completed mods 
+                
+                // completedList shows = {["for_cid": 1, "prereqid": 4]}
+                // availableCourses: function() { // this function retrieves courses completed by the student and returns the pre-reqs satisfied by them to display courses with pre-reqs
+                //     for (c in this.courseList) {
+                //         for (c_Comp in this.completedList) {
+                //             if (this.completedList[c_Comp].cid == this.) {
+                //                 this.availableList.push(this.courseList[c])
+                //             }
+                //         }
+                //     }
+                //     return this.availableList;
+                // }
                 
             },
             mounted: function () {
