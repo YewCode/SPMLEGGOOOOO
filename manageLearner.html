@@ -135,7 +135,6 @@
                                 <td> {{person.engineer.engineerid}} </td>
                                 <td> {{person.engineer.name}} </td>
                                 <td> {{person.isenrolled}} </td>
-                                <td v-if="person.isenrolled == 'enrolled' "> </td>
                                 <td v-if="person.isenrolled == 'enrolled' "></td>
                                 <td v-else> <button type="button" class="btn-outline-primary"
                                         @click="hrAssignL(person.engineer.engineerid)">Enroll to Course</button> </td>
@@ -184,9 +183,10 @@
                     for (classes of this.classList) {
                         if (this.chosenClass == classes.classdetails.classid) {
                             this.classCapacity = classes.classdetails.capacity;
+                            break;
                         }
                     }
-
+                    
                 },  
             },
             mounted: function () {

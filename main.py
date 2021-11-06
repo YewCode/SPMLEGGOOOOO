@@ -294,6 +294,22 @@ class Quiz_Attempt (db.Model):
             "qnNum": self.qnNum,
             "given_answer": self.given_answer
         }
+
+class Pre_Requisites (db.Model):
+    __tablename__ = 'prerequisites'
+
+    prerequisites_cid = db.Column(db.Integer, primary_key=True)
+    for_cid = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, prerequisites_cid, for_cid):
+        self.prerequisites_cid = prerequisites_cid
+        self.for_cid = for_cid
+    
+    def json(self):
+        return {
+            "prerequisites_cid": self.prerequisites_cid,
+            "for_cid": self.for_cid
+        }
         
 # all routes
 @app.route("/engineer")
@@ -492,7 +508,7 @@ def getPendingEnrollmentByCourseID(i_courseid):
     pendinglist = db.session.query(Course_EnrollmentPending, Engineer)\
         .join(Engineer, Engineer.engineerid == Course_EnrollmentPending.eid)\
         .filter(and_(Course_EnrollmentPending.cid == i_courseid, Course_EnrollmentPending.active == 1)).first()
-    print('pending', pendinglist)
+    # print('pending', pendinglist)
     if len([pendinglist]):
         return jsonify(
             {
@@ -775,6 +791,27 @@ def retrieveQuestion(quizid):
         }
     ), 404
         
+@app.route("/coursecompleted/<int:eid>")
+def retrieveCompletedByEid(eid):
+    result = db.session.query(Course_Completed, Pre_Requisites)\
+        .join(Course_Completed, Pre_Requisites.prerequisites_cid == Course_Completed.cid)\
+        .filter(Course_Completed.eid==eid).all()
+    # print(result)
+    if result != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": [ pre.json() for (coursecompleted,pre) in result]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Engineer " + str(eid) + " has not completed any courses which have pre-requisites."
+        }
+    ), 404
     
 if __name__ == "__main__":
     app.run(port="5000", debug=True)

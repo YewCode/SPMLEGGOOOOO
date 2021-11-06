@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS `class` (
 INSERT INTO `class` (`ClassID`, `CourseID`, `Capacity`, `ClassTime`) VALUES
 (1, 1, 20, 'Thursday 12:00pm'),
 (2, 1, 30, 'Thursday 3:15pm'),
-(1, 2, 30, 'Monday 8:15am');
+(1, 2, 30, 'Monday 8:15am'),
+(1, 3, 15, 'Friday 11:30am');
 
 -- --------------------------------------------------------
 
@@ -88,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `course` (
   `EndDate` date NOT NULL,
   `courseImg` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`CID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 --
 -- Dumping data for table `course`
@@ -97,7 +98,8 @@ CREATE TABLE IF NOT EXISTS `course` (
 INSERT INTO `course` (`CID`, `courseName`, `courseDescription`, `StartDate`, `EndDate`, `courseImg`) VALUES
 (1, 'Engineering 101', 'This is clearly a course all about electricity. Eventually you will become electricman.', '2021-11-23', '2022-11-23', 'images/electronics101.jpg'),
 (2, 'Thermodynamics', 'This is a module that every engineer hates but is absoultely useful in the long term, just ask around', '2021-11-05', '2022-11-05', 'images/thermo.png'),
-(3, 'Materials and Structures', 'This course focuses on the development and the optimization of materials, processes, and devices used for operations in extreme environments and special applications.', '2021-11-10', '2021-11-11', 'images/materials.jpg');
+(3, 'Materials and Structures', 'This course focuses on the development and the optimization of materials, processes, and devices used for operations in extreme environments and special applications.', '2021-11-10', '2021-11-11', 'images/materials.jpg'),
+(4, 'Engineering Basic', 'This is clearly a course all about electricity. Eventually you will become electricman.', '2020-10-23', '2021-10-23', 'images/basics.jpg');
 
 -- --------------------------------------------------------
 
@@ -117,8 +119,9 @@ CREATE TABLE IF NOT EXISTS `course_completed` (
 -- Dumping data for table `course_completed`
 --
 
+-- Assume that eid 1 completed course 4
 INSERT INTO `course_completed` (`CID`, `EID`) VALUES
-(1, 4);
+(4, 1);
 
 -- --------------------------------------------------------
 
@@ -222,13 +225,18 @@ INSERT INTO `engineer` (`EngineerID`, `Name`, `Role`) VALUES
 -- Table structure for table `prerequites`
 --
 
-DROP TABLE IF EXISTS `prerequites`;
-CREATE TABLE IF NOT EXISTS `prerequites` (
-  `prerequites_CID` int(11) NOT NULL,
-  `postrequite_CID` int(11) NOT NULL,
-  PRIMARY KEY (`prerequites_CID`,`postrequite_CID`),
-  KEY `postrequite_CID` (`postrequite_CID`)
+DROP TABLE IF EXISTS `prerequisites`;
+CREATE TABLE IF NOT EXISTS `prerequisites` (
+  `prerequisites_CID` int(11) NOT NULL,
+  `for_CID` int(11) NOT NULL,
+  PRIMARY KEY (`prerequisites_CID`,`for_CID`),
+  KEY `for_CID` (`for_CID`)
 ) ;
+
+-- Assume cid 4 is pre_req for cid 1
+INSERT INTO `prerequisites`
+VALUES
+(4, 1);
 
 -- --------------------------------------------------------
 
@@ -436,9 +444,9 @@ ALTER TABLE `course_trainer`
 --
 -- Constraints for table `prerequites`
 --
-ALTER TABLE `prerequites`
-  ADD CONSTRAINT `prerequites_ibfk_1` FOREIGN KEY (`prerequites_CID`) REFERENCES `course` (`CID`),
-  ADD CONSTRAINT `prerequites_ibfk_2` FOREIGN KEY (`postrequite_CID`) REFERENCES `course` (`CID`);
+ALTER TABLE `prerequisites`
+  ADD CONSTRAINT `prerequisites_ibfk_1` FOREIGN KEY (`prerequisites_CID`) REFERENCES `course` (`CID`),
+  ADD CONSTRAINT `prerequisites_ibfk_2` FOREIGN KEY (`for_CID`) REFERENCES `course` (`CID`);
 
 --
 -- Constraints for table `progress`
