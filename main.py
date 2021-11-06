@@ -126,6 +126,29 @@ class Course_Completed(db.Model):
         return {"cid": self.cid, "eid": self.eid}
 
 
+class Section(db.Model):
+    __tablename__ = 'section'
+# SectionID, ClassID, CourseID, SectionName, End_Date
+    sectionid = db.Column(db.Integer, primary_key=True)
+    classid = db.Column(db.Integer, primary_key=True)
+    courseid = db.Column(db.Integer, primary_key=True)
+    sectionName = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, sectionid, classid, courseid, sectionName):
+        self.sectionid = sectionid
+        self.classid = classid
+        self.courseid = courseid
+        self.sectionName = sectionName
+
+    def json(self):
+        return {"sectionid": self.sectionid,
+                "classid": self.classid,
+                "courseid": self.courseid,
+                "sectionName": self.sectionName
+                }
+    def getsectionid(self):
+        return self.sectionid
+    
 class Classes(db.Model):
     __tablename__ = 'class'
 
@@ -375,7 +398,7 @@ def getCourse():
 @app.route("/course/<int:cid>")
 def getCourseByCid(cid):
 
-    courselist = Course.query.filter_by(cid=cid).first()
+    courselist = db.session.query(Course).filter(Course.cid==cid).first()
     if courselist != None:
         return jsonify(
             {
@@ -391,6 +414,51 @@ def getCourseByCid(cid):
             "message": "There are no courses."
         }
     ), 404
+
+@app.route("/section/<int:cid>")
+def getSectionsByCid(cid):
+
+    resultlist = db.session.query(Section).filter(Section.courseid==cid).all()
+    print(resultlist)
+    if resultlist != None:
+        print(type(resultlist))
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "section": [result.json() for result in resultlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no sections in course id"+str(cid)
+        }
+    ), 404
+    
+@app.route("/create/section/<int:sectionid>/course/<int:cid>/classid/<int:classid>")
+def createSectionsByCid(sectionid,cid,classid):
+    sectionname = 'Section ' + str(sectionid)
+    addsection = Section(sectionid,classid,cid,sectionname)
+    try:
+        db.session.add(addsection)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while creating the section. " + str(e)
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "section":  addsection.getsectionid()
+        }
+    )
 
 
 @app.route("/course_trainer/cid/<int:cid>")
@@ -613,6 +681,9 @@ def uploadMaterials():
     formDict = formData.to_dict()
     material1 = request.files
     name = formDict['name']
+    courseid = formDict['courseid']
+    classid = formDict['classid']
+    sectionid = formDict['sectionid']
     # create unique file name
     fileext = name.split('.')[-1]
     namewoext = name.split('.')[:-1]
@@ -621,7 +692,7 @@ def uploadMaterials():
     # save file
     material1['material'].save(os.path.join(uploads_dir,secure_filename(finalfilename) ))
     
-    addtodb = Material(0,finalfilename,None,False,1,1,1)
+    addtodb = Material(0,finalfilename,None,False,classid,courseid,sectionid)
         
     try:
         db.session.add(addtodb)
@@ -651,7 +722,11 @@ def uploadLink():
     formData = request.form
     formDict = formData.to_dict()
     link = formDict['link']
-    addtodb = Material(0,None,link,False,1,1,1)
+    courseid = formDict['courseid']
+    classid = formDict['classid']
+    sectionid = formDict['sectionid']
+    print('section: ',sectionid)
+    addtodb = Material(0,None,link,False,classid,courseid,sectionid)
         
     try:
         db.session.add(addtodb)
@@ -676,15 +751,23 @@ def uploadLink():
         ),201
 
 # retrieve materials
-@app.route("/retrieve/materials/<int:courseid>")
-def retrieveMaterials(courseid):
-    result = db.session.query(Material).filter(Material.courseid==courseid).order_by(Material.sectionid.desc()).all()
+@app.route("/retrieve/materials/<int:courseid>/class/<int:classid>")
+def retrieveMaterials(courseid,classid):
+    result = db.session.query(Material).filter(and_(Material.courseid==courseid,\
+        Material.classid==classid)).order_by(Material.sectionid).all()
     if result != None:
+        newformat = {}
+        for material in result:
+            currentsectionid = 'Section '+str(material.getSectionId())
+            if currentsectionid not in newformat.keys():
+                newformat[currentsectionid] = [material.json()]
+            else:
+                newformat[currentsectionid].append(material.json())
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [('Sectionid ',material.getSectionId(),material.json()) for material in result]
+                    "result": newformat
                 }
             }
         )
