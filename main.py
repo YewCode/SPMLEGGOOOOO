@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask.globals import session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
+from sqlalchemy.orm import query
 from sqlalchemy.sql import expression
 from flask_cors import CORS
 
@@ -333,6 +334,11 @@ class Pre_Requisites (db.Model):
             "prerequisites_cid": self.prerequisites_cid,
             "for_cid": self.for_cid
         }
+    def getForCid(self):
+        return self.for_cid
+    
+    def getPreRequisite(self):
+        return self.prerequisites_cid
         
 # all routes
 @app.route("/engineer")
@@ -522,6 +528,28 @@ def getCourseEnrolledByEid(eid):
             "message": "There are no course enrolled for engineer id: "+str(eid) + '.'
         }
     ), 404
+    
+@app.route("/Course_Enrolled/info/eid/<int:eid>")
+def getCourseEnrolledInfoByEid(eid):
+
+    courseinfolist = db.session.query(Course,Course_Enrolled)\
+        .filter(and_(Course.cid==Course_Enrolled.cid, Course_Enrolled.eid==eid)).all()
+    if courseinfolist != None:
+        print(courseinfolist)
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "courses": [course.json() for (course,courseenrolled) in courseinfolist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no course enrolled for engineer id: "+str(eid) + '.'
+        }
+    ), 404
 
 
 @app.route("/Engineer/getAllEid/<int:i_cid>")
@@ -529,7 +557,7 @@ def getListOfEnrolledAndUnenrolled(i_cid):
 
     returnlist = db.session.query(Engineer, Course_Enrolled).\
         outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid)\
-        .filter(or_(Course_Enrolled.cid == None, Course_Enrolled.cid == i_cid)).all()
+        .filter( or_(Course_Enrolled.cid == None, Course_Enrolled.cid == i_cid) ).all()
     if len(returnlist):
         return jsonify(
             {
@@ -893,6 +921,35 @@ def retrieveCompletedByEid(eid):
         {
             "code": 404,
             "message": "Engineer " + str(eid) + " has not completed any courses which have pre-requisites."
+        }
+    ), 404
+    
+@app.route("/courseEligible/learner/<int:i_eid>")
+def retrieveEligibleCourseByEid(i_eid):
+    # all courses that has prereq learners can take
+    allcoursewprereq = db.session.query(Pre_Requisites.for_cid)\
+        .filter(and_(Course_Completed.cid==Pre_Requisites.prerequisites_cid,\
+            Course_Completed.eid==i_eid)).subquery()
+    
+    coursesCannotTake = db.session.query(Course.cid)\
+        .filter(and_(Course.cid==Pre_Requisites.for_cid,\
+            Course.cid.notin_(allcoursewprereq))).subquery()
+    
+    result = db.session.query(Course).filter(Course.cid.notin_(coursesCannotTake) ).all()
+    print(result)
+    if result != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": [ course.json() for course in result]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Engineer " + str(i_eid) + " has not completed any courses which have pre-requisites."
         }
     ), 404
     
