@@ -1,0 +1,186 @@
+Code Analysis Error Logs from Jenkins 6/11/2021:
+
+ too long (84 > 79 characters)
+main.py:55:80: E501 line too long (90 > 79 characters)
+main.py:64:80: E501 line too long (191 > 79 characters)
+main.py:89:40: E231 missing whitespace after ','
+main.py:96:72: E231 missing whitespace after ','
+main.py:96:80: E501 line too long (96 > 79 characters)
+main.py:149:5: E301 expected 1 blank line, found 0
+main.py:151:1: W293 blank line contains whitespace
+main.py:152:1: E302 expected 2 blank lines, found 1
+main.py:187:80: E501 line too long (84 > 79 characters)
+main.py:191:1: E303 too many blank lines (3)
+main.py:202:80: E501 line too long (90 > 79 characters)
+main.py:221:5: E301 expected 1 blank line, found 0
+main.py:223:1: W293 blank line contains whitespace
+main.py:226:1: W293 blank line contains whitespace
+main.py:227:1: E302 expected 2 blank lines, found 1
+main.py:229:1: W293 blank line contains whitespace
+main.py:232:35: E231 missing whitespace after ','
+main.py:233:37: E231 missing whitespace after ','
+main.py:240:40: E231 missing whitespace after ','
+main.py:240:59: E231 missing whitespace after ','
+main.py:240:69: E231 missing whitespace after ','
+main.py:240:80: E501 line too long (122 > 79 characters)
+main.py:261:38: W291 trailing whitespace
+main.py:263:1: W293 blank line contains whitespace
+main.py:264:1: E302 expected 2 blank lines, found 1
+main.py:267:34: E231 missing whitespace after ','
+main.py:268:33: E231 missing whitespace after ','
+main.py:273:1: W293 blank line contains whitespace
+main.py:275:5: E303 too many blank lines (2)
+main.py:275:46: E231 missing whitespace after ','
+main.py:275:61: E231 missing whitespace after ','
+main.py:282:1: W293 blank line contains whitespace
+main.py:284:5: E303 too many blank lines (2)
+main.py:291:34: W291 trailing whitespace
+main.py:293:1: W293 blank line contains whitespace
+main.py:294:1: E302 expected 2 blank lines, found 1
+main.py:296:1: W293 blank line contains whitespace
+main.py:303:1: W293 blank line contains whitespace
+main.py:305:5: E303 too many blank lines (2)
+main.py:305:53: E231 missing whitespace after ','
+main.py:305:59: E231 missing whitespace after ','
+main.py:311:1: W293 blank line contains whitespace
+main.py:321:1: E302 expected 2 blank lines, found 1
+main.py:330:1: W293 blank line contains whitespace
+main.py:336:1: W293 blank line contains whitespace
+main.py:338:1: E302 expected 2 blank lines, found 1
+main.py:401:60: E225 missing whitespace around operator
+main.py:402:19: E711 comparison to None should be 'if cond is not None:'
+main.py:418:1: E302 expected 2 blank lines, found 1
+main.py:421:67: E225 missing whitespace around operator
+main.py:423:19: E711 comparison to None should be 'if cond is not None:'
+main.py:439:1: W293 blank line contains whitespace
+main.py:440:1: E302 expected 2 blank lines, found 1
+main.py:440:80: E501 line too long (84 > 79 characters)
+main.py:441:34: E231 missing whitespace after ','
+main.py:441:38: E231 missing whitespace after ','
+main.py:443:35: E231 missing whitespace after ','
+main.py:443:43: E231 missing whitespace after ','
+main.py:443:47: E231 missing whitespace after ','
+main.py:452:80: E501 line too long (84 > 79 characters)
+main.py:473:80: E501 line too long (92 > 79 characters)
+main.py:480:80: E501 line too long (83 > 79 characters)
+main.py:494:80: E501 line too long (92 > 79 characters)
+main.py:501:80: E501 line too long (83 > 79 characters)
+main.py:515:80: E501 line too long (92 > 79 characters)
+main.py:522:80: E501 line too long (86 > 79 characters)
+main.py:532:17: F405 'or_' may be undefined, or defined from star imports: sqlalchemy, sqlalchemy.sql.elements
+main.py:532:41: E711 comparison to None should be 'if cond is None:'
+main.py:532:80: E501 line too long (85 > 79 characters)
+main.py:538:80: E501 line too long (223 > 79 characters)
+main.py:538:107: E711 comparison to None should be 'if cond is not None:'
+main.py:553:35: F405 'and_' may be undefined, or defined from star imports: sqlalchemy, sqlalchemy.sql.elements
+main.py:553:80: E501 line too long (126 > 79 characters)
+main.py:562:80: E501 line too long (123 > 79 characters)
+main.py:578:17: F405 'and_' may be undefined, or defined from star imports: sqlalchemy, sqlalchemy.sql.elements
+main.py:578:80: E501 line too long (111 > 79 characters)
+main.py:585:80: E501 line too long (88 > 79 characters)
+main.py:592:80: E501 line too long (87 > 79 characters)
+main.py:597:80: E501 line too long (91 > 79 characters)
+main.py:601:17: F405 'and_' may be undefined, or defined from star imports: sqlalchemy, sqlalchemy.sql.elements
+main.py:601:80: E501 line too long (91 > 79 characters)
+main.py:602:16: E711 comparison to None should be 'if cond is not None:'
+main.py:612:80: E501 line too long (87 > 79 characters)
+main.py:624:1: E302 expected 2 blank lines, found 1
+main.py:624:80: E501 line too long (110 > 79 characters)
+main.py:625:28: E231 missing whitespace after ','
+main.py:627:50: E231 missing whitespace after ','
+main.py:630:17: F405 'and_' may be undefined, or defined from star imports: sqlalchemy, sqlalchemy.sql.elements
+main.py:630:44: E231 missing whitespace after ','
+main.py:630:52: E225 missing whitespace around operator
+main.py:630:80: E501 line too long (108 > 79 characters)
+main.py:631:16: E711 comparison to None should be 'if cond is not None:'
+main.py:641:80: E501 line too long (87 > 79 characters)
+main.py:665:80: E501 line too long (81 > 79 characters)
+main.py:678:1: E302 expected 2 blank lines, found 1
+main.py:691:59: E225 missing whitespace around operator
+main.py:691:70: W291 trailing whitespace
+main.py:693:56: E231 missing whitespace after ','
+main.py:693:80: E501 line too long (89 > 79 characters)
+main.py:693:87: E202 whitespace before ')'
+main.py:694:1: W293 blank line contains whitespace
+main.py:695:25: E231 missing whitespace after ','
+main.py:695:39: E231 missing whitespace after ','
+main.py:695:44: E231 missing whitespace after ','
+main.py:695:50: E231 missing whitespace after ','
+main.py:695:58: E231 missing whitespace after ','
+main.py:695:67: E231 missing whitespace after ','
+main.py:696:1: W293 blank line contains whitespace
+main.py:709:80: E501 line too long (81 > 79 characters)
+main.py:710:19: E711 comparison to None should be 'if cond is not None:'
+main.py:717:10: E231 missing whitespace after ','
+main.py:718:1: W293 blank line contains whitespace
+main.py:720:1: E302 expected 2 blank lines, found 1
+main.py:728:22: E231 missing whitespace after ','
+main.py:729:25: E231 missing whitespace after ','
+main.py:729:30: E231 missing whitespace after ','
+main.py:729:35: E231 missing whitespace after ','
+main.py:729:41: E231 missing whitespace after ','
+main.py:729:49: E231 missing whitespace after ','
+main.py:729:58: E231 missing whitespace after ','
+main.py:730:1: W293 blank line contains whitespace
+main.py:743:80: E501 line too long (81 > 79 characters)
+main.py:744:19: E711 comparison to None should be 'if cond is not None:'
+main.py:751:10: E231 missing whitespace after ','
+main.py:754:1: E302 expected 2 blank lines, found 1
+main.py:755:31: E231 missing whitespace after ','
+main.py:756:48: F405 'and_' may be undefined, or defined from star imports: sqlalchemy, sqlalchemy.sql.elements
+main.py:756:70: E225 missing whitespace around operator
+main.py:756:80: E501 line too long (81 > 79 characters)
+main.py:756:81: E502 the backslash is redundant between brackets
+main.py:757:9: E128 continuation line under-indented for visual indent
+main.py:757:25: E225 missing whitespace around operator
+main.py:758:15: E711 comparison to None should be 'if cond is not None:'
+main.py:780:1: W293 blank line contains whitespace
+main.py:783:1: E303 too many blank lines (3)
+main.py:783:15: W291 trailing whitespace
+main.py:784:1: E302 expected 2 blank lines, found 3
+main.py:784:23: E231 missing whitespace after ','
+main.py:789:21: E231 missing whitespace after ','
+main.py:789:42: E231 missing whitespace after ','
+main.py:789:62: E231 missing whitespace after ','
+main.py:789:80: E501 line too long (106 > 79 characters)
+main.py:789:84: E231 missing whitespace after ','
+main.py:789:106: E502 the backslash is redundant between brackets
+main.py:790:9: E128 continuation line under-indented for visual indent
+main.py:790:30: E231 missing whitespace after ','
+main.py:790:51: E231 missing whitespace after ','
+main.py:790:74: E231 missing whitespace after ','
+main.py:790:80: E501 line too long (93 > 79 characters)
+main.py:808:10: E231 missing whitespace after ','
+main.py:810:1: E265 block comment should start with '# '
+main.py:811:1: E302 expected 2 blank lines, found 1
+main.py:811:46: E231 missing whitespace after ','
+main.py:811:61: E231 missing whitespace after ','
+main.py:817:34: E231 missing whitespace after ','
+main.py:817:52: E231 missing whitespace after ','
+main.py:817:72: E231 missing whitespace after ','
+main.py:817:80: E501 line too long (100 > 79 characters)
+main.py:817:100: E502 the backslash is redundant between brackets
+main.py:818:9: E128 continuation line under-indented for visual indent
+main.py:818:28: E231 missing whitespace after ','
+main.py:836:10: E231 missing whitespace after ','
+main.py:837:1: E265 block comment should start with '# '
+main.py:837:15: W291 trailing whitespace
+main.py:838:1: E302 expected 2 blank lines, found 0
+main.py:840:50: E225 missing whitespace around operator
+main.py:841:15: E711 comparison to None should be 'if cond is not None:'
+main.py:856:1: W293 blank line contains whitespace
+main.py:857:1: E265 block comment should start with '# '
+main.py:858:1: E302 expected 2 blank lines, found 1
+main.py:860:54: E225 missing whitespace around operator
+main.py:861:15: E711 comparison to None should be 'if cond is not None:'
+main.py:866:32: E201 whitespace after '['
+main.py:876:1: W293 blank line contains whitespace
+main.py:877:1: E302 expected 2 blank lines, found 1
+main.py:880:80: E501 line too long (90 > 79 characters)
+main.py:881:37: E225 missing whitespace around operator
+main.py:883:15: E711 comparison to None should be 'if cond is not None:'
+main.py:888:32: E201 whitespace after '['
+main.py:888:64: E231 missing whitespace after ','
+main.py:895:80: E501 line too long (107 > 79 characters)
+main.py:898:1: W293 blank line contains whitespace
+main.py:899:1: E305 expected 2 blank lines after class or function definition, found 1
