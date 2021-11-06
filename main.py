@@ -445,8 +445,8 @@ def getSectionsByCid(cid):
     
 @app.route("/create/section/<int:sectionid>/course/<int:cid>/classid/<int:classid>")
 def createSectionsByCid(sectionid,cid,classid):
-    sectionname = 'Section ' + str(sectionid)
-    addsection = Section(sectionid,classid,cid,sectionname)
+    sectionname = 'Section ' + str(sectionid + 1)
+    addsection = Section(sectionid + 1,classid,cid,sectionname)
     try:
         db.session.add(addsection)
         db.session.commit()
@@ -462,7 +462,7 @@ def createSectionsByCid(sectionid,cid,classid):
     return jsonify(
         {
             "code": 200,
-            "section":  addsection.getsectionid()
+            "section":  sectionid
         }
     )
 

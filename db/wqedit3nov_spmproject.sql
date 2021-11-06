@@ -350,7 +350,13 @@ CREATE TABLE IF NOT EXISTS `section` (
   `End_Date` datetime DEFAULT NULL,
   PRIMARY KEY (`SectionID`,`ClassID`,`CourseID`)
 ) ;
-
+INSERT INTO `spmproject`.`section`
+(`SectionID`,
+`ClassID`,
+`CourseID`,
+`SectionName`)
+VALUES
+(1,1,1, 'Section 1');
 -- --------------------------------------------------------
 
 --
