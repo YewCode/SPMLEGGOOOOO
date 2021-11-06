@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask.globals import session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
+from sqlalchemy.orm import query
 from sqlalchemy.sql import expression
 from flask_cors import CORS
 
@@ -126,6 +127,29 @@ class Course_Completed(db.Model):
         return {"cid": self.cid, "eid": self.eid}
 
 
+class Section(db.Model):
+    __tablename__ = 'section'
+# SectionID, ClassID, CourseID, SectionName, End_Date
+    sectionid = db.Column(db.Integer, primary_key=True)
+    classid = db.Column(db.Integer, primary_key=True)
+    courseid = db.Column(db.Integer, primary_key=True)
+    sectionName = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, sectionid, classid, courseid, sectionName):
+        self.sectionid = sectionid
+        self.classid = classid
+        self.courseid = courseid
+        self.sectionName = sectionName
+
+    def json(self):
+        return {"sectionid": self.sectionid,
+                "classid": self.classid,
+                "courseid": self.courseid,
+                "sectionName": self.sectionName
+                }
+    def getsectionid(self):
+        return self.sectionid
+    
 class Classes(db.Model):
     __tablename__ = 'class'
 
@@ -310,6 +334,11 @@ class Pre_Requisites (db.Model):
             "prerequisites_cid": self.prerequisites_cid,
             "for_cid": self.for_cid
         }
+    def getForCid(self):
+        return self.for_cid
+    
+    def getPreRequisite(self):
+        return self.prerequisites_cid
         
 # all routes
 @app.route("/engineer")
@@ -375,7 +404,7 @@ def getCourse():
 @app.route("/course/<int:cid>")
 def getCourseByCid(cid):
 
-    courselist = Course.query.filter_by(cid=cid).first()
+    courselist = db.session.query(Course).filter(Course.cid==cid).first()
     if courselist != None:
         return jsonify(
             {
@@ -391,6 +420,51 @@ def getCourseByCid(cid):
             "message": "There are no courses."
         }
     ), 404
+
+@app.route("/section/<int:cid>")
+def getSectionsByCid(cid):
+
+    resultlist = db.session.query(Section).filter(Section.courseid==cid).all()
+    print(resultlist)
+    if resultlist != None:
+        print(type(resultlist))
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "section": [result.json() for result in resultlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no sections in course id"+str(cid)
+        }
+    ), 404
+    
+@app.route("/create/section/<int:sectionid>/course/<int:cid>/classid/<int:classid>")
+def createSectionsByCid(sectionid,cid,classid):
+    sectionname = 'Section ' + str(sectionid)
+    addsection = Section(sectionid,classid,cid,sectionname)
+    try:
+        db.session.add(addsection)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while creating the section. " + str(e)
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "section":  addsection.getsectionid()
+        }
+    )
 
 
 @app.route("/course_trainer/cid/<int:cid>")
@@ -454,6 +528,28 @@ def getCourseEnrolledByEid(eid):
             "message": "There are no course enrolled for engineer id: "+str(eid) + '.'
         }
     ), 404
+    
+@app.route("/Course_Enrolled/info/eid/<int:eid>")
+def getCourseEnrolledInfoByEid(eid):
+
+    courseinfolist = db.session.query(Course,Course_Enrolled)\
+        .filter(and_(Course.cid==Course_Enrolled.cid, Course_Enrolled.eid==eid)).all()
+    if courseinfolist != None:
+        print(courseinfolist)
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "courses": [course.json() for (course,courseenrolled) in courseinfolist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no course enrolled for engineer id: "+str(eid) + '.'
+        }
+    ), 404
 
 
 @app.route("/Engineer/getAllEid/<int:i_cid>")
@@ -461,7 +557,7 @@ def getListOfEnrolledAndUnenrolled(i_cid):
 
     returnlist = db.session.query(Engineer, Course_Enrolled).\
         outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid)\
-        .filter(or_(Course_Enrolled.cid == None, Course_Enrolled.cid == i_cid)).all()
+        .filter( or_(Course_Enrolled.cid == None, Course_Enrolled.cid == i_cid) ).all()
     if len(returnlist):
         return jsonify(
             {
@@ -613,6 +709,9 @@ def uploadMaterials():
     formDict = formData.to_dict()
     material1 = request.files
     name = formDict['name']
+    courseid = formDict['courseid']
+    classid = formDict['classid']
+    sectionid = formDict['sectionid']
     # create unique file name
     fileext = name.split('.')[-1]
     namewoext = name.split('.')[:-1]
@@ -621,7 +720,7 @@ def uploadMaterials():
     # save file
     material1['material'].save(os.path.join(uploads_dir,secure_filename(finalfilename) ))
     
-    addtodb = Material(0,finalfilename,None,False,1,1,1)
+    addtodb = Material(0,finalfilename,None,False,classid,courseid,sectionid)
         
     try:
         db.session.add(addtodb)
@@ -651,7 +750,11 @@ def uploadLink():
     formData = request.form
     formDict = formData.to_dict()
     link = formDict['link']
-    addtodb = Material(0,None,link,False,1,1,1)
+    courseid = formDict['courseid']
+    classid = formDict['classid']
+    sectionid = formDict['sectionid']
+    print('section: ',sectionid)
+    addtodb = Material(0,None,link,False,classid,courseid,sectionid)
         
     try:
         db.session.add(addtodb)
@@ -676,15 +779,23 @@ def uploadLink():
         ),201
 
 # retrieve materials
-@app.route("/retrieve/materials/<int:courseid>")
-def retrieveMaterials(courseid):
-    result = db.session.query(Material).filter(Material.courseid==courseid).order_by(Material.sectionid.desc()).all()
+@app.route("/retrieve/materials/<int:courseid>/class/<int:classid>")
+def retrieveMaterials(courseid,classid):
+    result = db.session.query(Material).filter(and_(Material.courseid==courseid,\
+        Material.classid==classid)).order_by(Material.sectionid).all()
     if result != None:
+        newformat = {}
+        for material in result:
+            currentsectionid = 'Section '+str(material.getSectionId())
+            if currentsectionid not in newformat.keys():
+                newformat[currentsectionid] = [material.json()]
+            else:
+                newformat[currentsectionid].append(material.json())
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [('Sectionid ',material.getSectionId(),material.json()) for material in result]
+                    "result": newformat
                 }
             }
         )
@@ -810,6 +921,35 @@ def retrieveCompletedByEid(eid):
         {
             "code": 404,
             "message": "Engineer " + str(eid) + " has not completed any courses which have pre-requisites."
+        }
+    ), 404
+    
+@app.route("/courseEligible/learner/<int:i_eid>")
+def retrieveEligibleCourseByEid(i_eid):
+    # all courses that has prereq learners can take
+    allcoursewprereq = db.session.query(Pre_Requisites.for_cid)\
+        .filter(and_(Course_Completed.cid==Pre_Requisites.prerequisites_cid,\
+            Course_Completed.eid==i_eid)).subquery()
+    
+    coursesCannotTake = db.session.query(Course.cid)\
+        .filter(and_(Course.cid==Pre_Requisites.for_cid,\
+            Course.cid.notin_(allcoursewprereq))).subquery()
+    
+    result = db.session.query(Course).filter(Course.cid.notin_(coursesCannotTake) ).all()
+    print(result)
+    if result != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": [ course.json() for course in result]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Engineer " + str(i_eid) + " has not completed any courses which have pre-requisites."
         }
     ), 404
     

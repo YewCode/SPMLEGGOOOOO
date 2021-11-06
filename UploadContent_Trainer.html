@@ -92,8 +92,9 @@
 
                                 <span class="input-group-text" id="inputGroup-sizing-sm">URL: </span>
                                 <input type="text" class="form-control" aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-sm"   placeholder="Insert Training Material link here. eg. Youtube"
-                                   v-model='onlinematerial' >
+                                    aria-describedby="inputGroup-sizing-sm"
+                                    placeholder="Insert Training Material link here. eg. Youtube"
+                                    v-model='onlinematerial'>
                             </div>
                         </div>
 
@@ -124,6 +125,7 @@
             <section id="subHeader" class="sectionPadding"></section>
 
             <div class="container">
+                <h2>File (Only in PDF and Docx/Doc format)</h2>
                 <div class="row">
                     <table>
                         <tr>
@@ -145,19 +147,27 @@
                         </tr>
                     </table>
                     <br />
+                    <br />
+                    <br />
+                    <h2>Video Links</h2>
                     <table>
                         <tr>
                             <th class="col-md-6 col-sm-12">
-                                <h6>Link</h6>
-                            </th>
-                            <th class="col-md-6 col-sm-12">
                                 <h6>Preview</h6>
                             </th>
-                           
+                            <th class="col-md-6 col-sm-12">
+                            </th>
+
                         <tr v-for='(link, i) in linklist'>
-                            <td>{{ link }}</td>
-                            <td><iframe width="420" height="315" :src="link">
-                                </iframe></td>
+                            <td class="col-md-8 col-sm-12">
+                                <iframe width="420" height="315" :src="link.new" title="YouTube video player"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen></iframe>
+                            </td>
+                            <td class="col-md-2 col-sm-12">
+                                <button type="button" class="btn btn-link" @click="deleteRowLink(i)">Delete</button>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -184,11 +194,14 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
-    async function processaddingproducts(url, docfile) {
+    async function processaddingproducts(url, docfile, classid, courseid, sectionid) {
         var formData = new FormData();
 
         formData.append("material", docfile);
         formData.append("name", docfile.name);
+        formData.append("classid", classid);
+        formData.append("courseid", courseid);
+        formData.append("sectionid", sectionid);
 
         const response = await fetch(url, {
             body: formData,
@@ -204,6 +217,10 @@
             console.log('response ok');
             data = await response.json();
             console.log(data);
+            if (data.code == '200') {
+                alert('Document Successfully added');
+                
+            }
 
 
         } else {
@@ -213,10 +230,15 @@
 
     }
 
-    async function processaddlink(url, link) {
+    async function processaddlink(url, link, classid, courseid, sectionid) {
         var formData = new FormData();
 
         formData.append("link", link);
+        formData.append("classid", classid);
+        formData.append("courseid", courseid);
+        formData.append("sectionid", sectionid);
+
+
 
         const response = await fetch(url, {
             body: formData,
@@ -232,6 +254,9 @@
             console.log('response ok');
             data = await response.json();
             console.log(data);
+            if (data.code == '200') {
+                alert('Link Successfully added')
+            }
 
 
         } else {
@@ -242,7 +267,7 @@
     }
 
 
-    var accepted_ext = ['doc', 'docx', 'pdf','DOC','DOCX','PDF'];
+    var accepted_ext = ['doc', 'docx', 'pdf', 'DOC', 'DOCX', 'PDF'];
     const app1 = new Vue({
         el: "#App1",
         data: {
@@ -251,7 +276,10 @@
             file: '',
             filelist: [],
             onlinematerial: '',
-            linklist: []
+            linklist: [],
+            courseNo: '',
+            classNo: '',
+            sectionNo: ''
         },
         methods: {
             uploadfiles: function () {
@@ -276,36 +304,67 @@
 
                 }//end upload file function
             },
-            uploadlink:function(){
+            uploadlink: function () {
                 console.log('click upload link');
-                console.log(this.onlinematerial);
-                if (this.onlinematerial != ''){
-                    this.linklist.push(this.onlinematerial);
+                if (this.onlinematerial != '') {
+
+                    newlink = this.onlinematerial;
+                    if (newlink.includes('youtube')) {
+                        newlink = newlink.replaceAll('watch?v=', 'embed/');
+                        console.log(newlink)
+                        newlinklist = newlink.split('&');
+                        newlink = newlinklist[0];
+                    }else{
+                        newlink = this.onlinematerial;
+                    }
+
+                    this.linklist.push({
+                        "new": newlink,
+                        "old": this.onlinematerial
+                    });
                 }
-                
+
             },
-            testfunc :function(){
+            testfunc: function () {
                 console.log('test')
             },
             deleteRow: function (index) {
                 this.doclist.splice(index, 1);
                 this.filelist.splice(index, 1);
             },
+            deleteRowLink: function (index) {
+                this.linklist.splice(index, 1);
+            },
             onSubmit: function () {
                 //when submit
                 console.log(this.doclist)
                 console.log(this.filelist)
-                onlinematerial_url = 'http://127.0.0.1:5000/upload/material';
+                console.log(this.linklist)
+                material_url = 'http://127.0.0.1:5000/upload/material';
+                link_url = 'http://127.0.0.1:5000/upload/link';
                 for (docfile of this.filelist) {
                     console.log(docfile);
-                    processaddingproducts(onlinematerial_url, docfile);
+                    processaddingproducts(material_url, docfile, this.classNo, this.courseNo,this.sectionNo);
                 }
-
+                for (link of this.linklist) {
+                    console.log(link);
+                    processaddlink(link_url, link['new'], this.classNo, this.courseNo,this.sectionNo);
+                }
+                window.location.href = "manageLearner.html?courseNum=" + courseid;
 
             }
         },//end methods
-        // mounted: function () {
-        //     //    mounted
-        // }//end mounted
+        mounted: function () {
+            //    mounted
+            // window.location get the url string after ? 
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            this.courseNo = urlParams.get('courseNum')
+            this.classNo = urlParams.get('classNum')
+            this.sectionNo = urlParams.get('sectionNum')
+            console.log(this.courseNo)
+            console.log(this.classNo)
+            console.log(this.sectionNo)
+        }//end mounted
     });
 </script>

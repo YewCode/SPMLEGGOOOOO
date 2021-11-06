@@ -5,14 +5,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Management Home</title>
+    <title>View Enrolled course</title>
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+
+    <!-- Vue Dev -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 </head>
 
 <body>
@@ -69,81 +78,156 @@
             </div>
         </div>
     </nav>
-    <section id="header" class="pageTitlePad">
-        <h1>Learner's Enrolled Course View</h1>
-    </section>
+    <div id='app1'>
+        <section id="header" class="pageTitlePad">
+            <h1>My Enrolled Courses</h1>
+        </section>
 
-    <section id="subHeader" class="sectionPadding">
-        <div class="container">
-            <!-- need to fetch data here? -->
-            <div class="row" id="search">
-                <div class="col-md-4 col-sm-12">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Search for Course"
-                            aria-label="Search for Course" aria-describedby="searchCourse">
-                        <button class="btn btn-outline-secondary" type="button" id="searchCourse"><i
-                                class="bi bi-search"></i></button>
+        <section id="subHeader" class="sectionPadding">
+            <div class="container">
+                <!-- need to fetch data here? -->
+                <div class="row" id="search">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Search for Course"
+                                aria-label="Search for Course" aria-describedby="searchCourse">
+                            <button class="btn btn-outline-secondary" type="button" id="searchCourse"><i
+                                    class="bi bi-search"></i></button>
+                        </div>
                     </div>
                 </div>
+                <br />
+                <br />
+                <!--    loop this part -->
+                <div class="row">
+                    <div class="col-md-3 col-sm-12">
+                        <div class="rect " style="height: 150px;width: 250px;background-color: #555;"></div>
+                    </div>
+                    <!-- NEed to loop this part too  -->
+                    <div class="col-8">
+                        <h4>Course Name</h4>
+                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit! Vero
+                            blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
+                            quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit
+                            amet
+                            consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
+                            tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos
+                            ut
+                            architecto dolorum quas libero?</p>
+                        <a class="btn btn-primary" href='ContentView_Learner.html'>View Course Materials</a>
+
+                    </div>
+
+
+
+                </div>
+                <br />
+                <!-- example of looped -->
+                <div class="row">
+                    <div class="col-md-3 col-sm-12">
+                        <div class="rect " style="height: 150px;width: 250px;background-color: #555;"></div>
+                    </div>
+
+                    <!-- NEed to loop this part too  -->
+                    <div class="col-8">
+                        <h4>Course Name 2</h4>
+                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit! Vero
+                            blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
+                            quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit
+                            amet
+                            consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
+                            tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos
+                            ut
+                            architecto dolorum quas libero?</p>
+                        <a class="btn btn-primary" href='ContentView_Learner.html'>View Course Materials</a>
+
+                    </div>
+                    <!-- end course 2 -->
+
+
+                </div>
             </div>
-            <br/>
-            <br/>
-            <!--    loop this part -->
-            <div class="row">
-                <div class="col-md-3 col-sm-12">
-                    <div class="rect " style="height: 150px;width: 250px;background-color: #555;"></div>
-                </div>
-                <!-- NEed to loop this part too  -->
-                <div class="col-8">
-                    <h4>Course Name</h4>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit! Vero
-                        blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
-                        quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit amet
-                        consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
-                        tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos ut
-                        architecto dolorum quas libero?</p>
-                        <a class="btn btn-primary" href='ContentView_Learner.html' >View Course Materials</a>
-                     
-                </div>
-                
+        </section>
+
+        <section>
+
+        </section>
+    </div>
+    <script>
+        const app = new Vue({
+            el: "#app1",
+            data: {
+                courseList: [],
+                eID: '',
+                eDetails: [],
+                eName: "",
+                completedList: [],
+                availableList: [],
+
+            },
+            computed: {
+                getName: function () {
+                    for (item of this.eDetails) {
+                        this.eName = item.name;
+                        break;
+                    }
+                    return this.eName;
+                },
+
+                availableCourses: function () {
+                    for (c of this.courseList) {
+                        for (c_Comp of this.completedList) {
+                            if (c_Comp.prerequisites_cid != c.cid) {
+                                this.availableList.push(c.cid)
+                            }
+                        }
+                    }
+                    return this.availableList;
+                }
+
+            },
+            mounted: function () {
+                //temp code: add session
+                sessionStorage.setItem('usertype', 'learner');
+                sessionStorage.setItem('eid', 1);
+
+                //get session from engineer
+                var usertype = sessionStorage.getItem('usertype');
+                var engineerid = parseInt(sessionStorage.getItem('eid'));
+                console.log(usertype);
+                console.log(engineerid);
+                this.eID = engineerid;
+                console.log(typeof(this.eID))
+
+                axios.get('http://127.0.0.1:5000/Course_Enrolled/info/eid/' + this.eID)
+                    .then(response => {
+                        this.courseList = response.data.data.courses;
+                    })
+                    .catch(error => {
+                        alert("Course data not loaded properly from database"); // Logic to handle pre-requisite check not done yet because no session id is tracked
+                    });
+                // console.log(this.courseList);
 
 
-            </div>
-            <br/>
-            <!-- example of looped -->
-            <div class="row">
-                <div class="col-md-3 col-sm-12">
-                    <div class="rect " style="height: 150px;width: 250px;background-color: #555;"></div>
-                </div>
 
-                <!-- NEed to loop this part too  -->
-                <div class="col-8">
-                    <h4>Course Name 2</h4>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit! Vero
-                        blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
-                        quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit amet
-                        consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
-                        tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos ut
-                        architecto dolorum quas libero?</p>
-                        <a class="btn btn-primary" href='ContentView_Learner.html' >View Course Materials</a>
-                     
-                </div>
-                <!-- end course 2 -->
+                axios.get('http://127.0.0.1:5000/engineer/' + this.eID)
+                    .then(response => {
+                        this.eDetails = response.data.data.engineers;
+                    })
+                    .catch(error => {
+                        alert("Error retrieving engineer information")
+                    });
 
-
-            </div>
-        </div>
-    </section>
-
-    <section>
-
-    </section>
-
-
-
-
-
-
+                axios.get('http://127.0.0.1:5000/coursecompleted/' + this.eID)
+                    .then(response => {
+                        this.completedList = response.data.data.result
+                    })
+                    .catch(error => {
+                        alert("Error retrieving pre-requisite and completed course data")
+                    })
+            }
+        });
+    </script>
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
