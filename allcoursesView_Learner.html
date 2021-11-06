@@ -89,12 +89,12 @@
                     <h3>Welcome {{getName}}</h3>
                 </div>
 
-                <div>
-                    {{completedList}}
+                <div style="display: none;">
+                    {{getCompleted}}
                 </div>
 
                 <!--  loop this part -->
-                <div v-for="course in courseList" class="row py-3">
+                <div v-for="course in availableList" class="row py-3">
                     <div class="col-3">
                         <!-- <div class="rect" style="height: 150px;width: 250px;background-color: #555;"></div> -->
                         <img class="w-100" :src="course.courseimg" alt="images/placeholder.jpg">
@@ -104,6 +104,19 @@
                         <h4> {{course.coursename}} </h4>
                         <p> {{course.coursedescription}} </p>
                         <button type="button" class="btn btn-primary">Enroll Now</button>
+                    </div>
+                </div>
+
+                <div v-for="course in finishedList" class="row py-3">
+                    <div class="col-3">
+                        <!-- <div class="rect" style="height: 150px;width: 250px;background-color: #555;"></div> -->
+                        <img class="w-100" :src="course.courseimg" alt="images/placeholder.jpg">
+                    </div>
+                    <!-- Need to loop this part too  -->
+                    <div class="col-9">
+                        <h4> {{course.coursename}} </h4>
+                        <p> {{course.coursedescription}} </p>
+                        <button class="badge bg-success">Completed</button>
                     </div>
                 </div>
 
@@ -125,12 +138,12 @@
         const app = new Vue({
             el: "#courseApp",
             data: {
-                courseList: [],
                 eID: "",
                 eDetails: [],
                 eName: "",
-                completedList: [], // checks if learner has completed a course and returns the associated (pre-req_cid, for_cid) based on eid
-                availableList: [] // returns the courses that should be viewable by eid
+                availableList: [], // returns the courses that should be viewable by eid
+                completedList: [],
+                finishedList: []
             },
             computed: {
                 getName: function () {
@@ -141,31 +154,20 @@
                     return this.eName;
                 },
 
-                // Check if course pre-reqs are completed for now this does not show completed mods 
-                
-                // completedList shows = {["for_cid": 1, "prereqid": 4]}
-                // availableCourses: function() { // this function retrieves courses completed by the student and returns the pre-reqs satisfied by them to display courses with pre-reqs
-                //     for (c in this.courseList) {
-                //         for (c_Comp in this.completedList) {
-                //             if (this.completedList[c_Comp].cid == this.) {
-                //                 this.availableList.push(this.courseList[c])
-                //             }
-                //         }
-                //     }
-                //     return this.availableList;
-                // }
+                getCompleted: function() {
+                    for (c in this.availableList) {
+                        for (item in this.completedList) {
+                            // console.log(this.completedList[item].completed);
+                            if (this.availableList[c].cid == this.completedList[item].completed.cid) {
+                                this.finishedList.push(this.availableList.pop(c));
+                            }
+                        }
+                    }
+                    return this.finishedList;
+                }
                 
             },
             mounted: function () {
-                axios.get('http://127.0.0.1:5000/course')
-                    .then(response => {
-                        this.courseList = response.data.data.courses;
-                    })
-                    .catch(error => {
-                        alert("Course data not loaded properly from database"); // Logic to handle pre-requisite check not done yet because no session id is tracked
-                    });
-                // console.log(this.courseList);
-
                 // Find parameter to retrieve value being passed over, in this case I want to get courseNum
                 let uri = window.location.href.split('?');
 
@@ -174,6 +176,14 @@
 
                 // Returns the courseNo after the "="
                 this.eID = uri[cNoIndex].substring(3);
+
+                axios.get('http://127.0.0.1:5000/courseEligible/learner/' + this.eID)
+                    .then(response => {
+                        this.availableList = response.data.data.result
+                    })
+                    .catch(error => {
+                        alert("Error retrieving Engineer " + this.eID + "'s available courses")
+                    })
 
                 axios.get('http://127.0.0.1:5000/engineer/' + this.eID)
                     .then(response => {
@@ -185,10 +195,10 @@
 
                 axios.get('http://127.0.0.1:5000/coursecompleted/' + this.eID)
                     .then(response => {
-                        this.completedList = response.data.data.result
+                        this.completedList = response.data.data.result;
                     })
                     .catch(error => {
-                        alert("Error retrieving pre-requisite and completed course data")
+                        alert("Error retrieving Engineer " + this.eID + "'s completed courses")
                     })
             }
         });
