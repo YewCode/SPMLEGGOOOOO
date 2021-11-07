@@ -29,7 +29,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
+                <img src="images/LMS.png" width="50" height="24" class="d-inline-block align-text-top">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -39,7 +39,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="Loginpage.html">Home</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -80,7 +80,7 @@
 
     <div id="classEApp">
         <section id="header" class="pageTitlePad">
-            <h1>Class Enrollment for <span style="color: cornflowerblue">{{cName}}</span> </h1>
+            <h1>Class Enrollment for <span style="color: darkblue">{{cName}}</span> </h1>
         </section>
 
         <section id="subHeader" class="sectionPadding">
@@ -118,7 +118,7 @@
                 <div v-else>
                     <div class="card">
                         <div class="card-body text-center">
-                            <b>You are currently in the pending list waiting to be approved.</b>
+                            <h4 class="card-title">You are currently in the pending list waiting to be approved.</h4>
                             <button class="btn btn-primary" @click="goLearnerHome">Back to homepage</button>
                         </div>
                     </div>
@@ -146,27 +146,7 @@
             learnerEnroll: function (classid) {
                 let confirmation = confirm(`Are you sure you want to enroll into Class ${classid}?`);
 
-                if (confirmation == true) {
-                    axios.post(
-                            `http://127.0.0.1:5000/pending/add/eid/${this.eID}/cid/${classid}`, {
-                                headers: {
-                                    'Content-Type': 'text/plain'
-                                }
-                            }
-                        )
-                        .then(response => {
-                            alert(
-                                `You have been added into the pending list ${this.eName}, awaiting for HR to approve your enrollment`);
-
-                            this.enrollCheck = true;
-                        })
-                        .catch(error => {
-                            alert(error)
-                        })
-                }
-                else {
-                    alert(`You have not been added into the pending list for Class ${classid}`)
-                }
+                
 
             },
             goLearnerHome: function() {

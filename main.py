@@ -619,19 +619,19 @@ def getLearnerClassByCourseID(i_eid,i_courseid):
         }
     ), 404
 
-
+# Get pending list (HR Use)
 @app.route("/pending/<int:i_courseid>")
 def getPendingEnrollmentByCourseID(i_courseid):
     pendinglist = db.session.query(Course_EnrollmentPending, Engineer)\
         .join(Engineer, Engineer.engineerid == Course_EnrollmentPending.eid)\
-        .filter(and_(Course_EnrollmentPending.cid == i_courseid, Course_EnrollmentPending.active == 1)).first()
+        .filter(and_(Course_EnrollmentPending.cid == i_courseid, Course_EnrollmentPending.active == 1)).all()
     # print('pending', pendinglist)
     if len([pendinglist]):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [engineer.json() for (pending, engineer) in [pendinglist]]
+                    "result": [engineer.json() for (pending, engineer) in pendinglist]
                 }
             }
         )
@@ -642,12 +642,14 @@ def getPendingEnrollmentByCourseID(i_courseid):
         }
     ), 404
 
-
+# approve enrollment (HR Use)
 @app.route("/Course_Enrolled/pending/eid/<int:eid>/cid/<int:cid>", methods=['GET', 'POST'])
 def approveLearnersEnrollment(eid, cid):
-    courseenrolling = Course_Enrolled(cid, eid, 1)
+    courseenrolling = Course_Enrolled(cid, eid, 1, None)
     pending = Course_EnrollmentPending.query\
         .filter(and_(cid == cid, eid == eid, Course_EnrollmentPending.active == 1)).first()
+
+    print(pending)
     if pending != None:
         pending.active = 0
     try:

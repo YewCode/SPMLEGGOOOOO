@@ -30,7 +30,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
+                <img src="images/LMS.png" width="50" height="24" class="d-inline-block align-text-top">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -40,7 +40,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="Loginpage.html">Home</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -89,11 +89,19 @@
                     <h3>Welcome {{getName}}</h3>
                 </div>
 
-                <div style="display: none;">
-                    {{getCompleted}}
-                </div>
-
                 <!--  loop this part -->
+                <div v-for="course in enrolledList" class="row py-3">
+                    <div class="col-3">
+                        <!-- <div class="rect" style="height: 150px;width: 250px;background-color: #555;"></div> -->
+                        <img class="w-100" :src="course.courseimg" alt="images/placeholder.jpg">
+                    </div>
+                    <!-- Need to loop this part too  -->
+                    <div class="col-9">
+                        <h4> {{course.coursename}} </h4>
+                        <p> {{course.coursedescription}} </p>
+                        <button class="badge bg-warning" type="button">Enrolled</button>
+                    </div>
+                </div>
                 <div v-for="course in availableList" class="row py-3">
                     <div class="col-3">
                         <!-- <div class="rect" style="height: 150px;width: 250px;background-color: #555;"></div> -->
@@ -103,11 +111,12 @@
                     <div class="col-9">
                         <h4> {{course.coursename}} </h4>
                         <p> {{course.coursedescription}} </p>
-                        <button type="button" class="btn btn-primary" @click="viewClasses(course.cid)">Enroll Now</button>
+                        <button v-if="enrollCheck == false" type="button" class="badge bg-primary"
+                            @click="enrollCourse(course.cid, course.coursename)">Enroll Now</button>
+                        <button v-else type="button" class="badge bg-primary">Pending</button>
                     </div>
                 </div>
-
-                <div v-for="course in finishedList" class="row py-3">
+                <div v-for="course in finishedList[0]" class="row py-3">
                     <div class="col-3">
                         <!-- <div class="rect" style="height: 150px;width: 250px;background-color: #555;"></div> -->
                         <img class="w-100" :src="course.courseimg" alt="images/placeholder.jpg">
@@ -143,7 +152,9 @@
                 eName: "",
                 availableList: [], // returns the courses that should be viewable by eid
                 completedList: [],
-                finishedList: []
+                finishedList: [],
+                enrolledList: [],
+                enrollCheck: false
             },
             computed: {
                 getName: function () {
@@ -154,22 +165,35 @@
                     return this.eName;
                 },
 
-                getCompleted: function() {
-                    for (c in this.availableList) {
-                        for (item in this.completedList) {
-                            // console.log(this.completedList[item].completed);
-                            if (this.availableList[c].cid == this.completedList[item].completed.cid) {
-                                this.finishedList.push(this.availableList.pop(c));
-                            }
-                        }
-                    }
-                    return this.finishedList;
-                }
-                
             },
             methods: {
-                viewClasses: function(cid) {
-                    window.location.href = "ClassEnrollment.html?courseNum=" + cid + "&eid=" + this.eID;
+                // viewClasses: function (cid) {
+                //     window.location.href = "ClassEnrollment.html?courseNum=" + cid + "&eid=" + this.eID;
+                // },
+                enrollCourse: function (cid, cname) {
+                    let confirmation = confirm(`Are you sure you want to Enroll into ${cname}?`);
+
+                    if (confirmation == true) {
+                        axios.post(
+                                `http://127.0.0.1:5000/pending/add/eid/${this.eID}/cid/${cid}`, {
+                                    headers: {
+                                        'Content-Type': 'text/plain'
+                                    }
+                                }
+                            )
+                            .then(response => {
+                                console.log(response);
+                                alert(
+                                    `You have been added into the pending list ${this.eName}, awaiting for HR to approve your enrollment into ${cname}`
+                                );
+                                this.enrollCheck = true;
+                            })
+                            .catch(error => {
+                                alert(error)
+                            })
+                    } else {
+                        alert(`You have not been added into the pending list for ${cname}`)
+                    }
                 }
             },
             mounted: function () {
@@ -182,6 +206,7 @@
                 // Returns the courseNo after the "="
                 this.eID = uri[cNoIndex].substring(3);
 
+                // Get Courses available by checking against pre-reqs
                 axios.get('http://127.0.0.1:5000/courseEligible/learner/' + this.eID)
                     .then(response => {
                         this.availableList = response.data.data.result
@@ -189,7 +214,7 @@
                     .catch(error => {
                         alert("Error retrieving Engineer " + this.eID + "'s available courses")
                     })
-
+                // Get engineer details based on eid
                 axios.get('http://127.0.0.1:5000/engineer/' + this.eID)
                     .then(response => {
                         this.eDetails = response.data.data.engineers;
@@ -197,10 +222,42 @@
                     .catch(error => {
                         alert("Error retrieving engineer information")
                     });
-
+                // Get Completed Courses
                 axios.get('http://127.0.0.1:5000/coursecompleted/' + this.eID)
                     .then(response => {
                         this.completedList = response.data.data.result;
+
+                        for (d in this.availableList) {
+                            for (course in this.completedList) {
+                                if (this.availableList[d].cid == this.completedList[course].completed.cid) {
+                                    let toPush = this.availableList.splice(d,1);
+                                    // console.log(toPush);
+                                    this.finishedList.push(toPush);
+                                    // console.log(this.finishedList)
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        alert("Error retrieving Engineer " + this.eID + "'s completed courses")
+                    })
+                // Get Enrolled courses to display differently
+                axios.get('http://127.0.0.1:5000/Course_Enrolled/info/eid/' + this.eID)
+                    .then(response => {
+                        this.enrolledList = response.data.data.courses;
+
+                        for (c in this.availableList) {
+                            for (item in this.enrolledList) {
+                                // console.log(this.completedList[item].completed);
+                                if (this.availableList[c].cid == this.enrolledList[item].cid) {
+                                    this.availableList.splice(c,1);
+                                    // console.log(this.availableList[c])
+                                }
+                            }
+                        }
+
+                        
+
                     })
                     .catch(error => {
                         alert("Error retrieving Engineer " + this.eID + "'s completed courses")
