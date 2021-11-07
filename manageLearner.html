@@ -163,20 +163,27 @@
             methods: {
                 hrAssignL: function (id) {
                     // alert(typeof(id));
-                    let confirmation = confirm("Are you sure you want to enroll this learner into Class ID " + this.chosenClass + "?");
+                    console.log(this.chosenClass)
+                    if (this.chosenClass != ''){
+                        let confirmation = confirm("Are you sure you want to enroll this learner into Class ID " + this.chosenClass + "?");
 
-                    if (confirmation == true) {
-                        axios.get('/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo + '/class/' + this.chosenClass); // For now this assigns engineer to course, need to handle api for class
+                        if (confirmation == true) {
+                            axios.get('http://127.0.0.1:5000/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo + '/class/' + this.chosenClass); // For now this assigns engineer to course, need to handle api for class
 
-                        alert("Engineer has been enrolled successfully to " + this.courseName); // Works but if use catch method it returns code 500
+                            alert("Engineer has been enrolled successfully to " + this.courseName); // Works but if use catch method it returns code 500
 
-                        location.reload();
+                            location.reload();
+                        }
+                        else {
+                            alert("Engineer " + id + " was not enrolled into " + this.courseName);
+                        }
+                    }else{
+                        alert('Please choose a class first.');
                     }
-                    else {
-                        alert("Engineer " + id + " was not enrolled into " + this.courseName);
-                    }
+                    
                 },
                 updateCap: function() {
+                    console.log(this.chosenClass)
                     if (this.chosenClass == "") {
                         this.classCapacity = "";
                     }
