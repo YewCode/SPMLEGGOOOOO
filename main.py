@@ -535,7 +535,6 @@ def getCourseEnrolledInfoByEid(eid):
     courseinfolist = db.session.query(Course,Course_Enrolled)\
         .filter(and_(Course.cid==Course_Enrolled.cid, Course_Enrolled.eid==eid)).all()
     if courseinfolist != None:
-        print(courseinfolist)
         return jsonify(
             {
                 "code": 200,
@@ -591,6 +590,28 @@ def getclassByCourseID(i_courseid):
                 }
             }
         )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no classs."
+        }
+    ), 404
+@app.route("/class/engineer/<int:i_eid>/course/<int:i_courseid>")
+def getLearnerClassByCourseID(i_eid,i_courseid):
+    classlist = db.session.query(Classes)\
+        .filter(and_(Course_Enrolled.cid == Classes.courseid, Course_Enrolled.classid == Classes.classid))\
+        .filter(Engineer.engineerid == Course_Enrolled.eid)\
+        .filter(Classes.courseid == i_courseid).all()
+    print(classlist)
+    if len(classlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "classes": [ classs.json() for classs in classlist]
+                }
+            }
+        ),200
     return jsonify(
         {
             "code": 404,
