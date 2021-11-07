@@ -103,7 +103,7 @@
                     <div class="col-9">
                         <h4> {{course.coursename}} </h4>
                         <p> {{course.coursedescription}} </p>
-                        <button type="button" class="btn btn-primary">Enroll Now</button>
+                        <button type="button" class="btn btn-primary" @click="viewClasses(course.cid)">Enroll Now</button>
                     </div>
                 </div>
 
@@ -166,6 +166,11 @@
                     return this.finishedList;
                 }
                 
+            },
+            methods: {
+                viewClasses: function(cid) {
+                    window.location.href = "ClassEnrollment.html?courseNum=" + cid + "&eid=" + this.eID;
+                }
             },
             mounted: function () {
                 // Find parameter to retrieve value being passed over, in this case I want to get courseNum
