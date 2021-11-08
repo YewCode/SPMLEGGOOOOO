@@ -843,19 +843,21 @@ def addNewQuiz():
         db.session.commit()
     except Exception as e:
         print(e)
+        
+    newlyadded = db.session.query(Quiz)\
+        .filter(and_(Quiz.courseid==formdict['courseid'],\
+            Quiz.classid==formdict['classid'],\
+                Quiz.sectionid==formdict['sectionid'])).order_by(Quiz.quizid).first()
+    if newlyadded != None:
         return jsonify(
             {
-                "code": 500,
-                "message": "An error occurred while adding quiz :" + str(e)
-            }
-        ), 500
-    return jsonify(
-            {
                 "code": 200,
-                "message": 'added successfully',
-                "enrolled":  newQuiz.json()
+                "message": 'added quiz successfully',
+                "quiz":  newlyadded.json()
             }
         ),201
+        
+    
 
 #add new quiz questions
 @app.route("/quiz/questions/add/<int:quizid>",methods=['GET','POST'])
