@@ -598,10 +598,10 @@ def getclassByCourseID(i_courseid):
     ), 404
 @app.route("/class/engineer/<int:i_eid>/course/<int:i_courseid>")
 def getLearnerClassByCourseID(i_eid,i_courseid):
-    classlist = db.session.query(Classes)\
-        .filter(and_(Course_Enrolled.cid == Classes.courseid, Course_Enrolled.classid == Classes.classid))\
-        .filter(Engineer.engineerid == Course_Enrolled.eid)\
-        .filter(Classes.courseid == i_courseid).all()
+    classlist = db.session.query(Classes, Engineer, Course_Enrolled)\
+        .filter(and_(Classes.courseid == i_courseid , Classes.classid==Course_Enrolled.classid,\
+            Classes.courseid==Course_Enrolled.cid,\
+            Engineer.engineerid==Course_Enrolled.eid, Engineer.engineerid==i_eid) ).all()
     print(classlist)
     if len(classlist):
         return jsonify(
@@ -614,10 +614,12 @@ def getLearnerClassByCourseID(i_eid,i_courseid):
         ),200
     return jsonify(
         {
-            "code": 404,
-            "message": "There are no classs."
+            "code": 200,
+            "data": {
+                    "classes": []
+                }
         }
-    ), 404
+    )
 
 # Get pending list (HR Use)
 @app.route("/pending/<int:i_courseid>")

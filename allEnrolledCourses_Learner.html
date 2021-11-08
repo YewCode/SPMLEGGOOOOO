@@ -153,7 +153,19 @@
             },
             methods: {
                 //
+                getClassApi: function (eid,courseID) {
+                    axios.get('http://127.0.0.1:5000/class/engineer/' + eid + '/course/' + courseID)
+                        .then(response => {
+                            console.log('getClass')
+                            console.log(response)
 
+                            resultlist = response.data.data.classes
+                            this.classlist.push(resultlist)
+                        })
+                        .catch(error => {
+                            alert("Error retrieving pre-requisite and completed course data")
+                        })
+                }
             },
             mounted: function () {
                 //temp code: add session

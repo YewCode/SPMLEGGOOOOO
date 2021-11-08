@@ -173,7 +173,36 @@
         }
     </script>
 
+ <script>
+    // Vue App 1
+    const app1 = new Vue({
+      el: "#app1",
+      data: {
+        courseNo: "",
+        classNo: "",
+        course: "",
+        sectionlist: [],
+        uploadurl: '',
+        materiallist: {},
+        changing: ''
+      },
+      methods: {
+        
+      },
+      mounted: function () {
 
+        // window.location get the url string after ? 
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        this.courseNo = urlParams.get('courseNum')
+        this.classNo = urlParams.get('classNum')
+        console.log(this.courseNo)
+        console.log(this.classNo)
+
+        
+      }
+    });
+  </script>
 
 
 
