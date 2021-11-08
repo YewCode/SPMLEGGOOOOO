@@ -236,9 +236,8 @@ class Quiz (db.Model):
     timelimit = db.Column(db.String(50))
     isHidden = db.Column(db.Integer)
     passing_requirements = db.Column(db.Float(precision=2))
-    isGraded = db.Column(db.Integer)
 
-    def __init__(self, quizid, courseid,classid, sectionid,quiz_name,timelimit, isHidden, passing_requirements, isGraded):
+    def __init__(self, quizid, courseid,classid, sectionid,quiz_name,timelimit, isHidden, passing_requirements):
         self.quizid = quizid
         self.courseid = courseid
         self.classid = classid
@@ -247,7 +246,6 @@ class Quiz (db.Model):
         self.timelimit = timelimit
         self.isHidden = isHidden
         self.passing_requirements = passing_requirements
-        self.isGraded = isGraded
 
     def json(self):
         return {
@@ -258,8 +256,7 @@ class Quiz (db.Model):
             "quiz_name": self.quiz_name,
             "timelimit": self.timelimit,
             "isHidden": self.isHidden,
-            "passing_requirements": self.passing_requirements,
-            "isGraded": self.isGraded   
+            "passing_requirements": self.passing_requirements
         }
         
 class Question (db.Model):
@@ -838,7 +835,7 @@ def addNewQuiz():
     formdict = formdata.to_dict()
     print(formdict)
     newQuiz = Quiz(0,formdict['courseid'],formdict['classid'],formdict['sectionid'],formdict['quizname'],\
-        formdict['timelimit'],formdict['isHidden'],formdict['passingreq'],formdict['graded'])
+        formdict['timelimit'],formdict['isHidden'],formdict['passingreq'])
     try:
         db.session.add(newQuiz)
         db.session.commit()
