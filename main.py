@@ -889,7 +889,7 @@ def addNewQuestions(quizid):
 #retreive quiz by id
 @app.route("/quiz/retrieve/<int:quizid>")
 def retrieveQuiz(quizid):
-    result = db.session.query(Quiz).filter(quizid==quizid).first()
+    result = db.session.query(Quiz).filter(Quiz.quizid==quizid).first()
     if result != None:
         return jsonify(
             {
@@ -909,7 +909,7 @@ def retrieveQuiz(quizid):
 #retreive quiz question
 @app.route("/quiz/question/retrieve/<int:quizid>")
 def retrieveQuestion(quizid):
-    result = db.session.query(Question).filter(quizid==quizid).all()
+    result = db.session.query(Question).filter(Question.quizid==quizid).all()
     if result != None:
         return jsonify(
             {
@@ -921,10 +921,12 @@ def retrieveQuestion(quizid):
         )
     return jsonify(
         {
-            "code": 404,
-            "message": "There are no results for quiz id: "+str(quizid) + '.'
+            "code": 200,
+            "data": {
+                    "result": []
+                }
         }
-    ), 404
+    )
         
 @app.route("/coursecompleted/<int:eid>")
 def retrieveCompletedByEid(eid):
