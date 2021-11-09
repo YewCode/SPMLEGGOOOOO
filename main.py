@@ -886,7 +886,7 @@ def addNewQuestions(quizid):
                 "enrolled":  newquestion.json()
             }
         ),201
-#retreive quiz 
+#retreive quiz by id
 @app.route("/quiz/retrieve/<int:quizid>")
 def retrieveQuiz(quizid):
     result = db.session.query(Quiz).filter(quizid==quizid).first()

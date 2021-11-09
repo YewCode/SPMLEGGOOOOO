@@ -120,23 +120,6 @@
                         <button class="btn btn-outline-info" type="button" @click="addQuiz">Add Quiz</button>
                     </section>
             </form>
-            <!-- <section id="questionForm" class="sectionPadding">
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <b>Please indicate if you want to add a t/f or mcq type question before clicking on the
-                            "Add Details" button to fill in the question and answer details.</b>
-                    </div>
-                </div>
-                <div class="row pt-5">
-                    <div class="col-6 text-center">
-                        <input type="radio" name="qType" value="mcq" v-model="selectedQType">MCQ &nbsp; &nbsp;
-                        <input type="radio" name="qType" value="tf" v-model="selectedQType">T/F
-                    </div>
-                    <div class="col-6 text-center">
-                        <button type="button" class="btn btn-outline-primary" @click="showForm">Add
-                            Details</button>
-                    </div>
-                </div> -->
 
             <!-- This displays the type of form depending on the radio box selected -->
             <!-- <component :is="formComponent"></component>
@@ -154,7 +137,7 @@
     </div>
 
 
-   
+
 
     <script>
         Vue.component('mcq-template', {
@@ -195,67 +178,7 @@
 
         })
 
-        Vue.component('mcq-form', {
-            data: function () {
-                return {
-                    mcqTitle: "",
-                    a: "",
-                    b: "",
-                    c: "",
-                    mcqAns: ""
-                }
-            },
-            // methods: {
-            //     addMCQ: function() {
-
-            //     }
-            // },
-            template: `
-            <div class="py-3">
-                <label for="mcqTitle" class="form-label">Question title:</label>
-                <input class="form-control" id="mcqTitle" type="text" v-model="mcqTitle">
-
-                <label for="option1" class="form-label">Option 1:</label>
-                <input class="form-control" id="option1" type="text" v-model="a">
-
-                <label for="option2" class="form-label">Option 2:</label>
-                <input class="form-control" id="option2" type="text" v-model="b">
-
-                <label for="option3" class="form-label">Option 3:</label>
-                <input class="form-control" id="option3" type="text" v-model="c">
-
-                <label for="mcqans" class="form-label">Answer (Please type out the entire answer and not just indicate the value):</label>
-                <input class="form-control" id="mcqans" type="text" v-model="mcqAns">
-
-                <button type="button" class="btn-success mt-3" @click="addMCQ">Done</button>
-            </div>
-            `
-        })
-
-        Vue.component('tf-form', {
-            data: function () {
-                return {
-                    tfTitle: "",
-                    tfAns: ""
-                }
-            },
-            // methods: {
-            //     addTF: function() {
-
-            //     }
-            // },
-            template: `
-            <div class="py-3">
-                <label for="tftitle" class="form-label">Question title:</label>
-                <input class="form-control" id="tftitle" type="text" v-model="tfTitle">
-
-                <label for="option1" class="form-label">Answer (Please type out True or False):</label>
-                <input class="form-control" id="option1" type="text" v-model="tfAns">
-
-                <button type="button" class="btn-success mt-3" @click="addTF">Done</button>
-            </div>
-            `
-        })
+        
 
         async function addNewQuiz(courseid, classid, secid, quiztitle, selectedtime, ishidden, selectedcriteria) {
             var formData = new FormData();
@@ -279,11 +202,11 @@
                 redirect: "follow"
             });
             if (response.status >= 200 && response.status < 300) {
-                console.log('response ok');
+                // console.log('response ok');
                 data = await response.json();
-                console.log(data);
+                // console.log(data);
                 if (data.code == '200') {
-                    alert('Quiz added successfully!');
+                    // alert('Quiz added successfully!');
 
                 } else {
                     console.log(response);
@@ -305,39 +228,30 @@
                 formComponent: "",
                 secID: 1,
                 classID: 1,
-                courseID: 1
+                courseID: 1,
+                quizID: 1
 
             },
             methods: {
-                showForm: function () {
-                    this.addCounter += 1;
-                    if (this.selectedQType == "mcq") {
-                        this.formComponent = "mcq-form"
-                    } else {
-                        this.formComponent = "tf-form"
-                    }
-                },
 
                 addQuiz: function () {
-<<<<<<< HEAD:quizCreation_Trainer(backup).html
-                    // addNewQuiz(this.courseID, this.classID, this.secID, this.quizTitle, this.selectedTime, 0, this.selectedCriteria);
+                    // console.log("this.courseID, this.classID, this.secID, this.quizTitle, this.selectedTime, 0, this.selectedCriteria");
+                    // console.log(this.courseID, this.classID, this.secID, this.quizTitle, this.selectedTime, 0, this.selectedCriteria);
+                    addNewQuiz(this.courseID, this.classID, this.secID, this.quizTitle, this.selectedTime,
+                        0, this.selectedCriteria);
 
-=======
-                    console.log("this.courseID, this.classID, this.secID, this.quizTitle, this.selectedTime, 0, this.selectedCriteria");
-                    console.log(this.courseID, this.classID, this.secID, this.quizTitle, this.selectedTime, 0, this.selectedCriteria);
-                    addNewQuiz(this.courseID, this.classID, this.secID, this.quizTitle, this.selectedTime, 0, this.selectedCriteria);
->>>>>>> 94c02ff54bff50c99ded0e8f67c2036574e58838:quizCreation_Trainer_backup.html
+                    alert("Quiz Added Successfully!")
 
-
+                    window.location.href = `quizQCreation_Trainer.html?courseNum=${this.courseID}&classNum=${this.classID}&secNum=${this.secID}&quizID=${this.quizID}`
                 }
             },
 
 
         })
     </script>
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
-     integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
- </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
+    </script>
 </body>
 
 
