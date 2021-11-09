@@ -13,6 +13,15 @@
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+
+    <!-- Vue Dev -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -69,140 +78,180 @@
             </div>
         </div>
     </nav>
+    <div id='app1'>
+        <section id="header" class="pageTitlePad">
+            <h1>{{quizinfo.quiz_name}}</h1>
+        </section>
 
-    <section id="header" class="pageTitlePad">
-        <h1>Quiz #1</h1>
-    </section>
-
-    <section id="subHeader">
-        <div class="container">
-            <br />
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Instructions: </h5>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class=row>
-                <p>This quiz contains <u><b>2</b></u> Questions</p>
-                <p>To Pass this quiz, you need to score at least <u><b>50%</b></u></p>
-                <p>Time left: <u><b>00:00</b></u>
-                    <span class=ms-5><button onclick="RetrieveQuiz()" type="button" class="btn btn-success">Start
-                            Quiz</button>
-                    </span>
-                </p>
-            </div>
-
-
-            <div id="Quiz_Name" class="sectionPadding" style="display: none;">
-                <!-- This chunk is test sample -->
-                <h6>1. How are you ? </h6>
-                <br>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="option1">
-                    <label class="form-check-label" for="flexRadioDefault1">
-                        a.Happy
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="option2">
-                    <label class="form-check-label" for="flexRadioDefault2">
-                        b.Sad
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="option3">
-                    <label class="form-check-label" for="flexRadioDefault2">
-                        c.Angry
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="option4">
-                    <label class="form-check-label" for="flexRadioDefault2">
-                        d.Excited
-                    </label>
-                </div>
-                <br>
-
-                <h6>2. I Love SPM </h6>
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="True">
-                <label class="form-check-label" for="flexRadioDefault1">
-                    True
-                </label>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="False">
-                    <label class="form-check-label" for="flexRadioDefault2">
-                        False
-                    </label>
-                </div>
-
-                <!-- Submit Button to trigger modal -->
-                <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin:40px; margin-left:900px;">
-                    Submit Quiz
-                </button>
-
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                Congratulations on completing the quiz.
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-warning">Done</button>
-                            </div>
-                        </div>
+        <section id="subHeader">
+            <div class="container">
+                <br />
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Instructions: </h5>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+            <div class="container">
+                <div class=row>
+                    <p>This quiz contains <u><b>{{questionslist.length}}</b></u> Questions</p>
+                    <p>To Pass this quiz, you need to score at least <u><b>{{quizinfo.passing_requirements}}%</b></u>
+                    </p>
+                    <p>Time left: <u><b>00:00</b></u>
+                        <span class=ms-5><button onclick="RetrieveQuiz()" type="button" class="btn btn-success">Start
+                                Quiz</button>
+                        </span>
+                    </p>
+                </div>
 
+
+                <form id="Quiz_Name" action="#" class="sectionPadding" style="display: none;" >
+                    <div v-for='question in questionslist'>
+                        <!-- This chunk is test sample -->
+                        <h6>{{question.qnNum}}. {{question.qn_Description}}</h6>
+                        <br>
+                        <div class="form-check" v-for='option in optionlist[question.qnNum]'>
+                            <input class="form-check-input" type="radio" :name="question.qnNum" id="option1" :ref='question.qnNum'>
+                            <label class="form-check-label" :for="question.qnNum">
+                                {{option}}
+                            </label>
+                        </div>
+                        <br/>
+                    </div>
+
+                    
+
+
+                    <!-- Submit Button to trigger modal -->
+                    <button type="button"  class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        style="margin:40px; margin-left:900px;" >
+                        Submit Quiz
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Congratulations on completing the quiz.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-warning" @click='submitQuiz()'>Done</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </form> <!-- end quiz section -->
+            </div>
+        </section>
+    </div>
     <script>
         function RetrieveQuiz() {
-            document.getElementById("Quiz_Name").style.display = "";
+            console.log(document.getElementById("Quiz_Name").style.display)
+            document.getElementById("Quiz_Name").style.display = "block";
         }
     </script>
 
- <script>
-    // Vue App 1
-    const app1 = new Vue({
-      el: "#app1",
-      data: {
-        courseNo: "",
-        classNo: "",
-        course: "",
-        sectionlist: [],
-        uploadurl: '',
-        materiallist: {},
-        changing: ''
-      },
-      methods: {
-        
-      },
-      mounted: function () {
+    <script>
+        function startTimer(duration, display) {
+            var timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
 
-        // window.location get the url string after ? 
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        this.courseNo = urlParams.get('courseNum')
-        this.classNo = urlParams.get('classNum')
-        console.log(this.courseNo)
-        console.log(this.classNo)
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        
-      }
-    });
-  </script>
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    timer = duration;
+                }
+            }, 1000);
+        }
+        // Vue App 1
+        const app1 = new Vue({
+            el: "#app1",
+            data: {
+                quizid: "",
+                classNo: "",
+                course: "",
+                questionslist: [],
+                answers: '',
+                quizinfo: {},
+                optionlist: {}
+            },
+            methods: {
+                submitQuiz: function () {
+                    console.log('submitQuiz');
+                    console.log(this.$refs);
+                    console.log(typeof this.$refs);
+                    
+                    // for(let element of this.$refs) {
+                    //      console.log(element);
+                    //     //  console.log(element.value);
+                    // }
+                    for (let i = 1; i < this.questionslist.length ; i++) {
+                        console.log(this.$ref[i])
+                    }
+
+                }
+            },
+            mounted: function () {
+
+                // window.location get the url string after ? 
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                this.quizid = parseInt(urlParams.get('quizid'))
+                console.log(this.quizid)
+
+                axios.get('http://127.0.0.1:5000/quiz/retrieve/' + this.quizid)
+                    .then(response => {
+                        console.log(response.data.data.result);
+                        this.quizinfo = response.data.data.result;
+                    })
+                    .catch(error => {
+
+                        this.quizinfo = []; // Error handling for no response retrieve not done
+                    });
+                if (this.quizinfo != []) {
+                    axios.get('http://127.0.0.1:5000/quiz/question/retrieve/' + this.quizid)
+                        .then(response => {
+                            this.questionslist = response.data.data.result;
+                            qnNo = this.questionslist
+                            if (this.questionslist != []) {
+                                for (question of this.questionslist) {
+                                    options = question.options;
+                                    qnNo = question.qnNum;
+                                    options = options.replace(/['"]+/g, '').toString();
+                                    options = options.split(",");
+                                    this.optionlist[qnNo] = options
+                                }
+                            } else {
+                                alert('No Questions in this quiz')
+                            }
+
+                        })
+                        .catch(error => {
+
+                            this.classList = []; // Error handling for no response retrieve not done
+
+
+                        });
+                }
+
+            }
+        });
+    </script>
 
 
 
