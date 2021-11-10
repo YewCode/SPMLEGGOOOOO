@@ -107,6 +107,8 @@
                         <div class="col-2">
                             <button style="text-align: right" type="button" class="btn btn-outline-dark">My
                                 Progress</button>
+                            <a style="text-align: right" type="button" class="btn btn-outline-dark"
+                                @click='createSection'>Add Section</a>
                         </div>
 
                     </div>
@@ -130,7 +132,8 @@
                                     <div class="row">
                                         <div class="col-8"></div>
                                         <div class="col-3">
-                                            <a class="btn btn-outline-dark" :href=" uploadurl+ '?courseNum='+courseNo+'&classNum='+classNo+'&sectionNum='+section.sectionid"
+                                            <a class="btn btn-outline-dark"
+                                                :href=" uploadurl+ '?courseNum='+courseNo+'&classNum='+classNo+'&sectionNum='+section.sectionid"
                                                 class="btn btn-primary">Upload</a>
                                         </div>
                                     </div>
@@ -138,41 +141,43 @@
                                         <h6>Materials</h6>
                                         <!-- loop materials -->
                                         <!-- {{materiallist[section.sectionName]}} -->
-                                         <div v-for='materialdict of materiallist[section.sectionName]'>
+                                        <div v-for='materialdict of materiallist[section.sectionName]'>
 
                                             <div v-if='showFile(materialdict.filename)'>
-                                                <a  :href="'uploadfiles/'+ 'materialdict.filename'">{{renameFilename(materialdict.filename)}}</a><br/><br/><br/>
+                                                <a
+                                                    :href="'uploadfiles/'+ 'materialdict.filename'">{{renameFilename(materialdict.filename)}}</a><br /><br /><br />
                                             </div>
-                                            <div v-else-if='showURL(materialdict.url)' >
-                                                <iframe width="420" height="315" :src="materialdict.url" title="YouTube video player"
-                                                 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                  allowfullscreen>
-                                                </iframe><br/><br/><br/>
+                                            <div v-else-if='showURL(materialdict.url)'>
+                                                <iframe width="420" height="315" :src="materialdict.url"
+                                                    title="YouTube video player" frameborder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowfullscreen>
+                                                </iframe><br /><br /><br />
                                             </div>
-                                            <div v-else >
+                                            <div v-else>
                                                 <a :href="materialdict.url">{{materialdict.url}}</a>
                                             </div>
 
-                                    </div>
-                                    
+                                        </div>
+
                                         <h6>Quiz</h6>
-                                        <div style="color: #555;">No Quizzes Release Yet 
+                                        <div style="color: #555;">No Quizzes Release Yet
 
+                                        </div>
+
+                                    </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
+
+
+
+
+
                 </div>
-    </div>
-
-
-
-
-
-    </div>
-    </section>
-    </section>
+            </section>
+        </section>
     </div>
 
     <script>
@@ -189,6 +194,28 @@
                 changing: ''
             },
             methods: {
+                createSection: function () {
+                    //onclick create section
+                    console.log(this.sectionlist.at(-1))
+                    confirmmsg = confirm('create ' + this.sectionlist.at(-1).sectionName + ' ?');
+                    if (confirmmsg == true) {
+                        console.log('confirm msg')
+                        currentid = parseInt(this.sectionlist.at(-1).sectionid)
+                        console.log(currentid);
+                        axios.get('http://127.0.0.1:5000/create/section/'+currentid+'/course/'+this.courseNo+'/classid/' +this.classNo )
+                            .then(response => {
+                                newsectionid = response.data;
+                                console.log(response.data)
+                                console.log(newsectionid);
+                                alert('Section '+ newsectionid+' created');
+
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                alert("Error retrieving sections for " + this.courseNo);
+                            })
+                    }
+                },
                 renameFilename: function (file_name) {
                     if (file_name) {
                         console.log(file_name)

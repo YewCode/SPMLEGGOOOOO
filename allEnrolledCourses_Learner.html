@@ -99,53 +99,29 @@
                 <br />
                 <br />
                 <!--    loop this part -->
-                <div class="row">
-                    <div class="col-md-3 col-sm-12">
-                        <div class="rect " style="height: 150px;width: 250px;background-color: #555;"></div>
-                    </div>
-                    <!-- NEed to loop this part too  -->
-                    <div class="col-8">
-                        <h4>Course Name</h4>
-                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit! Vero
-                            blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
-                            quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit
-                            amet
-                            consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
-                            tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos
-                            ut
-                            architecto dolorum quas libero?</p>
-                        <a class="btn btn-primary" href='ContentView_Learner.html'>View Course Materials</a>
-
-                    </div>
+                <div v-for="(course,i) in courseList">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-12">
+                            <img :src='course.courseimg' style="height: 150px;width: 250px;background-color: #555;">
+                        </div>
+                        <!-- NEed to loop this part too  -->
+                        <div class="col-8">
+                            <h4>{{course.coursename}}</h4>
+                            <p>{{course.coursedescription}}</p>
+                            {{classdict}}
+                            <a class="btn btn-primary" >View course material</a>
+                            <!-- href='ContentView_Learner.html' -->
+                        </div>
 
 
 
+                    </div><!-- end of row -->
+                    <br />
+                    <br />
                 </div>
+                <!-- end of loop -->
                 <br />
-                <!-- example of looped -->
-                <div class="row">
-                    <div class="col-md-3 col-sm-12">
-                        <div class="rect " style="height: 150px;width: 250px;background-color: #555;"></div>
-                    </div>
 
-                    <!-- NEed to loop this part too  -->
-                    <div class="col-8">
-                        <h4>Course Name 2</h4>
-                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero, sunt odit! Vero
-                            blanditiis dolorum corporis ea reiciendis, animi repudiandae voluptas perspiciatis similique
-                            quis dolor fugiat. Natus, necessitatibus facere. Voluptatum, enim. Lorem ipsum dolor sit
-                            amet
-                            consectetur adipisicing elit. Repellendus facere dolores necessitatibus magnam maiores totam
-                            tenetur deserunt quidem. Eveniet, quia possimus delectus temporibus repellendus dignissimos
-                            ut
-                            architecto dolorum quas libero?</p>
-                        <a class="btn btn-primary" href='ContentView_Learner.html'>View Course Materials</a>
-
-                    </div>
-                    <!-- end course 2 -->
-
-
-                </div>
             </div>
         </section>
 
@@ -161,7 +137,7 @@
                 eID: '',
                 eDetails: [],
                 eName: "",
-                completedList: [],
+                classdict: {},
                 availableList: [],
 
             },
@@ -172,19 +148,24 @@
                         break;
                     }
                     return this.eName;
-                },
-
-                availableCourses: function () {
-                    for (c of this.courseList) {
-                        for (c_Comp of this.completedList) {
-                            if (c_Comp.prerequisites_cid != c.cid) {
-                                this.availableList.push(c.cid)
-                            }
-                        }
-                    }
-                    return this.availableList;
                 }
 
+            },
+            methods: {
+                //
+                getClassApi: function (eid,courseID) {
+                    axios.get('http://127.0.0.1:5000/class/engineer/' + eid + '/course/' + courseID)
+                        .then(response => {
+                            console.log('getClass')
+                            console.log(response)
+
+                            resultlist = response.data.data.classes
+                            this.classlist.push(resultlist)
+                        })
+                        .catch(error => {
+                            alert("Error retrieving pre-requisite and completed course data")
+                        })
+                }
             },
             mounted: function () {
                 //temp code: add session
@@ -197,11 +178,12 @@
                 console.log(usertype);
                 console.log(engineerid);
                 this.eID = engineerid;
-                console.log(typeof(this.eID))
+                console.log(typeof (this.eID))
 
                 axios.get('http://127.0.0.1:5000/Course_Enrolled/info/eid/' + this.eID)
                     .then(response => {
                         this.courseList = response.data.data.courses;
+                        console.log(this.courseList);
                     })
                     .catch(error => {
                         alert("Course data not loaded properly from database"); // Logic to handle pre-requisite check not done yet because no session id is tracked
@@ -213,18 +195,29 @@
                 axios.get('http://127.0.0.1:5000/engineer/' + this.eID)
                     .then(response => {
                         this.eDetails = response.data.data.engineers;
+                        console.log('end')
+                        for (course of this.courseList) {
+                            courseID = course.cid
+                            axios.get('http://127.0.0.1:5000/class/engineer/' + this.eID + '/course/' + courseID)
+                                .then(response => {
+                                    console.log(response.data.data.classes[0])
+
+                                    resultlist = response.data.data.classes[0]
+                                    this.classdict[resultlist.courseid] = resultlist
+                                    console.log('class dict'+this.classdict)
+                                })
+                                .catch(error => {
+                                    alert("Error retrieving pre-requisite and completed course data")
+                                })
+                        }
+                        console.log(this.classdict)
                     })
                     .catch(error => {
                         alert("Error retrieving engineer information")
                     });
 
-                axios.get('http://127.0.0.1:5000/coursecompleted/' + this.eID)
-                    .then(response => {
-                        this.completedList = response.data.data.result
-                    })
-                    .catch(error => {
-                        alert("Error retrieving pre-requisite and completed course data")
-                    })
+                console.log('test')
+
             }
         });
     </script>

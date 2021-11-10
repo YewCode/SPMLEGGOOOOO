@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 03, 2021 at 06:55 AM
+-- Generation Time: Nov 09, 2021 at 07:21 PM
 -- Server version: 8.0.18
 -- PHP Version: 7.4.0
 
@@ -21,9 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `spmproject`
 --
-DROP Database IF EXISTS `spmproject`;
-Create DATABASE `spmproject`;
-USE `spmproject`;
 
 -- --------------------------------------------------------
 
@@ -89,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `course` (
   `EndDate` date NOT NULL,
   `courseImg` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`CID`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `course`
@@ -119,7 +116,6 @@ CREATE TABLE IF NOT EXISTS `course_completed` (
 -- Dumping data for table `course_completed`
 --
 
--- Assume that eid 1 completed course 4
 INSERT INTO `course_completed` (`CID`, `EID`) VALUES
 (4, 1);
 
@@ -146,6 +142,7 @@ CREATE TABLE IF NOT EXISTS `course_enrolled` (
 INSERT INTO `course_enrolled` (`CID`, `EID`, `active`, `ClassID`) VALUES
 (1, 1, 1, NULL),
 (2, 1, 1, NULL),
+(1, 2, 1, 1),
 (1, 6, 1, NULL),
 (2, 6, 1, NULL);
 
@@ -169,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `course_enrollmentpending` (
 --
 
 INSERT INTO `course_enrollmentpending` (`CID`, `EID`, `active`) VALUES
-(1, 4, 1);
+(1, 4, 0);
 
 -- --------------------------------------------------------
 
@@ -205,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `engineer` (
   `Name` varchar(100) NOT NULL,
   `Role` varchar(100) NOT NULL,
   PRIMARY KEY (`EngineerID`)
-) ;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `engineer`
@@ -222,7 +219,7 @@ INSERT INTO `engineer` (`EngineerID`, `Name`, `Role`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `prerequites`
+-- Table structure for table `prerequisites`
 --
 
 DROP TABLE IF EXISTS `prerequisites`;
@@ -233,10 +230,13 @@ CREATE TABLE IF NOT EXISTS `prerequisites` (
   KEY `for_CID` (`for_CID`)
 ) ;
 
--- Assume cid 4 is pre_req for cid 1
-INSERT INTO `prerequisites`
-VALUES
-(4, 1);
+--
+-- Dumping data for table `prerequisites`
+--
+
+INSERT INTO `prerequisites` (`prerequisites_CID`, `for_CID`) VALUES
+(4, 1),
+(1, 3);
 
 -- --------------------------------------------------------
 
@@ -295,6 +295,14 @@ CREATE TABLE IF NOT EXISTS `question` (
   PRIMARY KEY (`QuizID`,`QnNum`)
 ) ;
 
+--
+-- Dumping data for table `question`
+--
+
+INSERT INTO `question` (`QuizID`, `QnNum`, `Qn_type`, `Qn_Description`, `options`, `answer`) VALUES
+(1, 1, 'MCQ', 'Which of the Following are the Design Process in order?', '\"\'Ask Research Imagine Research Plan Improve\',\'Ask Imagine Improve Research Plan\',\'Ask Research Imagine Plan Improve\'\"', '\'Ask Research Imagine Plan Improve\''),
+(1, 2, 'T/F', 'Carbon arc lamps need frequent adjustment and replacement of carbon rod.', '\"\'True\',\'False\'\"', '\'True\'');
+
 -- --------------------------------------------------------
 
 --
@@ -316,7 +324,14 @@ CREATE TABLE IF NOT EXISTS `quiz` (
   PRIMARY KEY (`QuizID`,`ClassID`,`SectionID`),
   KEY `CourseID` (`CourseID`,`ClassID`),
   KEY `SectionID` (`SectionID`)
-) ;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `quiz`
+--
+
+INSERT INTO `quiz` (`QuizID`, `CourseID`, `ClassID`, `SectionID`, `quiz_name`, `Timelimit`, `isHidden`, `passing_requirements`, `isGraded`, `grades`) VALUES
+(1, 1, 1, 1, 'Class 1 Section 1 Quiz', '10', 0, '60.00', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -328,12 +343,42 @@ DROP TABLE IF EXISTS `quiz_attempt`;
 CREATE TABLE IF NOT EXISTS `quiz_attempt` (
   `EngineerID` int(11) NOT NULL,
   `QuizID` int(11) NOT NULL,
-  `AttemptID` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Attemptid` int(11) NOT NULL,
   `QnNum` int(11) NOT NULL,
   `given_answer` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`EngineerID`,`QuizID`,`AttemptID`,`QnNum`),
-  KEY `QuizID` (`QuizID`,`QnNum`)
-) ;
+  PRIMARY KEY (`id`),
+  KEY `QuizID` (`QuizID`,`QnNum`),
+  KEY `EngineerID` (`EngineerID`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `quiz_attempt`
+--
+
+INSERT INTO `quiz_attempt` (`EngineerID`, `QuizID`, `id`, `Attemptid`, `QnNum`, `given_answer`) VALUES
+(1, 1, 1, 1, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 2, 1, 2, 'True'),
+(1, 1, 3, 1, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 4, 1, 2, 'True'),
+(1, 1, 5, 1, 2, 'True'),
+(1, 1, 6, 1, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 7, 2, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 8, 2, 2, 'True'),
+(1, 1, 9, 3, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 10, 3, 2, 'True'),
+(1, 1, 11, 4, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 12, 4, 2, 'True'),
+(1, 1, 13, 5, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 14, 5, 2, 'True'),
+(1, 1, 15, 6, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 16, 6, 2, 'True'),
+(1, 1, 17, 7, 2, 'True'),
+(1, 1, 18, 7, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 19, 8, 2, 'True'),
+(1, 1, 20, 8, 1, 'Ask Imagine Improve Research Plan'),
+(1, 1, 21, 9, 2, 'True'),
+(1, 1, 22, 9, 1, 'Ask Imagine Improve Research Plan');
 
 -- --------------------------------------------------------
 
@@ -350,13 +395,23 @@ CREATE TABLE IF NOT EXISTS `section` (
   `End_Date` datetime DEFAULT NULL,
   PRIMARY KEY (`SectionID`,`ClassID`,`CourseID`)
 ) ;
-INSERT INTO `spmproject`.`section`
-(`SectionID`,
-`ClassID`,
-`CourseID`,
-`SectionName`)
-VALUES
-(1,1,1, 'Section 1');
+
+--
+-- Dumping data for table `section`
+--
+
+INSERT INTO `section` (`SectionID`, `ClassID`, `CourseID`, `SectionName`, `End_Date`) VALUES
+(1, 1, 1, 'Section 1', NULL),
+(2, 1, 1, 'Section 2', NULL),
+(3, 1, 1, 'Section 3', NULL),
+(4, 1, 1, 'Section 4', NULL),
+(5, 1, 1, 'Section 5', NULL),
+(6, 1, 1, 'Section 6', NULL),
+(7, 1, 1, 'Section 7', NULL),
+(8, 1, 1, 'Section 8', NULL),
+(9, 1, 1, 'Section 9', NULL),
+(10, 1, 1, 'Section 10', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -375,31 +430,18 @@ CREATE TABLE IF NOT EXISTS `training_materials` (
   PRIMARY KEY (`materialid`),
   KEY `CourseID` (`CourseID`,`ClassID`),
   KEY `SectionID` (`SectionID`)
-) ;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `training_materials`
 --
 
 INSERT INTO `training_materials` (`materialid`, `filename`, `url`, `isHidden`, `ClassID`, `CourseID`, `SectionID`) VALUES
-(2, '20211102-173137_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 1),
-(3, '20211102-173204_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 2),
-(4, '20211102-173533_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 1),
-(5, '20211102-173803_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 1),
-(6, '20211102-173928_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 1),
-(7, '20211102-174105_Contextual gaps_privacy issues on ', NULL, 0, 1, 1, 1),
-(8, '20211102-174522_Contextual gaps_privacy issues on ', NULL, 0, 1, 1, 1),
-(9, '20211102-174850_Contextual gaps_privacy issues on ', NULL, 0, 1, 1, 1),
-(10, '20211102-175010_Week 12 Reading List and Questions', NULL, 0, 1, 1, 1),
-(11, '20211102-175334_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 1),
-(12, '20211102-175402_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 1),
-(13, '20211102-175546_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 1),
-(14, '20211102-175734_Session 10 Market Basket Analysis.', NULL, 0, 1, 1, 1),
-(15, '20211102-175823_Lab0-ToolsInstallationGuide.docx', NULL, 0, 1, 1, 1),
-(16, '20211102-175855_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 1),
-(17, '20211102-175922_ESR Slides Week 11.pdf', NULL, 0, 1, 1, 1),
-(18, '20211103-133259_Lab9_WebSecurity.docx', NULL, 0, 1, 1, 1),
-(19, '20211103-133400_Estimation CA (baseline).docx', NULL, 0, 1, 1, 1);
+(20, NULL, 'https://www.youtube.com/embed/btGYcizV0iI', 0, 1, 1, 1),
+(21, '20211106-194624_Introduction.docx', NULL, 0, 1, 1, 1),
+(22, '20211106-200127_Introducing to Electricity.docx', NULL, 0, 1, 1, 1),
+(23, NULL, 'https://www.youtube.com/embed/ru032Mfsfig', 0, 1, 1, 1),
+(24, '20211108-155134_Introducing to Electricity.docx', NULL, 0, 1, 1, 2);
 
 --
 -- Constraints for dumped tables
@@ -448,7 +490,7 @@ ALTER TABLE `course_trainer`
   ADD CONSTRAINT `course_trainer_ibfk_2` FOREIGN KEY (`CID`) REFERENCES `course` (`CID`);
 
 --
--- Constraints for table `prerequites`
+-- Constraints for table `prerequisites`
 --
 ALTER TABLE `prerequisites`
   ADD CONSTRAINT `prerequisites_ibfk_1` FOREIGN KEY (`prerequisites_CID`) REFERENCES `course` (`CID`),
@@ -486,8 +528,9 @@ ALTER TABLE `quiz`
 -- Constraints for table `quiz_attempt`
 --
 ALTER TABLE `quiz_attempt`
-  ADD CONSTRAINT `quiz_attempt_ibfk_1` FOREIGN KEY (`EngineerID`) REFERENCES `engineer` (`EngineerID`),
-  ADD CONSTRAINT `quiz_attempt_ibfk_2` FOREIGN KEY (`QuizID`,`QnNum`) REFERENCES `question` (`QuizID`, `QnNum`);
+  ADD CONSTRAINT `quiz_attempt_ibfk_1` FOREIGN KEY (`QuizID`) REFERENCES `quiz` (`QuizID`),
+  ADD CONSTRAINT `quiz_attempt_ibfk_2` FOREIGN KEY (`EngineerID`) REFERENCES `engineer` (`EngineerID`),
+  ADD CONSTRAINT `quiz_attempt_ibfk_3` FOREIGN KEY (`QuizID`,`QnNum`) REFERENCES `question` (`QuizID`, `QnNum`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

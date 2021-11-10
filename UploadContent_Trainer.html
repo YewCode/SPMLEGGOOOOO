@@ -350,7 +350,7 @@
                     console.log(link);
                     processaddlink(link_url, link['new'], this.classNo, this.courseNo,this.sectionNo);
                 }
-                window.location.href = "manageLearner.html?courseNum=" + courseid;
+                window.location.href = "trainer_viewCourse.html?courseNum=" + this.courseNo+'&classNum='+this.classNo;
 
             }
         },//end methods
