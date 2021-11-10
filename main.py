@@ -185,7 +185,7 @@ class Class_Trainer(db.Model):
     def __init__(self, classid, courseid, eid):
         self.classid = classid
         self.courseid = courseid
-        self.courseid = courseid
+        self.eid = eid
 
     def json(self):
         return {"classid": self.classid, "courseid": self.courseid, "eid": self.eid}
