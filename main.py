@@ -88,14 +88,14 @@ class Course_Enrolled(db.Model):
     active = db.Column(db.String(100), nullable=False)
     classid = db.Column(db.Integer, primary_key=True)
 
-    def __init__(self, cid, eid, active,classid):
+    def __init__(self, cid, eid, active, classid):
         self.cid = cid
         self.eid = eid
         self.active = active
         self.classid = classid
 
     def json(self):
-        return {"cid": self.cid, "eid": self.eid, "active": self.active,"classid": self.classid}
+        return {"cid": self.cid, "eid": self.eid, "active": self.active, "classid": self.classid}
 
 
 class Course_EnrollmentPending(db.Model):
@@ -148,9 +148,11 @@ class Section(db.Model):
                 "courseid": self.courseid,
                 "sectionName": self.sectionName
                 }
+
     def getsectionid(self):
         return self.sectionid
-    
+
+
 class Classes(db.Model):
     __tablename__ = 'class'
 
@@ -189,7 +191,6 @@ class Class_Trainer(db.Model):
         return {"classid": self.classid, "courseid": self.courseid, "eid": self.eid}
 
 
-
 class Material (db.Model):
     __tablename__ = 'training_materials'
 
@@ -220,25 +221,27 @@ class Material (db.Model):
             "courseid": self.courseid,
             "sectionid": self.sectionid,
         }
+
     def getMaterialId(self):
         return self.materialid
-    
+
     def getSectionId(self):
         return self.sectionid
-    
+
+
 class Quiz (db.Model):
     __tablename__ = 'quiz'
-    
+
     quizid = db.Column(db.Integer, primary_key=True)
     courseid = db.Column(db.Integer)
-    classid = db.Column(db.Integer,primary_key=True)
-    sectionid = db.Column(db.Integer,primary_key=True)
+    classid = db.Column(db.Integer, primary_key=True)
+    sectionid = db.Column(db.Integer, primary_key=True)
     quiz_name = db.Column(db.String(50))
     timelimit = db.Column(db.String(50))
     isHidden = db.Column(db.Integer)
     passing_requirements = db.Column(db.Float(precision=2))
 
-    def __init__(self, quizid, courseid,classid, sectionid,quiz_name,timelimit, isHidden, passing_requirements):
+    def __init__(self, quizid, courseid, classid, sectionid, quiz_name, timelimit, isHidden, passing_requirements):
         self.quizid = quizid
         self.courseid = courseid
         self.classid = classid
@@ -259,26 +262,25 @@ class Quiz (db.Model):
             "isHidden": self.isHidden,
             "passing_requirements": self.passing_requirements
         }
-        
+
+
 class Question (db.Model):
     __tablename__ = 'question'
 
-    quizid = db.Column(db.Integer,primary_key=True)
-    qnNum = db.Column(db.Integer,primary_key=True)
+    quizid = db.Column(db.Integer, primary_key=True)
+    qnNum = db.Column(db.Integer, primary_key=True)
     qn_type = db.Column(db.String(100))
     qn_Description = db.Column(db.String(250))
     options = db.Column(db.String(1000))
     answer = db.Column(db.String(100))
-    
 
-    def __init__(self, quizid, qnNum, qn_type,qn_Description,options, answer):
+    def __init__(self, quizid, qnNum, qn_type, qn_Description, options, answer):
         self.quizid = quizid
         self.qnNum = qnNum
         self.qn_type = qn_type
         self.qn_Description = qn_Description
         self.options = options
         self.answer = answer
-        
 
     def json(self):
         return {
@@ -287,35 +289,42 @@ class Question (db.Model):
             "qn_type": self.qn_type,
             "qn_Description": self.qn_Description,
             "options": self.options,
-            "answer": self.answer   
+            "answer": self.answer
         }
-        
+
+
 class Quiz_Attempt (db.Model):
     __tablename__ = 'quiz_attempt'
-    
+
 # EngineerID, QuizID, AttemptID, QnNum, given_answer
-    engineerid = db.Column(db.Integer, primary_key=True)
+    engineerid = db.Column(db.Integer)
     quizid = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True)
     attemptID = db.Column(db.Integer)
     qnNum = db.Column(db.Integer)
     given_answer = db.Column(db.String(250))
-    
 
-    def __init__(self, engineerid, quizid, attemptID,qnNum,given_answer):
+    def __init__(self, engineerid, quizid, id, attemptID, qnNum, given_answer):
         self.engineerid = engineerid
         self.quizid = quizid
+        self.id = id
         self.attemptID = attemptID
         self.qnNum = qnNum
         self.given_answer = given_answer
-        
+
     def json(self):
         return {
             "engineerid": self.engineerid,
             "quizid": self.quizid,
+            "id": self.id,
             "attemptID": self.attemptID,
             "qnNum": self.qnNum,
             "given_answer": self.given_answer
         }
+
+    def getAttemptID(self):
+        return self.attemptID
+
 
 class Pre_Requisites (db.Model):
     __tablename__ = 'prerequisites'
@@ -326,19 +335,22 @@ class Pre_Requisites (db.Model):
     def __init__(self, prerequisites_cid, for_cid):
         self.prerequisites_cid = prerequisites_cid
         self.for_cid = for_cid
-    
+
     def json(self):
         return {
             "prerequisites_cid": self.prerequisites_cid,
             "for_cid": self.for_cid
         }
+
     def getForCid(self):
         return self.for_cid
-    
+
     def getPreRequisite(self):
         return self.prerequisites_cid
-        
+
 # all routes
+
+
 @app.route("/engineer")
 def getAllEngineer():
     engineerlist = Engineer.query.all()
@@ -402,7 +414,7 @@ def getCourse():
 @app.route("/course/<int:cid>")
 def getCourseByCid(cid):
 
-    courselist = db.session.query(Course).filter(Course.cid==cid).first()
+    courselist = db.session.query(Course).filter(Course.cid == cid).first()
     if courselist != None:
         return jsonify(
             {
@@ -419,10 +431,12 @@ def getCourseByCid(cid):
         }
     ), 404
 
+
 @app.route("/section/<int:cid>")
 def getSectionsByCid(cid):
 
-    resultlist = db.session.query(Section).filter(Section.courseid==cid).all()
+    resultlist = db.session.query(Section).filter(
+        Section.courseid == cid).all()
     print(resultlist)
     if resultlist != None:
         print(type(resultlist))
@@ -440,11 +454,12 @@ def getSectionsByCid(cid):
             "message": "There are no sections in course id"+str(cid)
         }
     ), 404
-    
+
+
 @app.route("/create/section/<int:sectionid>/course/<int:cid>/classid/<int:classid>")
-def createSectionsByCid(sectionid,cid,classid):
+def createSectionsByCid(sectionid, cid, classid):
     sectionname = 'Section ' + str(sectionid + 1)
-    addsection = Section(sectionid + 1,classid,cid,sectionname)
+    addsection = Section(sectionid + 1, classid, cid, sectionname)
     try:
         db.session.add(addsection)
         db.session.commit()
@@ -526,18 +541,19 @@ def getCourseEnrolledByEid(eid):
             "message": "There are no course enrolled for engineer id: "+str(eid) + '.'
         }
     ), 404
-    
+
+
 @app.route("/Course_Enrolled/info/eid/<int:eid>")
 def getCourseEnrolledInfoByEid(eid):
 
-    courseinfolist = db.session.query(Course,Course_Enrolled)\
-        .filter(and_(Course.cid==Course_Enrolled.cid, Course_Enrolled.eid==eid)).all()
+    courseinfolist = db.session.query(Course, Course_Enrolled)\
+        .filter(and_(Course.cid == Course_Enrolled.cid, Course_Enrolled.eid == eid)).all()
     if courseinfolist != None:
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "courses": [course.json() for (course,courseenrolled) in courseinfolist]
+                    "courses": [course.json() for (course, courseenrolled) in courseinfolist]
                 }
             }
         )
@@ -554,7 +570,7 @@ def getListOfEnrolledAndUnenrolled(i_cid):
 
     returnlist = db.session.query(Engineer, Course_Enrolled).\
         outerjoin(Course_Enrolled, Course_Enrolled.eid == Engineer.engineerid)\
-        .filter( or_(Course_Enrolled.cid == None, Course_Enrolled.cid == i_cid) ).all()
+        .filter(or_(Course_Enrolled.cid == None, Course_Enrolled.cid == i_cid)).all()
     if len(returnlist):
         return jsonify(
             {
@@ -594,32 +610,36 @@ def getclassByCourseID(i_courseid):
             "message": "There are no classs."
         }
     ), 404
+
+
 @app.route("/class/engineer/<int:i_eid>/course/<int:i_courseid>")
-def getLearnerClassByCourseID(i_eid,i_courseid):
+def getLearnerClassByCourseID(i_eid, i_courseid):
     classlist = db.session.query(Classes, Engineer, Course_Enrolled)\
-        .filter(and_(Classes.courseid == i_courseid , Classes.classid==Course_Enrolled.classid,\
-            Classes.courseid==Course_Enrolled.cid,\
-            Engineer.engineerid==Course_Enrolled.eid, Engineer.engineerid==i_eid) ).all()
+        .filter(and_(Classes.courseid == i_courseid, Classes.classid == Course_Enrolled.classid,
+                     Classes.courseid == Course_Enrolled.cid,
+                     Engineer.engineerid == Course_Enrolled.eid, Engineer.engineerid == i_eid)).all()
     print(classlist)
     if len(classlist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "classes": [ classs.json() for classs in classlist]
+                    "classes": [classs.json() for classs in classlist]
                 }
             }
-        ),200
+        ), 200
     return jsonify(
         {
             "code": 200,
             "data": {
-                    "classes": []
-                }
+                "classes": []
+            }
         }
     )
 
 # Get pending list (HR Use)
+
+
 @app.route("/pending/<int:i_courseid>")
 def getPendingEnrollmentByCourseID(i_courseid):
     pendinglist = db.session.query(Course_EnrollmentPending, Engineer)\
@@ -643,6 +663,8 @@ def getPendingEnrollmentByCourseID(i_courseid):
     ), 404
 
 # approve enrollment (HR Use)
+
+
 @app.route("/Course_Enrolled/pending/eid/<int:eid>/cid/<int:cid>", methods=['GET', 'POST'])
 def approveLearnersEnrollment(eid, cid):
     courseenrolling = Course_Enrolled(cid, eid, 1, None)
@@ -672,13 +694,15 @@ def approveLearnersEnrollment(eid, cid):
     )
 
 # assign learner
+
+
 @app.route("/Course_Enrolled/assign/eid/<int:eid>/cid/<int:cid>/class/<int:classid>", methods=['GET', 'POST'])
-def assignlearners(eid, cid,classid):
+def assignlearners(eid, cid, classid):
     # created the course enrolled row
-    courseenrolling = Course_Enrolled(cid, eid, 1,classid)
+    courseenrolling = Course_Enrolled(cid, eid, 1, classid)
     # check against pending
     pending = Course_EnrollmentPending.query\
-        .filter(and_(cid == cid, eid == eid,classid==classid, Course_EnrollmentPending.active == 1)).first()
+        .filter(and_(cid == cid, eid == eid, classid == classid, Course_EnrollmentPending.active == 1)).first()
     if pending != None:
         pending.active = 0
     try:
@@ -726,6 +750,8 @@ def addPendingEnrollment(eid, cid):
     )
 
 # upload material
+
+
 @app.route("/upload/material", methods=['GET', 'POST'])
 def uploadMaterials():
     formData = request.form
@@ -739,12 +765,14 @@ def uploadMaterials():
     fileext = name.split('.')[-1]
     namewoext = name.split('.')[:-1]
     timestr = time.strftime("%Y%m%d-%H%M%S")
-    finalfilename = str(timestr)+'_'+' '.join(namewoext) +'.'+fileext 
+    finalfilename = str(timestr)+'_'+' '.join(namewoext) + '.'+fileext
     # save file
-    material1['material'].save(os.path.join(uploads_dir,secure_filename(finalfilename) ))
-    
-    addtodb = Material(0,finalfilename,None,False,classid,courseid,sectionid)
-        
+    material1['material'].save(os.path.join(
+        uploads_dir, secure_filename(finalfilename)))
+
+    addtodb = Material(0, finalfilename, None, False,
+                       classid, courseid, sectionid)
+
     try:
         db.session.add(addtodb)
         db.session.commit()
@@ -757,7 +785,8 @@ def uploadMaterials():
             }
         ), 500
 
-    newlyadded = db.session.query(Material).order_by(Material.materialid).first()
+    newlyadded = db.session.query(Material).order_by(
+        Material.materialid).first()
     if newlyadded != None:
         return jsonify(
             {
@@ -765,9 +794,11 @@ def uploadMaterials():
                 "message": 'added successfully',
                 "enrolled":  newlyadded.json()
             }
-        ),201
-        
+        ), 201
+
 # upload link
+
+
 @app.route("/upload/link", methods=['GET', 'POST'])
 def uploadLink():
     formData = request.form
@@ -776,9 +807,9 @@ def uploadLink():
     courseid = formDict['courseid']
     classid = formDict['classid']
     sectionid = formDict['sectionid']
-    print('section: ',sectionid)
-    addtodb = Material(0,None,link,False,classid,courseid,sectionid)
-        
+    print('section: ', sectionid)
+    addtodb = Material(0, None, link, False, classid, courseid, sectionid)
+
     try:
         db.session.add(addtodb)
         db.session.commit()
@@ -791,7 +822,8 @@ def uploadLink():
             }
         ), 500
 
-    newlyadded = db.session.query(Material).order_by(Material.materialid).first()
+    newlyadded = db.session.query(Material).order_by(
+        Material.materialid).first()
     if newlyadded != None:
         return jsonify(
             {
@@ -799,13 +831,15 @@ def uploadLink():
                 "message": 'link added successfully',
                 "enrolled":  newlyadded.json()
             }
-        ),201
+        ), 201
 
 # retrieve materials
+
+
 @app.route("/retrieve/materials/<int:courseid>/class/<int:classid>")
-def retrieveMaterials(courseid,classid):
-    result = db.session.query(Material).filter(and_(Material.courseid==courseid,\
-        Material.classid==classid)).order_by(Material.sectionid).all()
+def retrieveMaterials(courseid, classid):
+    result = db.session.query(Material).filter(and_(Material.courseid == courseid,
+                                                    Material.classid == classid)).order_by(Material.sectionid).all()
     if result != None:
         newformat = {}
         for material in result:
@@ -828,27 +862,26 @@ def retrieveMaterials(courseid,classid):
             "message": "There are no results for cid: "+str(courseid) + '.'
         }
     ), 404
-    
 
 
-# add new Quiz 
-@app.route("/quiz/add",methods=['POST'])
+# add new Quiz
+@app.route("/quiz/add", methods=['POST'])
 def addNewQuiz():
     formdata = request.form
     formdict = formdata.to_dict()
     print(formdict)
-    newQuiz = Quiz(0,formdict['courseid'],formdict['classid'],formdict['sectionid'],formdict['quizname'],\
-        formdict['timelimit'],formdict['isHidden'],formdict['passingreq'])
+    newQuiz = Quiz(0, formdict['courseid'], formdict['classid'], formdict['sectionid'], formdict['quizname'],
+                   formdict['timelimit'], formdict['isHidden'], formdict['passingreq'])
     try:
         db.session.add(newQuiz)
         db.session.commit()
     except Exception as e:
         print(e)
-        
+
     newlyadded = db.session.query(Quiz)\
-        .filter(and_(Quiz.courseid==formdict['courseid'],\
-            Quiz.classid==formdict['classid'],\
-                Quiz.sectionid==formdict['sectionid'])).order_by(Quiz.quizid).first()
+        .filter(and_(Quiz.courseid == formdict['courseid'],
+                     Quiz.classid == formdict['classid'],
+                     Quiz.sectionid == formdict['sectionid'])).order_by(Quiz.quizid).first()
     if newlyadded != None:
         return jsonify(
             {
@@ -856,19 +889,18 @@ def addNewQuiz():
                 "message": 'added quiz successfully',
                 "quiz":  newlyadded.json()
             }
-        ),201
-        
-    
+        ), 201
 
-#add new quiz questions
-@app.route("/quiz/questions/add/<int:quizid>",methods=['GET','POST'])
+
+# add new quiz questions
+@app.route("/quiz/questions/add/<int:quizid>", methods=['GET', 'POST'])
 def addNewQuestions(quizid):
     # QuizID, QnNum, Qn_type, Qn_Description, options, answer
     formdata = request.form
     formdict = formdata.to_dict()
     print(formdict)
-    newquestion = Question(quizid,formdata['qnNum'],formdata['qn_type'],formdata['qn_description'],\
-        formdata['options'],formdata['answer'])
+    newquestion = Question(quizid, formdata['qnNum'], formdata['qn_type'], formdata['qn_description'],
+                           formdata['options'], formdata['answer'])
     try:
         db.session.add(newquestion)
         db.session.commit()
@@ -881,16 +913,19 @@ def addNewQuestions(quizid):
             }
         ), 500
     return jsonify(
-            {
-                "code": 200,
-                "message": 'added successfully',
-                "enrolled":  newquestion.json()
-            }
-        ),201
-#retreive quiz by id
+        {
+            "code": 200,
+            "message": 'added successfully',
+            "enrolled":  newquestion.json()
+        }
+    ), 201
+
+# retreive quiz by id
+
+
 @app.route("/quiz/retrieve/<int:quizid>")
 def retrieveQuiz(quizid):
-    result = db.session.query(Quiz).filter(Quiz.quizid==quizid).first()
+    result = db.session.query(Quiz).filter(Quiz.quizid == quizid).first()
     if result != None:
         return jsonify(
             {
@@ -906,17 +941,19 @@ def retrieveQuiz(quizid):
             "message": "There are no results for quiz id: "+str(quizid) + '.'
         }
     ), 404
-    
-#retreive quiz question
+
+# retreive quiz question
+
+
 @app.route("/quiz/question/retrieve/<int:quizid>")
 def retrieveQuestion(quizid):
-    result = db.session.query(Question).filter(Question.quizid==quizid).all()
+    result = db.session.query(Question).filter(Question.quizid == quizid).all()
     if result != None:
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [ quiz.json() for quiz in result]
+                    "result": [quiz.json() for quiz in result]
                 }
             }
         )
@@ -924,23 +961,82 @@ def retrieveQuestion(quizid):
         {
             "code": 200,
             "data": {
-                    "result": []
-                }
+                "result": []
+            }
         }
     )
-        
+
+# add Quiz_Attempt by learner
+
+
+@app.route("/quiz_attempt/add/<int:quizid>/<int:attempt>", methods=['GET', 'POST'])
+def addQuizAttempt(quizid, attempt):
+    formdata = request.form
+    formdict = formdata.to_dict()
+    print(formdict)
+
+    newattempt = Quiz_Attempt(
+        formdict['eid'], quizid, 0, attempt, formdict['qnNum'], formdict['given_answer'])
+    try:
+        db.session.add(newattempt)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while adding new attempt :" + str(e)
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "message": 'added quiz successfully',
+            "attempt":  attempt
+        }
+    ), 201
+
+# get Quiz_Attempt by learner
+
+
+@app.route("/quiz_attempt/retrieve/<int:quizid>/engineer/<int:eid>/attempt/<int:attemptid>")
+def getQuizAttemptID(quizid, eid, attemptid):
+
+    results = db.session.query(Quiz_Attempt)\
+        .filter(and_(Quiz_Attempt.quizid == quizid,
+                     Quiz_Attempt.engineerid == eid,
+                     Quiz_Attempt.attemptID == attemptid))\
+        .order_by(Quiz_Attempt.attemptID.desc()).all()
+    if results != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "attempt": [result.json()for result in results]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Engineer " + str(eid) + " has not completed any attempts on quiz id."+str(quizid)
+        }
+    ), 404
+
+
 @app.route("/coursecompleted/<int:eid>")
 def retrieveCompletedByEid(eid):
     result = db.session.query(Course_Completed, Pre_Requisites)\
         .join(Course_Completed, Pre_Requisites.prerequisites_cid == Course_Completed.cid)\
-        .filter(Course_Completed.eid==eid).all()
+        .filter(Course_Completed.eid == eid).all()
     # print(result)
     if result != None:
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [ ({"prereqs": pre.json(), "completed": coursecompleted.json()}) for (coursecompleted,pre) in result]
+                    "result": [({"prereqs": pre.json(), "completed": coursecompleted.json()}) for (coursecompleted, pre) in result]
                 }
             }
         )
@@ -950,26 +1046,28 @@ def retrieveCompletedByEid(eid):
             "message": "Engineer " + str(eid) + " has not completed any courses which have pre-requisites."
         }
     ), 404
-    
+
+
 @app.route("/courseEligible/learner/<int:i_eid>")
 def retrieveEligibleCourseByEid(i_eid):
     # all courses that has prereq learners can take
     allcoursewprereq = db.session.query(Pre_Requisites.for_cid)\
-        .filter(and_(Course_Completed.cid==Pre_Requisites.prerequisites_cid,\
-            Course_Completed.eid==i_eid)).subquery()
-    
+        .filter(and_(Course_Completed.cid == Pre_Requisites.prerequisites_cid,
+                     Course_Completed.eid == i_eid)).subquery()
+
     coursesCannotTake = db.session.query(Course.cid)\
-        .filter(and_(Course.cid==Pre_Requisites.for_cid,\
-            Course.cid.notin_(allcoursewprereq))).subquery()
-    
-    result = db.session.query(Course).filter(Course.cid.notin_(coursesCannotTake) ).all()
+        .filter(and_(Course.cid == Pre_Requisites.for_cid,
+                     Course.cid.notin_(allcoursewprereq))).subquery()
+
+    result = db.session.query(Course).filter(
+        Course.cid.notin_(coursesCannotTake)).all()
     print(result)
     if result != None:
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "result": [ course.json() for course in result]
+                    "result": [course.json() for course in result]
                 }
             }
         )
@@ -979,6 +1077,7 @@ def retrieveEligibleCourseByEid(i_eid):
             "message": "Engineer " + str(i_eid) + " has not completed any courses which have pre-requisites."
         }
     ), 404
-    
+
+
 if __name__ == "__main__":
     app.run(port="5000", debug=True)
