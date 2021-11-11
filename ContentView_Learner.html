@@ -25,58 +25,59 @@
 </head>
 
 <body>
-
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Quick Find
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Home</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </li>
-        </ul>
-        <ul class="navbar-nav me-2 mb-2 mb-lg-0">
-          <li style="padding-right: 20px;" class="nav-item">
-            <a class="nav-link" href="#">My Courses</a>
-            <!--This will be a popup box which retrieves the list of learners pending acceptance-->
-          </li>
-          <li class="nav-item popUp" onclick="showNotif()">
-            <a class="navbar-brand" href="#">
-              <i class="bi bi-bell"></i>
-            </a>
-            <ul class="popUpText" id="HRPopUp"></ul>
-
-          </li>
-          <li class="nav-item">
-            <a class="navbar-brand" href="#">
-              <i class="bi bi-person-circle"></i>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
   <div id='app1'>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Quick Find
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
+                <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
+                </li>
+                <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?id='+ eID">Course
+                    Available</a>
+                </li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="navbar-nav me-2 mb-2 mb-lg-0">
+            <li style="padding-right: 20px;" class="nav-item">
+              <a class="nav-link" href="#">My Courses</a>
+              <!--This will be a popup box which retrieves the list of learners pending acceptance-->
+            </li>
+            <li class="nav-item popUp" onclick="showNotif()">
+              <a class="navbar-brand" href="#">
+                <i class="bi bi-bell"></i>
+              </a>
+              <ul class="popUpText" id="HRPopUp"></ul>
+
+            </li>
+            <li class="nav-item">
+              <a class="navbar-brand" href="#">
+                <i class="bi bi-person-circle"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
     <section id="header" class="pageTitlePad">
       <div class="container"></div>
@@ -161,90 +162,6 @@
               </div>
             </div>
 
-            <div class="collapse multi-collapse" id="quiz">
-
-              <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button">
-                      Training Course 1
-                    </button>
-                  </h2>
-                  <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                    data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                      <div class="card card-body">
-                        <h3>Section 1: Set up Printer</h3>
-
-                        <div>
-                          <h6>Materials</h6>
-                          <b>Test sample</b>
-                          <div class="underLineText inline">Printer_manual_2021.doc</span>
-                            <button type="button" class="btn btn-link">Download</button>
-                          </div>
-
-                          <div class="underLineText inline">Lecture_slides.ppt</span>
-                            <button type="button" class="btn btn-link">Download</button>
-                          </div>
-
-                          <div class="underLineText inline">Video_Lecture Youtube Link</span>
-                            <button type="button" class="btn btn-link">Download</button>
-                          </div>
-                          <p></p>
-                          <h6>Quiz</h6>
-                          <div style="color: #555;">No Quizzes Release Yet
-
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingTwo">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                      data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                      Accordion Item #2
-                    </button>
-                  </h2>
-                  <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                    data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                      <strong>This is the second item's accordion body.</strong> It is hidden by default, until the
-                      collapse plugin adds the appropriate classes that we use to style each element. These classes
-                      control the overall appearance, as well as the showing and hiding via CSS transitions. You can
-                      modify any of this with custom CSS or overriding our default variables. It's also worth noting
-                      that
-                      just about any HTML can go within the <code>.accordion-body</code>, though the transition does
-                      limit
-                      overflow.
-                    </div>
-                  </div>
-                </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingThree">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                      data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                      Accordion Item #3
-                    </button>
-                  </h2>
-                  <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                    data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                      <strong>This is the third item's accordion body.</strong> It is hidden by default, until the
-                      collapse plugin adds the appropriate classes that we use to style each element. These classes
-                      control the overall appearance, as well as the showing and hiding via CSS transitions. You can
-                      modify any of this with custom CSS or overriding our default variables. It's also worth noting
-                      that
-                      just about any HTML can go within the <code>.accordion-body</code>, though the transition does
-                      limit
-                      overflow.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
 
           </div>
@@ -315,7 +232,7 @@
         console.log(this.courseNo)
         console.log(this.classNo)
 
-        axios.get('http://127.0.0.1:5000/course/' + this.courseNo)
+        axios.get('http://18.136.106.135:5000/course/' + this.courseNo)
           .then(response => {
             currentcourse = response.data.data.courses;
             console.log(currentcourse);
@@ -329,7 +246,7 @@
             alert("Error retrieving course data, please check if main.py is being run");
           });
 
-        axios.get('http://127.0.0.1:5000/section/' + this.courseNo)
+        axios.get('http://18.136.106.135:5000/section/' + this.courseNo)
           .then(response => {
             this.sectionlist = response.data.data.section;
             console.log(this.sectionlist)
@@ -340,7 +257,7 @@
             alert("Error retrieving sections for " + this.courseNo);
           })
 
-        axios.get('http://127.0.0.1:5000/retrieve/materials/' + this.courseNo + '/class/' + this.classNo)
+        axios.get('http://18.136.106.135:5000/retrieve/materials/' + this.courseNo + '/class/' + this.classNo)
           .then(response => {
             this.materiallist = response.data.data.result;
             console.log(this.materiallist)

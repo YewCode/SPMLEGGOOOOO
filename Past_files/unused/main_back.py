@@ -18,6 +18,7 @@ import time
 
 app = Flask(__name__)
 
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/spmproject'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:password@localhost:3306/spmproject'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -81,6 +82,7 @@ class Course_Trainer(db.Model):
 
 
 class Course_Enrolled(db.Model):
+    __tablename__ = 'Course_Enrolled'
     __tablename__ = 'course_enrolled'
 
     cid = db.Column(db.Integer, primary_key=True)
@@ -99,6 +101,7 @@ class Course_Enrolled(db.Model):
 
 
 class Course_EnrollmentPending(db.Model):
+    __tablename__ = 'Course_EnrollmentPending'
     __tablename__ = 'course_enrollmentpending'
 
     cid = db.Column(db.Integer, primary_key=True)
@@ -262,8 +265,6 @@ class Quiz (db.Model):
             "isHidden": self.isHidden,
             "passing_requirements": self.passing_requirements
         }
-    def getSectionId(self):
-        return self.sectionid
 
 
 class Question (db.Model):
@@ -487,6 +488,8 @@ def getCourseTrainerByCid(cid):
 
     coursetrainerlist = Course_Trainer.query.filter_by(cid=cid)
     if len(coursetrainerlist):
+        coursetrainerlist = Course_Trainer.query.filter_by(cid=cid).first()
+    if len([coursetrainerlist]):
         return jsonify(
             {
                 "code": 200,
@@ -596,25 +599,22 @@ def getclassByCourseID(i_courseid):
         .outerjoin(Class_Trainer, and_(Class_Trainer.courseid == Classes.courseid, Class_Trainer.classid == Classes.classid))\
         .outerjoin(Engineer, Engineer.engineerid == Class_Trainer.eid)\
         .filter(Classes.courseid == i_courseid).all()
-    print(classlist)
+
     if len(classlist) and classlist != None:
-        
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "classes": [({"classdetails": classs.json()  , "engineer": en.json()})  for (classs, en, ct) in classlist]
+                    "classes": [({"classdetails": classs.json(), "engineer": en.json()})  for (classs, en, ct) in classlist]
                 }
             }
         )
     return jsonify(
         {
-            "code": 200,
-            "data": {
-                    "classes": []
-                }
+            "code": 404,
+            "message": "There are no classs."
         }
-    )
+    ), 404
 
 
 @app.route("/class/engineer/<int:i_eid>/course/<int:i_courseid>")
@@ -624,23 +624,24 @@ def getLearnerClassByCourseID(i_eid, i_courseid):
                      Engineer.engineerid==Course_Enrolled.eid, Engineer.engineerid==i_eid)).all()
     print(classlist)
     if len(classlist):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "classes": [classs.json() for classs in classlist]
+        if classlist != None:
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": {
+                        "classes": [classs.json() for classs in classlist]
+                    }
                 }
+            ), 200
+    
+    return jsonify(
+        {
+            "code": 200,
+            "data": {
+                "classes": []
             }
-        ), 200
-    else:
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "classes": []
-                }
-            }
-        )
+        }
+    )
 
 # Get pending list (HR Use)
 
@@ -925,35 +926,9 @@ def addNewQuestions(quizid):
         }
     ), 201
 
-# retreive quiz by courseNo and classNo
-@app.route("/quiz/section/retrieve/<int:courseid>/class/<int:classid>")
-def retrieveQuizBysectionid(courseid,classid):
-    result = db.session.query(Quiz).filter(and_(Quiz.courseid == courseid,
-                                                    Quiz.classid == classid)).order_by(Quiz.sectionid).all()
-    if result != None:
-        newformat = {}
-        for quiz in result:
-            currentsectionid = 'Section '+str(quiz.getSectionId())
-            if currentsectionid not in newformat.keys():
-                newformat[currentsectionid] = [quiz.json()]
-            else:
-                newformat[currentsectionid].append(quiz.json())
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "result": newformat
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 200,
-            "message": "There are no results for course id: "+str(courseid) + 'and '+str(classid)+'.'
-        }
-    ), 200
-    
 # retreive quiz by id
+
+
 @app.route("/quiz/retrieve/<int:quizid>")
 def retrieveQuiz(quizid):
     result = db.session.query(Quiz).filter(quizid == quizid).first()
@@ -974,6 +949,8 @@ def retrieveQuiz(quizid):
     ), 404
 
 # retreive quiz question
+
+
 @app.route("/quiz/question/retrieve/<int:quizid>")
 def retrieveQuestion(quizid):
     result = db.session.query(Question).filter(Question.quizid == quizid).all()
@@ -996,6 +973,8 @@ def retrieveQuestion(quizid):
     )
 
 # add Quiz_Attempt by learner
+
+
 @app.route("/quiz_attempt/add/<int:quizid>/<int:attempt>", methods=['GET', 'POST'])
 def addQuizAttempt(quizid, attempt):
     formdata = request.form
@@ -1068,12 +1047,10 @@ def getQuizAttemptIDWithoutAttemptID(quizid, eid):
         )
     return jsonify(
         {
-                "code": 200,
-                "data": {
-                    "attempt": 0
-                }
-            }
-        )
+            "code": 404,
+            "message": "Engineer " + str(eid) + " has not completed any attempts on quiz id."+str(quizid)
+        }
+    ), 404
 
 
 @app.route("/coursecompleted/<int:eid>")
@@ -1130,5 +1107,8 @@ def retrieveEligibleCourseByEid(i_eid):
     ), 404
 
 
+
+    
 if __name__ == "__main__":
+    # app.run(port="5000", debug=True)
     app.run(host="0.0.0.0", port=5000, debug=True)

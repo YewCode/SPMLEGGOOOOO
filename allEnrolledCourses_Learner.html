@@ -51,7 +51,7 @@
                                 <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
                                 <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
                                 </li>
-                                <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?'+ eID">Course
+                                <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?id='+ eID">Course
                                         Available</a>
                                 </li>
                                 <li>
@@ -112,13 +112,10 @@
                         <div class="col-8">
                             <h4>{{course.coursename}}</h4>
                             <p>{{course.coursedescription}}</p>
-                            {{course}}
                             <a class="btn btn-primary" @click='getClassApi(course.cid,eID)'>View course material</a>
+                            
                             <!-- href='ContentView_Learner.html' -->
                         </div>
-
-
-
                     </div><!-- end of row -->
                     <br />
                     <br />
@@ -160,19 +157,27 @@
             methods: {
                 //
                 getClassApi: function (eid, courseID) {
-                    axios.get('http://127.0.0.1:5000/class/engineer/' + eid + '/course/' + courseID)
+                    axios.get('http://18.136.106.135:5000/class/engineer/' + eid + '/course/' + courseID)
                         .then(response => {
                             console.log('getClass')
-                            console.log(response)
+                            console.log(courseID)
 
                             resultlist = response.data.data.classes;
                             console.log('test');
-                            console.log(resultlist);
-                            this.classdict[resultlist.courseid] = resultlist;
-                            console.log(this.classdict)
+                            if (resultlist.length == 0) {
+                                alert('No class enrolled. Please enroll into a class first.');
+                                window.location.href ='classEnrollment.html?eid='+ eid +'&courseNum='+courseID
+                            } else {
+                                console.log(resultlist);
+                                
+                                // window.location.href = 'ContentView_Learner.html?courseNum='+courseID+'&classNum='+ resultlist[0].classid;
+
+                            }
+
                         })
                         .catch(error => {
-                            alert("Error retrieving pre-requisite and completed course data")
+                            console.log(error);
+
                         })
                 }
 
@@ -187,7 +192,7 @@
 
                 this.eID = engineerid;
 
-                axios.get('http://127.0.0.1:5000/Course_Enrolled/info/eid/' + this.eID)
+                axios.get('http://18.136.106.135:5000/Course_Enrolled/info/eid/' + this.eID)
                     .then(response => {
                         this.courseList = response.data.data.courses;
                     })
@@ -203,7 +208,7 @@
                 }
 
 
-                axios.get('http://127.0.0.1:5000/engineer/' + this.eID)
+                axios.get('http://18.136.106.135:5000/engineer/' + this.eID)
                     .then(response => {
                         this.eDetails = response.data.data.engineers;
 

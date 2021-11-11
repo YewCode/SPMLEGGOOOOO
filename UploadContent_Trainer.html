@@ -79,7 +79,7 @@
     <div id="App1">
         <section id="header" class="pageTitlePad">
             <h1>Upload Training Materials</h1>
-            <h3>Section 1: Set Up Printer</h3>
+            <h3>{{course.coursename}}: {{sectionlist.sectionName}}</h3>
         </section>
 
         <section class="sectionPadding">
@@ -209,7 +209,7 @@
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             credentials: 'same-origin', // include, *same-origin, omit
-            origin: ["http://127.0.0.1:8080", "http://localhost", "http://127.0.0.1:5000"],
+            origin: ["http://18.136.106.135:8080", "http://localhost", "http://18.136.106.135:5000"],
             redirect: 'follow' // manual, *follow, error
         });
         if (response.status >= 200 && response.status < 300) {
@@ -246,7 +246,7 @@
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             credentials: 'same-origin', // include, *same-origin, omit
-            origin: ["http://127.0.0.1:8080", "http://localhost", "http://127.0.0.1:5000"],
+            origin: ["http://18.136.106.135:8080", "http://localhost", "http://18.136.106.135:5000"],
             redirect: 'follow' // manual, *follow, error
         });
         if (response.status >= 200 && response.status < 300) {
@@ -279,7 +279,9 @@
             linklist: [],
             courseNo: '',
             classNo: '',
-            sectionNo: ''
+            sectionNo: '',
+            sectionlist: [],
+            course: []
         },
         methods: {
             uploadfiles: function () {
@@ -340,8 +342,8 @@
                 console.log(this.doclist)
                 console.log(this.filelist)
                 console.log(this.linklist)
-                material_url = 'http://127.0.0.1:5000/upload/material';
-                link_url = 'http://127.0.0.1:5000/upload/link';
+                material_url = 'http://18.136.106.135:5000/upload/material';
+                link_url = 'http://18.136.106.135:5000/upload/link';
                 for (docfile of this.filelist) {
                     console.log(docfile);
                     processaddingproducts(material_url, docfile, this.classNo, this.courseNo,this.sectionNo);
@@ -365,6 +367,31 @@
             console.log(this.courseNo)
             console.log(this.classNo)
             console.log(this.sectionNo)
+
+            axios.get('http://18.136.106.135:5000/course/' + this.courseNo)
+                    .then(response => {
+                        currentcourse = response.data.data.courses;
+                        console.log(currentcourse);
+
+                        if (this.courseNo == currentcourse.cid) {
+                            this.course = currentcourse;
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert("Error retrieving course data, please check if main.py is being run");
+                    });
+
+            axios.get('http://18.136.106.135:5000/section/' + this.courseNo)
+                    .then(response => {
+                        this.sectionlist = response.data.data.section[this.sectionNo-1];
+                        console.log(this.sectionlist)
+
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        alert("Error retrieving sections for " + this.courseNo);
+                    })
         }//end mounted
     });
 </script>

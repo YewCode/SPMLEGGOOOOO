@@ -81,7 +81,7 @@
                 <div class="col-md-3 col-sm-12">
                     <h4>Course Name</h4>
                 </div>
-        
+
 
                 <div class="col-md-3 col-sm-12">
                     <div class="input-group mb-3">
@@ -90,14 +90,14 @@
                         <button class="btn btn-outline-secondary" type="button" id="searchCourse"><i
                                 class="bi bi-search"></i></button>
                     </div>
-                
+
                 </div>
                 <div class="col-md-3 col-sm-12" style="margin-left:200px;">
                     <button type="button" class="btn btn-warning">Done</button>
-                    
+
                 </div>
-                </div>
-        <section id="subHeader" class= "sectionPadding"></section>
+            </div>
+            <section id="subHeader" class="sectionPadding"></section>
             <div class="container">
                 <!-- need to fetch data from here -->
                 <div class="row" id="courseDetails">
@@ -110,23 +110,65 @@
                         <h7>class 01</h7>
 
                     </div>
-                    
+
                     <div class="col-md-3 col-sm-12">
-                            <h6>Class Schedule</h6>
-                            <h7>schedule #1</h7>
-                            
-                    </div>        
+                        <h6>Class Schedule</h6>
+                        <h7>schedule #1</h7>
+
+                    </div>
                     <div class="col-md-3 col-sm-12">
-                        <br/>
+                        <br />
                         <a href='trainer_viewCourse.html'>View</a>
                     </div>
-                    
 
-                   
+
+
                 </div>
             </div>
     </section>
+    <script>
+        const app = new Vue({
+            el: "#app1",
+            data: {
+                courseList: [],
+                eID: '',
+                eDetails: [],
+                eName: "",
+                classdict: {},
+                availableList: [],
 
+            },
+            computed: {
+                getName: function () {
+                    for (item of this.eDetails) {
+                        this.eName = item.name;
+                        break;
+                    }
+                    return this.eName;
+                }
+
+            },
+            methods: {
+                //
+
+
+            },
+            mounted: function () {
+                //get session from engineer
+                console.log(sessionStorage);
+                var usertype = sessionStorage.getItem('usertype');
+                var engineerid = parseInt(sessionStorage.getItem('eid'));
+                console.log(usertype);
+                console.log(engineerid);
+
+                this.eID = engineerid;
+
+
+            }
+
+
+        });
+    </script>
 
 
 

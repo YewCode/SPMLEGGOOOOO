@@ -28,59 +28,64 @@
 
 <body>
 
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Quick Find
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Home</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="navbar-nav me-2 mb-2 mb-lg-0">
-                    <li style="padding-right: 20px;" class="nav-item">
-                        <a class="nav-link" href="#">My Courses</a>
-                        <!--This will be a popup box which retrieves the list of learners pending acceptance-->
-                    </li>
-                    <li class="nav-item popUp" onclick="showNotif()">
-                        <a class="navbar-brand" href="#">
-                            <i class="bi bi-bell"></i>
-                        </a>
-                        <ul class="popUpText" id="HRPopUp"></ul>
-
-                    </li>
-                    <li class="nav-item">
-                        <a class="navbar-brand" href="#">
-                            <i class="bi bi-person-circle"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
     <div id='app1'>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="images/LMS.png" alt="" width="50" height="24" class="d-inline-block align-text-top">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                        <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Quick Find
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
+                                <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
+                                </li>
+                                <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?id='+ eID">Course
+                                        Available</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav me-2 mb-2 mb-lg-0">
+                        <li style="padding-right: 20px;" class="nav-item">
+                            <a class="nav-link" href="#">My Courses</a>
+                            <!--This will be a popup box which retrieves the list of learners pending acceptance-->
+                        </li>
+                        <li class="nav-item popUp" onclick="showNotif()">
+                            <a class="navbar-brand" href="#">
+                                <i class="bi bi-bell"></i>
+                            </a>
+                            <ul class="popUpText" id="HRPopUp"></ul>
+
+                        </li>
+                        <li class="nav-item">
+                            <a class="navbar-brand" href="#">
+                                <i class="bi bi-person-circle"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
         <section id="header" class="pageTitlePad">
             <h1>{{quizinfo.quiz_name}} Results</h1>
         </section>
@@ -99,7 +104,7 @@
                     <p>This quiz contains <u><b>{{questionslist.length}}</b></u> Questions</p>
                     <p>To Pass this quiz, you need to score at least <u><b>{{quizinfo.passing_requirements}}%</b></u>
                     </p>
-                    <p><b> {{cal}}</b></p>
+                    <p><b>Score : {{ cal}} %</b></p>
                 </div>
 
 
@@ -112,10 +117,10 @@
 
                             <div v-if='option==attemptlist[question.qnNum]'>
                                 <input class="form-check-input" type="radio" :name="question.qnNum" :value="option"
-                                     checked>
+                                    checked>
                                 <label class="form-check-label" :for="question.qnNum">
                                     {{option}}
-                                    <span v-if="getMarking(getFormat(attemptlist[question.qnNum]),getFormat(question.answer))">
+                                    <span v-if="getMarking(attemptlist[question.qnNum],question.answer)">
                                         <i class="bi bi-check-circle-fill"></i>
                                     </span>
                                     <span v-else>
@@ -134,29 +139,13 @@
                         </div>
                         <br />
                     </div>
+                    <!-- end of for -->
+                    <a type="button" class="btn btn-warning"
+                        :href="'ContentView_Learner.html?courseNum='+quizinfo.courseid+'&classNum='+ quizinfo.classid">
+                        Go back to View Course Content
+                    </a>
+                </form>
 
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Congratulations on completing the quiz.
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-warning"
-                                        @click.prevent='submitQuiz()'>Done</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                 </form> <!-- end quiz section -->
             </div>
@@ -193,17 +182,19 @@
                     formatted = answer.replace(/[']+/g, '').toString();
                     return formatted
                 },
-                getMarking: function(attempt,correctanswer){
-                    if (attempt == correctanswer){
-                        this.correct += 1
-                        return true
+                getMarking: function (attempt, correctanswer) {
+                    attempt = this.getFormat(attempt);
+                    correctanswer = this.getFormat(correctanswer);
+                    if (attempt == correctanswer) {
+                        return true;
                     }
-                    return false
-                
-                }
+                    return false;
+
+                },
+
+
             },
             mounted: function () {
-
                 // window.location get the url string after ? 
                 const queryString = window.location.search;
                 const urlParams = new URLSearchParams(queryString);
@@ -212,16 +203,16 @@
                 console.log(this.quizid)
                 console.log(this.attemptID)
                 // quiz retrieval
-                axios.get('http://127.0.0.1:5000/quiz/retrieve/' + this.quizid)
+                axios.get('http://18.136.106.135:5000/quiz/retrieve/' + this.quizid)
                     .then(response => {
-                        console.log(response.data.data.result);
                         this.quizinfo = response.data.data.result;
+                        console.log(this.quizinfo);
                     })
                     .catch(error => {
 
                         this.quizinfo = []; // Error handling for no response retrieve not done
                     });
-                axios.get('http://127.0.0.1:5000/quiz_attempt/retrieve/' + this.quizid + '/engineer/' + engineerid + '/attempt/' + this.attemptID)
+                axios.get('http://18.136.106.135:5000/quiz_attempt/retrieve/' + this.quizid + '/engineer/' + engineerid + '/attempt/' + this.attemptID)
                     .then(response => {
                         console.log(response.data.data.attempt);
                         tempattemptlist = response.data.data.attempt;
@@ -238,7 +229,7 @@
                 if (this.quizinfo != []) {
 
                     // question retrieval
-                    axios.get('http://127.0.0.1:5000/quiz/question/retrieve/' + this.quizid)
+                    axios.get('http://18.136.106.135:5000/quiz/question/retrieve/' + this.quizid)
                         .then(response => {
                             this.questionslist = response.data.data.result;
                             if (this.questionslist != []) {
@@ -248,7 +239,13 @@
                                     options = options.replace(/['"]+/g, '').toString();
                                     options = options.split(",");
                                     this.optionlist[qnNo] = options
+
+                                    attemptans = "'" + this.attemptlist[qnNo] + "'";
+                                    if (attemptans == question.answer) {
+                                        this.correct += 1;
+                                    }
                                 }
+                                this.cal = (this.correct / Object.keys(this.attemptlist).length) * 100;
                             } else {
                                 alert('No Questions in this quiz')
                             }

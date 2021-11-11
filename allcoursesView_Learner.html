@@ -181,18 +181,18 @@
 
                     if (confirmation == true) {
                         axios.post(
-                            `http://127.0.0.1:5000/pending/add/eid/${this.eID}/cid/${cid}`, {
+                            `http://18.136.106.135:5000/pending/add/eid/${this.eID}/cid/${cid}`, {
                             headers: {
                                 'Content-Type': 'text/plain'
                             }
-                        }
-                        )
+                        })
                             .then(response => {
                                 console.log(response);
                                 alert(
                                     `You have been added into the pending list ${this.eName}, awaiting for HR to approve your enrollment into ${cname}`
                                 );
-                                this.enrollCheck = true;
+                                // this.enrollCheck = true;
+                                window.reload;
                             })
                             .catch(error => {
                                 alert(error)
@@ -215,7 +215,7 @@
 
 
                 // Get Courses available by checking against pre-reqs
-                axios.get('http://127.0.0.1:5000/courseEligible/learner/' + this.eID)
+                axios.get('http://18.136.106.135:5000/courseEligible/learner/' + this.eID)
                     .then(response => {
                         this.availableList = response.data.data.result
                     })
@@ -223,7 +223,7 @@
                         alert("Error retrieving Engineer " + this.eID + "'s available courses")
                     })
                 // Get engineer details based on eid
-                axios.get('http://127.0.0.1:5000/engineer/' + this.eID)
+                axios.get('http://18.136.106.135:5000/engineer/' + this.eID)
                     .then(response => {
                         this.eDetails = response.data.data.engineers;
                     })
@@ -231,7 +231,7 @@
                         alert("Error retrieving engineer information")
                     });
                 // Get Completed Courses
-                axios.get('http://127.0.0.1:5000/coursecompleted/' + this.eID)
+                axios.get('http://18.136.106.135:5000/coursecompleted/' + this.eID)
                     .then(response => {
                         this.completedList = response.data.data.result;
 
@@ -250,7 +250,7 @@
                         alert("Error retrieving Engineer " + this.eID + "'s completed courses")
                     })
                 // Get Enrolled courses to display differently
-                axios.get('http://127.0.0.1:5000/Course_Enrolled/info/eid/' + this.eID)
+                axios.get('http://18.136.106.135:5000/Course_Enrolled/info/eid/' + this.eID)
                     .then(response => {
                         this.enrolledList = response.data.data.courses;
 

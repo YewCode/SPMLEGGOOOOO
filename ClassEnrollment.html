@@ -25,66 +25,67 @@
 </head>
 
 <body>
-    <!-- This Nav Bar is for HR -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="images/LMS.png" width="50" height="24" class="d-inline-block align-text-top">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="Loginpage.html">Home</a>
-                    </li>
-                    <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
-                    <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" :href="'allcoursesView_Learner.html?'+ eID">Course Available</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Quick Find
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Home</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="navbar-nav me-2 mb-2 mb-lg-0">
-                    <li style="padding-right: 20px;" class="nav-item">
-                        <a class="nav-link" href="#">My Courses</a>
-                        <!--This will be a popup box which retrieves the list of learners pending acceptance-->
-                    </li>
-                    <li class="nav-item popUp" onclick="showNotif()">
-                        <a class="navbar-brand" href="#">
-                            <i class="bi bi-bell"></i>
-                        </a>
-                        <ul class="popUpText" id="HRPopUp"></ul>
-
-                    </li>
-                    <li class="nav-item">
-                        <a class="navbar-brand" href="#">
-                            <i class="bi bi-person-circle"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <div id="classEApp">
+        <!-- This Nav Bar is for HR -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="images/LMS.png" width="50" height="24" class="d-inline-block align-text-top">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="Loginpage.html">Home</a>
+                        </li>
+                        <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
+                        <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" :href="'allcoursesView_Learner.html?'+ eID">Course Available</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Quick Find
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">Home</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav me-2 mb-2 mb-lg-0">
+                        <li style="padding-right: 20px;" class="nav-item">
+                            <a class="nav-link" href="#">My Courses</a>
+                            <!--This will be a popup box which retrieves the list of learners pending acceptance-->
+                        </li>
+                        <li class="nav-item popUp" onclick="showNotif()">
+                            <a class="navbar-brand" href="#">
+                                <i class="bi bi-bell"></i>
+                            </a>
+                            <ul class="popUpText" id="HRPopUp"></ul>
+
+                        </li>
+                        <li class="nav-item">
+                            <a class="navbar-brand" href="#">
+                                <i class="bi bi-person-circle"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
         <section id="header" class="pageTitlePad">
             <h1>Class Enrollment for <span style="color: darkblue">{{cName}}</span> </h1>
         </section>
@@ -136,6 +137,7 @@
 </body>
 
 <script>
+    
     const vue = new Vue({
         el: "#classEApp",
         data: {
@@ -165,7 +167,7 @@
             this.courseNo = urlParams.get('courseNum')
             this.eID = urlParams.get('eid')
 
-            axios.get('http://127.0.0.1:5000/engineer/' + this.eID)
+            axios.get('http://18.136.106.135:5000/engineer/' + this.eID)
                 .then(response => {
                     this.eDetails = response.data.data.engineers;
 
@@ -180,7 +182,7 @@
                     alert("Error retrieving engineer information")
                 });
 
-            axios.get('http://127.0.0.1:5000/course/' + this.courseNo)
+            axios.get('http://18.136.106.135:5000/course/' + this.courseNo)
                 .then(response => {
                     this.cDetails = response.data.data.courses;
 
@@ -190,7 +192,7 @@
                     alert("Error retrieving course info")
                 });
 
-            axios.get('http://127.0.0.1:5000/class/courseid/' + this.courseNo)
+            axios.get('http://18.136.106.135:5000/class/courseid/' + this.courseNo)
                 .then(response => {
                     this.classList = response.data.data.classes;
                 })

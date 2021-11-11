@@ -161,9 +161,17 @@
                                         </div>
 
                                         <h6>Quiz</h6>
-                                        <div style="color: #555;">No Quizzes Release Yet
+                                        <div v-if='Object.keys(quizlist).length != 0'>
+                                            <div v-for='quiz of quizlist[section.sectionName]'>
+                                                <h4>{{quiz.quiz_name}}</h4>
+                                                <a :href="'QuizInterface_Learners.html?quizid='+quiz.quizid" class='btn btn-primary'> Take Quiz</a>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <p style="color: #555;">No Quizzes Release Yet</p>
 
                                         </div>
+
 
                                     </div>
                                 </div>
@@ -191,23 +199,27 @@
                 sectionlist: [],
                 uploadurl: 'UploadContent_Trainer.html',
                 materiallist: {},
+                quizlist: {},
                 changing: ''
             },
             methods: {
                 createSection: function () {
                     //onclick create section
-                    console.log(this.sectionlist.at(-1))
-                    confirmmsg = confirm('create ' + this.sectionlist.at(-1).sectionName + ' ?');
+                    if (this.sectionlist.length == 0) {
+                        currentid = 0;
+                    } else {
+                        currentid = parseInt(this.sectionlist.at(-1).sectionid)
+                    }
+                    confirmmsg = confirm('create Section ' + (currentid + 1) + ' ?');
                     if (confirmmsg == true) {
                         console.log('confirm msg')
-                        currentid = parseInt(this.sectionlist.at(-1).sectionid)
-                        console.log(currentid);
-                        axios.get('http://127.0.0.1:5000/create/section/'+currentid+'/course/'+this.courseNo+'/classid/' +this.classNo )
+
+                        axios.get('http://18.136.106.135:5000/create/section/' + currentid + '/course/' + this.courseNo + '/classid/' + this.classNo)
                             .then(response => {
                                 newsectionid = response.data;
                                 console.log(response.data)
                                 console.log(newsectionid);
-                                alert('Section '+ newsectionid+' created');
+                                alert('Section ' + newsectionid + ' created');
 
                             })
                             .catch(error => {
@@ -258,7 +270,7 @@
                 console.log(this.courseNo)
                 console.log(this.classNo)
 
-                axios.get('http://127.0.0.1:5000/course/' + this.courseNo)
+                axios.get('http://18.136.106.135:5000/course/' + this.courseNo)
                     .then(response => {
                         currentcourse = response.data.data.courses;
                         console.log(currentcourse);
@@ -272,7 +284,7 @@
                         alert("Error retrieving course data, please check if main.py is being run");
                     });
 
-                axios.get('http://127.0.0.1:5000/section/' + this.courseNo)
+                axios.get('http://18.136.106.135:5000/section/' + this.courseNo)
                     .then(response => {
                         this.sectionlist = response.data.data.section;
                         console.log(this.sectionlist)
@@ -283,10 +295,20 @@
                         alert("Error retrieving sections for " + this.courseNo);
                     })
 
-                axios.get('http://127.0.0.1:5000/retrieve/materials/' + this.courseNo + '/class/' + this.classNo)
+                axios.get('http://18.136.106.135:5000/retrieve/materials/' + this.courseNo + '/class/' + this.classNo)
                     .then(response => {
                         this.materiallist = response.data.data.result;
                         console.log(this.materiallist)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        this.materiallist = ['No Materials in This course']
+                    })
+
+                axios.get('http://18.136.106.135:5000/quiz/section/retrieve/' + this.courseNo + '/class/' + this.classNo)
+                    .then(response => {
+                        this.quizlist = response.data.data.result;
+                        console.log(this.quizlist)
                     })
                     .catch(error => {
                         console.log(error)
@@ -294,6 +316,10 @@
                     })
 
             }
+
+
+
+
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
