@@ -687,7 +687,7 @@ def getPendingEnrollmentByCourseID(i_courseid):
 
 @app.route("/Course_Enrolled/pending/eid/<int:eid>/cid/<int:cid>", methods=['GET', 'POST'])
 def approveLearnersEnrollment(eid, cid):
-    courseenrolling = Course_Enrolled(cid, eid, 1, None)
+    courseenrolling = Course_Enrolled(cid, eid, 1, 1)
     pending = Course_EnrollmentPending.query\
         .filter(and_(cid == cid, eid == eid, Course_EnrollmentPending.active == 1)).first()
 
