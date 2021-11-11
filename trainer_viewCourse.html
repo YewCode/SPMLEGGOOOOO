@@ -43,7 +43,7 @@
                     <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
                     </li>
                     <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?id='+ eID">Course
-                        Available</a>
+                            Available</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -136,8 +136,14 @@
                                         <div class="col-8"></div>
                                         <div class="col-3">
                                             <a class="btn btn-outline-dark"
-                                                :href=" uploadurl+ '?courseNum='+courseNo+'&classNum='+classNo+'&sectionNum='+section.sectionid"
+                                                :href=" uploadurl+'?courseNum='+courseNo+'&classNum='+classNo+'&sectionNum='+section.sectionid"
                                                 class="btn btn-primary">Upload</a>
+                                            <div v-if='!quizlist[section.sectionName]'>
+                                                <a class="btn btn-outline-dark"
+                                                    :href=" quizcreationurl+'?courseNum='+courseNo+'&classNum='+classNo+'&sectionNum='+section.sectionid+'&quizid=1'"
+                                                    class="btn btn-primary">Add Quiz</a>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                     <div>
@@ -167,7 +173,8 @@
                                         <div v-if='Object.keys(quizlist).length != 0'>
                                             <div v-for='quiz of quizlist[section.sectionName]'>
                                                 <h4>{{quiz.quiz_name}}</h4>
-                                                <a :href="'quizQCreation_Trainer.html?courseNum=1&classNum='+classMo+'&secNum='+section.sectionid+'&quizID='+quiz.quizid" class='btn btn-primary'> View Quiz Questions</a>
+                                                <a :href="'quizQCreation_Trainer.html?courseNum=1&classNum='+classMo+'&secNum='+section.sectionid+'&quizID='+quiz.quizid"
+                                                    class='btn btn-primary'> View Quiz Questions</a>
                                             </div>
                                         </div>
                                         <div v-else>
@@ -201,6 +208,7 @@
                 course: "",
                 sectionlist: [],
                 uploadurl: 'UploadContent_Trainer.html',
+                quizcreationurl: 'quizCreation_Trainer_backup.html',
                 materiallist: {},
                 quizlist: {},
                 changing: ''

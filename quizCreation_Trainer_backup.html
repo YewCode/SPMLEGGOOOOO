@@ -192,7 +192,7 @@
             formData.append('isHidden', ishidden);
             formData.append('passingreq', selectedcriteria);
 
-            const response = await fetch("http://18.136.106.135/quiz/add", {
+            const response = await fetch("http://18.136.106.135:5000/quiz/add", {
                 body: formData,
                 method: "POST",
                 mode: "cors",
@@ -209,7 +209,6 @@
                 // console.log(data);
                 if (data.code == '200') {
                     // alert('Quiz added successfully!');
-
                 } else {
                     console.log(response);
                     alert("There has been an error, please refresh and try again");
@@ -228,10 +227,10 @@
                 selectedQType: "",
                 addCounter: 0,
                 formComponent: "",
-                secID: 1,
-                classID: 1,
-                courseID: 1,
-                quizID: 1
+                secID: '',
+                classID: '',
+                courseID: '',
+                quizID: ''
 
             },
             methods: {
@@ -247,6 +246,33 @@
                     window.location.href = `quizQCreation_Trainer.html?courseNum=${this.courseID}&classNum=${this.classID}&secNum=${this.secID}&quizID=${this.quizID}`
                 }
             },
+            mounted: function () {
+
+                // window.location get the url string after ? 
+                console.log('test');
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                this.courseID = urlParams.get('courseNum');
+                this.classID = urlParams.get('classNum');
+                this.secID = urlParams.get('sectionNum');
+                console.log(this.courseID);
+                console.log(this.classID);
+                console.log(this.secID);
+                axios.get('http://18.136.106.135:5000/quiz/latest')
+                    .then(response => {
+                        data1 =  response.data.data.result;
+                        console.log(data1);
+
+                        this.quizID = parseInt(data1)+1;
+                        console.log(this.quizID);
+                    })
+                    .catch(error => {
+
+                        this.quizinfo = []; // Error handling for no response retrieve not done
+                    });
+
+
+            }
 
 
         })

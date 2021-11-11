@@ -18,8 +18,8 @@ import time
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/spmproject'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:password@localhost:3306/spmproject'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/spmproject'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:password@localhost:3306/spmproject'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -265,6 +265,9 @@ class Quiz (db.Model):
         }
     def getSectionId(self):
         return self.sectionid
+    
+    def getQuizId(self):
+        return self.quizid
 
 
 class Question (db.Model):
@@ -968,7 +971,7 @@ def retrieveQuizBysectionid(courseid,classid):
 # retreive quiz by id
 @app.route("/quiz/retrieve/<int:quizid>")
 def retrieveQuiz(quizid):
-    result = db.session.query(Quiz).filter(quizid == quizid).first()
+    result = db.session.query(Quiz).filter(Quiz.quizid == quizid).first()
     if result != None:
         return jsonify(
             {
@@ -984,6 +987,26 @@ def retrieveQuiz(quizid):
             "message": "There are no results for quiz id: "+str(quizid) + '.'
         }
     ), 404
+    
+# retreive latest quiz id
+@app.route("/quiz/latest")
+def retrieveLatestQuiz():
+    result = db.session.query(Quiz).order_by(Quiz.quizid.desc()).first()
+    if result != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": result.getQuizId()
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 200,
+            "message": "There are no results."
+        }
+    ), 200
 
 # retreive quiz question
 @app.route("/quiz/question/retrieve/<int:quizid>")
@@ -1143,5 +1166,5 @@ def retrieveEligibleCourseByEid(i_eid):
 
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
-    # app.run(host='0.0.0.0',port=5000, debug=True)
+    # app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0',port=5000, debug=True)

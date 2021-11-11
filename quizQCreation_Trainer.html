@@ -332,8 +332,8 @@
                 axios.get(`http://18.136.106.135:5000/quiz/retrieve/${this.qID}`)
                     .then(response => {
                         this.qDetails = response.data.data.result;
+                        this.qTitle = this.qDetails.quiz_name;
 
-                        this.qTitle = this.qDetails.quiz_name
                     })
                     .catch(error => {
                         alert("Error retrieving quiz details");
