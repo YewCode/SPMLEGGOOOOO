@@ -18,7 +18,7 @@ import time
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:password@localhost:3306/spmproject'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/spmproject'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -596,25 +596,34 @@ def getclassByCourseID(i_courseid):
         .outerjoin(Class_Trainer, and_(Class_Trainer.courseid == Classes.courseid, Class_Trainer.classid == Classes.classid))\
         .outerjoin(Engineer, Engineer.engineerid == Class_Trainer.eid)\
         .filter(Classes.courseid == i_courseid).all()
-    print(classlist)
+    # print(classlist)
     if len(classlist) and classlist != None:
-        
+        returnlist = []
+        for (classs, en, ct) in classlist:
+            if classs != None and en != None:
+                returnlist.append({"classdetails": classs.json()  
+                             , "engineer": en.json()})
+            elif classs == None:
+                returnlist.append({"classdetails": []  
+                             , "engineer": en.json()})
+        return jsonify(
+        {
+            "code": 200,
+            "data": {
+                    "classes": returnlist
+                }
+        }
+    )
+    else:
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "classes": [({"classdetails": classs.json()  , "engineer": en.json()})  for (classs, en, ct) in classlist]
+                    "classes": []
                 }
             }
         )
-    return jsonify(
-        {
-            "code": 200,
-            "data": {
-                    "classes": []
-                }
-        }
-    )
+    
 
 
 @app.route("/class/engineer/<int:i_eid>/course/<int:i_courseid>")
@@ -1131,4 +1140,4 @@ def retrieveEligibleCourseByEid(i_eid):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(port=5000, debug=True)

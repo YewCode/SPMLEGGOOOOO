@@ -38,24 +38,15 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
+            <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Quick Find
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
-                <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
-                </li>
-                <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?id='+ eID">Course
-                    Available</a>
-                </li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-              </ul>
+            <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?id='+ eID">Course
+                Available</a>
             </li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+          </li>
           </ul>
           <ul class="navbar-nav me-2 mb-2 mb-lg-0">
             <li style="padding-right: 20px;" class="nav-item">
@@ -93,8 +84,7 @@
         </div>
         <div class="col-sm-1"></div>
         <div id="myGroup" class="col-sm-1">
-          <button id="quiz-accordion" class="btn btn-primary" type="button" data-bs-toggle="collapse"
-            data-bs-target="#quiz" aria-controls="content" data-parent="#myGroup">Quiz</button>
+
         </div>
       </div>
 
@@ -149,7 +139,15 @@
 
                           </div>
                           <h6>Quiz</h6>
-                          <div style="color: #555;">No Quizzes Release Yet
+                          <div v-if='Object.keys(quizlist).length != 0'>
+                            <div v-for='quiz of quizlist[section.sectionName]'>
+                              <h4>{{quiz.quiz_name}}</h4>
+                              <a :href="'QuizInterface_Learners.html?quizid='+quiz.quizid" class='btn btn-primary'> Take
+                                Quiz</a>
+                            </div>
+                          </div>
+                          <div v-else>
+                            <p style="color: #555;">No Quizzes Release Yet</p>
 
                           </div>
 
@@ -187,7 +185,8 @@
         sectionlist: [],
         uploadurl: '',
         materiallist: {},
-        changing: ''
+        changing: '',
+        quizlist: {}
       },
       methods: {
         renameFilename: function (file_name) {
@@ -256,17 +255,26 @@
             console.log(error)
             alert("Error retrieving sections for " + this.courseNo);
           })
-
-        axios.get('http://18.136.106.135:5000/retrieve/materials/' + this.courseNo + '/class/' + this.classNo)
-          .then(response => {
-            this.materiallist = response.data.data.result;
-            console.log(this.materiallist)
-          })
-          .catch(error => {
-            console.log(error)
-            alert("Error retrieving sections for " + this.courseNo);
-          })
-
+          axios.get('http://18.136.106.135:5000/retrieve/materials/' + this.courseNo + '/class/' + this.classNo)
+            .then(response => {
+              this.materiallist = response.data.data.result;
+              console.log(this.materiallist)
+            })
+            .catch(error => {
+              console.log(error)
+              alert("Error retrieving sections for " + this.courseNo);
+            })
+          axios.get('http://18.136.106.135:5000/quiz/section/retrieve/' + this.courseNo + '/class/' + this.classNo)
+            .then(response => {
+              this.quizlist = response.data.data.result;
+              console.log('quiz')
+              console.log(this.quizlist)
+            })
+            .catch(error => {
+              console.log(error)
+              alert("Error retrieving sections for " + this.courseNo);
+            })
+        
       }
     });
   </script>

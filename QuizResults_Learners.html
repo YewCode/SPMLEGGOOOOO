@@ -104,7 +104,7 @@
                     <p>This quiz contains <u><b>{{questionslist.length}}</b></u> Questions</p>
                     <p>To Pass this quiz, you need to score at least <u><b>{{quizinfo.passing_requirements}}%</b></u>
                     </p>
-                    <p><b>Score : {{ cal}} %</b></p>
+                    <p><b>Score : {{ cal }} %</b></p>
                 </div>
 
 
@@ -200,8 +200,8 @@
                 const urlParams = new URLSearchParams(queryString);
                 this.quizid = parseInt(urlParams.get('quizid'))
                 this.attemptID = parseInt(urlParams.get('attemptID'))
-                console.log(this.quizid)
-                console.log(this.attemptID)
+                // console.log(this.quizid)
+                // console.log(this.attemptID)
                 // quiz retrieval
                 axios.get('http://18.136.106.135:5000/quiz/retrieve/' + this.quizid)
                     .then(response => {
@@ -245,7 +245,10 @@
                                         this.correct += 1;
                                     }
                                 }
-                                this.cal = (this.correct / Object.keys(this.attemptlist).length) * 100;
+                                console.log(this.correct);
+                                console.log(Object.keys(this.attemptlist).length);
+                                this.cal = this.correct / Object.keys(this.attemptlist).length;
+                                console.log(this.cal)
                             } else {
                                 alert('No Questions in this quiz')
                             }

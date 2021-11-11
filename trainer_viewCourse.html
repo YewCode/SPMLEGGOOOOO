@@ -39,8 +39,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
+                    <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
+                    </li>
+                    <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?id='+ eID">Course
+                        Available</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -164,7 +167,7 @@
                                         <div v-if='Object.keys(quizlist).length != 0'>
                                             <div v-for='quiz of quizlist[section.sectionName]'>
                                                 <h4>{{quiz.quiz_name}}</h4>
-                                                <a :href="'QuizInterface_Learners.html?quizid='+quiz.quizid" class='btn btn-primary'> Take Quiz</a>
+                                                <a :href="'quizQCreation_Trainer.html?courseNum=1&classNum='+classMo+'&secNum='+section.sectionid+'&quizID='+quiz.quizid" class='btn btn-primary'> View Quiz Questions</a>
                                             </div>
                                         </div>
                                         <div v-else>

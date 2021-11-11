@@ -41,8 +41,11 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
+                        <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
+                        </li>
+                        <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?id='+ eID">Course
+                                Available</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -50,12 +53,7 @@
                                 Quick Find
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>
-                                <li><a class="dropdown-item" href="allEnrolledCourses_Learner.html">Course Enrolled</a>
-                                </li>
-                                <li><a class="dropdown-item" :href="'allcoursesView_Learner.html?id='+ eID">Course
-                                        Available</a>
-                                </li>
+
                                 <li><a class="dropdown-item" href="#">Something else here</a></li>
                             </ul>
                         </li>
@@ -308,6 +306,7 @@
                     axios.get('http://18.136.106.135:5000/pending/' + this.courseNo)
                         .then(response => {
                             this.pendingList = response.data.data.result;
+                            console.log(this.pendingList);
                         })
                         .catch(error => {
 
@@ -330,7 +329,7 @@
                             axios.get('http://18.136.106.135:5000/Course_Enrolled/pending/eid/' + id + '/cid/' + this.courseNo)
                         }
                         alert("Learners have been successfully enrolled into " + this.courseName);
-                        // location.reload();
+                        location.reload();
                     } else {
                         alert("Learners in pending list have not been enrolled.")
                     }
