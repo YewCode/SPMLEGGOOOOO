@@ -48,8 +48,7 @@
                             Quick Find
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Home</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="Loginpage.html">LoginPage</a></li>                            <li><a class="dropdown-item" href="#">Another action</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -283,7 +282,7 @@
                         this.quizinfo = []; // Error handling for no response retrieve not done
                     });
                     
-                axios.get('http://127.0.0.1:5000/quiz_attempt/retrieve/' + this.quizid+'/engineer/'+engineerid)
+                axios.get('http://127.0.0.1:5000/quiz_attempt/retrieve/noattemptid/' + this.quizid+'/engineer/'+engineerid)
                     .then(response => {
                         console.log('attempt id '+response.data.data.attempt);
                         this.attemptID = parseInt(response.data.data.attempt) + 1;

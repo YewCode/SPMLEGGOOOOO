@@ -49,8 +49,8 @@
                             Quick Find
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Home</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="Loginpage.html">Login Page</a></li>
+                            
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -86,10 +86,12 @@
                     </div>
                 </div>
                 <div class="text-center my-2">
-                    <button type="button" class="btn btn-outline-primary" @click="nonPreReqLearner">Login as Learner 1</button>
+                    <button type="button" class="btn btn-outline-primary" @click="nonPreReqLearner">Login as Learner
+                        1</button>
                 </div>
                 <div class="text-center my-2">
-                    <button type="button" class="btn btn-outline-primary" @click="preReqLearner">Login as Learner 5</button>
+                    <button type="button" class="btn btn-outline-primary" @click="preReqLearner">Login as Learner
+                        5</button>
                 </div>
                 <div class="text-center my-2">
                     <button type="button" class="btn btn-outline-primary" @click="hrLogin">Login as HR</button>
@@ -105,22 +107,31 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
-    </script>
+        </script>
 
     <script>
         const app = new Vue({
             el: "#loginApp",
             methods: {
-                nonPreReqLearner: function() {
+                nonPreReqLearner: function () {
+                    window.sessionStorage.setItem('usertype', 'learner');
+                    window.sessionStorage.setItem('eid', 1);
                     window.location.href = "allcoursesView_Learner.html?id=1";
                 },
-                preReqLearner: function() {
+                preReqLearner: function () {
+                    window.sessionStorage.setItem('usertype', 'learner');
+                    window.sessionStorage.setItem('eid', 5);
                     window.location.href = "allcoursesView_Learner.html?id=5";
                 },
-                hrLogin: function() {
+                hrLogin: function () {
+                    window.sessionStorage.setItem('usertype', 'hr');
+                    window.sessionStorage.setItem('eid', 0);
                     window.location.href = "HRAssign.html";
                 },
-                johnLogin: function() {
+                johnLogin: function () {
+                    window.sessionStorage.setItem('usertype', 'trainer');
+                    window.sessionStorage.setItem('eid', 2);
+                    console.log(sessionStorage)
                     window.location.href = "CourseSummary_Trainer.html?id=2";
                 }
             }

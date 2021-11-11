@@ -45,7 +45,7 @@ class Engineer(db.Model):
 
 
 class Course(db.Model):
-    __tablename__ = 'Course'
+    __tablename__ = 'course'
 
     cid = db.Column(db.Integer, primary_key=True)
     coursename = db.Column(db.String(100), nullable=False)
@@ -185,7 +185,7 @@ class Class_Trainer(db.Model):
     def __init__(self, classid, courseid, eid):
         self.classid = classid
         self.courseid = courseid
-        self.courseid = courseid
+        self.eid = eid
 
     def json(self):
         return {"classid": self.classid, "courseid": self.courseid, "eid": self.eid}
@@ -595,12 +595,12 @@ def getclassByCourseID(i_courseid):
         .outerjoin(Engineer, Engineer.engineerid == Class_Trainer.eid)\
         .filter(Classes.courseid == i_courseid).all()
 
-    if len(classlist):
+    if len(classlist) and classlist != None:
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "classes": [({"classdetails": classs.json(), "engineer": en.json()}) for (classs, en, ct) in classlist]
+                    "classes": [({"classdetails": classs.json(), "engineer": en.json()})  for (classs, en, ct) in classlist]
                 }
             }
         )
@@ -614,10 +614,9 @@ def getclassByCourseID(i_courseid):
 
 @app.route("/class/engineer/<int:i_eid>/course/<int:i_courseid>")
 def getLearnerClassByCourseID(i_eid, i_courseid):
-    classlist = db.session.query(Classes, Engineer, Course_Enrolled)\
-        .filter(and_(Classes.courseid == i_courseid, Classes.classid == Course_Enrolled.classid,
-                     Classes.courseid == Course_Enrolled.cid,
-                     Engineer.engineerid == Course_Enrolled.eid, Engineer.engineerid == i_eid)).all()
+    classlist = db.session.query(Classes)\
+        .filter(and_(Classes.courseid==i_courseid,Classes.courseid == Course_Enrolled.cid,\
+                     Engineer.engineerid==Course_Enrolled.eid, Engineer.engineerid==i_eid)).all()
     print(classlist)
     if len(classlist):
         return jsonify(
@@ -926,7 +925,6 @@ def addNewQuestions(quizid):
 @app.route("/quiz/retrieve/<int:quizid>")
 def retrieveQuiz(quizid):
     result = db.session.query(Quiz).filter(quizid == quizid).first()
-    print(result)
     if result != None:
         return jsonify(
             {
@@ -997,8 +995,6 @@ def addQuizAttempt(quizid, attempt):
     ), 201
 
 # get Quiz_Attempt by learner
-
-
 @app.route("/quiz_attempt/retrieve/<int:quizid>/engineer/<int:eid>/attempt/<int:attemptid>")
 def getQuizAttemptID(quizid, eid, attemptid):
 
@@ -1013,6 +1009,30 @@ def getQuizAttemptID(quizid, eid, attemptid):
                 "code": 200,
                 "data": {
                     "attempt": [result.json()for result in results]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Engineer " + str(eid) + " has not completed any attempts on quiz id."+str(quizid)
+        }
+    ), 404
+    
+# get Quiz_Attempt by learner without attemptid
+@app.route("/quiz_attempt/retrieve/noattemptid/<int:quizid>/engineer/<int:eid>")
+def getQuizAttemptIDWithoutAttemptID(quizid, eid):
+
+    results = db.session.query(Quiz_Attempt)\
+        .filter(and_(Quiz_Attempt.quizid == quizid,
+                     Quiz_Attempt.engineerid == eid))\
+        .order_by(Quiz_Attempt.attemptID.desc()).first()
+    if results != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "attempt": results.getAttemptID()
                 }
             }
         )

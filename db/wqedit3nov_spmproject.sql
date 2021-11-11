@@ -328,11 +328,14 @@ DROP TABLE IF EXISTS `quiz_attempt`;
 CREATE TABLE IF NOT EXISTS `quiz_attempt` (
   `EngineerID` int(11) NOT NULL,
   `QuizID` int(11) NOT NULL,
-  `AttemptID` int(11) NOT NULL,
+  `id` int(11) NOT NULL auto_increment PRimary key,
+  `Attemptid` int(11) NOT NULL ,
   `QnNum` int(11) NOT NULL,
   `given_answer` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`EngineerID`,`QuizID`,`AttemptID`,`QnNum`),
-  KEY `QuizID` (`QuizID`,`QnNum`)
+  KEY `QuizID` (`QuizID`,`QnNum`),
+  foreign key (QuizID) REFERENCES Quiz(QuizID),
+  foreign key (EngineerID) REFERENCES Engineer(EngineerID),
+    foreign key (QuizID,QnNum) REFERENCES Question(QuizID,QnNum)
 ) ;
 
 -- --------------------------------------------------------
@@ -485,10 +488,10 @@ ALTER TABLE `quiz`
 --
 -- Constraints for table `quiz_attempt`
 --
-ALTER TABLE `quiz_attempt`
-  ADD CONSTRAINT `quiz_attempt_ibfk_1` FOREIGN KEY (`EngineerID`) REFERENCES `engineer` (`EngineerID`),
-  ADD CONSTRAINT `quiz_attempt_ibfk_2` FOREIGN KEY (`QuizID`,`QnNum`) REFERENCES `question` (`QuizID`, `QnNum`);
-COMMIT;
+-- ALTER TABLE `quiz_attempt`
+--   ADD CONSTRAINT `quiz_attempt_ibfk_1` FOREIGN KEY (`EngineerID`) REFERENCES `engineer` (`EngineerID`),
+--   ADD CONSTRAINT `quiz_attempt_ibfk_2` FOREIGN KEY (`QuizID`,`QnNum`) REFERENCES `question` (`QuizID`, `QnNum`);
+-- COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
