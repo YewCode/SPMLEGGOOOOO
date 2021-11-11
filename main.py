@@ -925,7 +925,8 @@ def addNewQuestions(quizid):
 
 @app.route("/quiz/retrieve/<int:quizid>")
 def retrieveQuiz(quizid):
-    result = db.session.query(Quiz).filter(Quiz.quizid == quizid).first()
+    result = db.session.query(Quiz).filter(quizid == quizid).first()
+    print(result)
     if result != None:
         return jsonify(
             {
@@ -967,8 +968,6 @@ def retrieveQuestion(quizid):
     )
 
 # add Quiz_Attempt by learner
-
-
 @app.route("/quiz_attempt/add/<int:quizid>/<int:attempt>", methods=['GET', 'POST'])
 def addQuizAttempt(quizid, attempt):
     formdata = request.form

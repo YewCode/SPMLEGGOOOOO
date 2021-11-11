@@ -120,10 +120,11 @@
                                         <label for="option3" class="form-label">Option 3:</label>
                                         <input class="form-control" id="option3" type="text">
 
-                                        <label for="mcqAns" class="form-label">Answer (Please type out the entire answer and not just indicate the value):</label>
+                                        <label for="mcqAns" class="form-label">Answer (Please type out the entire answer
+                                            and not just indicate the value):</label>
                                         <input class="form-control" id="mcqAns" type="text">
 
-                                        <button type="button" class="btn-success mt-3" onclick="addMCQ()">Done</button>
+                                        <button type="button" class="btn-success mt-3" @click="addMCQ">Done</button>
                                     </div>
                                 </form>
                             </div>
@@ -143,11 +144,12 @@
                                     <div class="py-3">
                                         <label for="tftitle" class="form-label">Question title:</label>
                                         <input class="form-control" id="tftitle" type="text">
-                    
-                                        <label for="tfAns" class="form-label">Answer (Please type out True or False):</label>
+
+                                        <label for="tfAns" class="form-label">Answer (Please type out True or
+                                            False):</label>
                                         <input class="form-control" id="tfAns" type="text">
-                    
-                                        <button type="button" class="btn-success mt-3" onclick="addTF()">Done</button>
+
+                                        <button type="button" class="btn-success mt-3" @click="addTF">Done</button>
                                     </div>
                                 </form>
                             </div>
@@ -162,11 +164,16 @@
         <!-- Display questions associated with qid here -->
         <section class="sectionPadding">
             <div class="container">
-                <div v-for="qn in qnList">
-                    <h4> {{qn.Description}} </h4>
-                    <p v-for="(option,i) in qn.options">
-                        {{i}}. <input type="radio" name="mcqSelectionv">
-                    </p>
+                <div v-if="qnList.length > 0">
+                    <div v-for="qn in qnList">
+                        <h4> {{qn.qn_Description}} </h4>
+                        <p v-for="(option,i) in qn.options">
+                            {{i+1}}. &nbsp; &nbsp; <input type="radio" :name="qn.qnNum" :value="option"> {{option}}
+                        </p>
+                    </div>
+                </div>
+                <div v-else class="mx-auto">
+                    <h3>There are no questions created for Quiz {{qID}} at the moment</h3>
                 </div>
             </div>
         </section>
@@ -180,7 +187,7 @@
                         <button type="button" class="btn btn-outline-info" @click="toLogin">Home</button>
                     </div>
                 </div>
-                
+
             </div>
         </section>
 
@@ -188,7 +195,6 @@
 
 
     <script>
-
         async function addNewQn(qid, qnNum, qnType, qnDescription, optionJson, ans) {
             var formData = new FormData();
             formData.append('quizid', qid);
@@ -214,29 +220,12 @@
                 data = await response.json();
                 // console.log(data);
                 if (data.code == '200') {
-                    alert("Question added successfully!")
+                    // alert("Success!")
                 } else {
                     console.log(response);
                     alert("There has been an error, please refresh and try again");
                 }
             }
-        }
-
-        function addMCQ() {
-            var mcqTitle = document.getElementById('mcqTitle').value;
-            var option1 = document.getElementById('option1').value;
-            var option2 = document.getElementById('option2').value;
-            var option3 = document.getElementById('option3').value;
-
-            var toObj = [option1, option2, option3];
-
-            var q_No = 2;
-            var mcqans = document.getElementById('mcqAns').value;
-
-            addNewQn(1, q_No, 'mcq', mcqTitle, JSON.stringify(toObj), mcqans);
-
-            window.location.reload();
-
         }
 
         const app = new Vue({
@@ -257,6 +246,50 @@
             methods: {
                 toLogin: function () {
                     window.location.href = 'Loginpage.html';
+                },
+
+                addMCQ: function () {
+                    let currentQNum = this.qnList.length
+                    var mcqTitle = document.getElementById('mcqTitle').value;
+                    var option1 = document.getElementById('option1').value;
+                    var option2 = document.getElementById('option2').value;
+                    var option3 = document.getElementById('option3').value;
+
+                    var toObj = [option1, option2, option3];
+                    toObj = toObj.toString();
+                    // toObj = toObj.replace(/[\[\]'\"\,]+/g,'');
+                    toObj = toObj.replace(/[|]|"|'/, '');
+                    console.log(toObj);
+                    toObj = toObj.split(",");
+                    // console.log(typeof toObj);
+                    var q_No = currentQNum + 1;
+                    var mcqans = document.getElementById('mcqAns').value;
+
+                    addNewQn(this.qID, q_No, 'mcq', mcqTitle, toObj, mcqans);
+
+                    console.log(toObj);
+
+                    alert("MCQ question added successfully!")
+
+                    window.location.reload();
+
+
+
+                },
+                addTF: function() {
+                    let currentQNum = this.qnList.length
+                    var tftitle = document.getElementById('tftitle').value;
+                    var tOption = "True"
+                    var fOption = "False"
+                    var toObj = [tOption, fOption];
+                    var q_No = currentQNum + 1;
+                    var tfAns = document.getElementById('tfAns').value;
+
+                    addNewQn(this.qID, q_No, 'tf', tftitle, JSON.stringify(toObj), tfAns);
+
+                    alert("MCQ question added successfully!")
+
+                    window.location.reload();
                 }
             },
             mounted: function () {
@@ -280,11 +313,10 @@
                         alert("Error retrieving quiz details");
                     })
 
+                // Retrieve list of quiz questions
                 axios.get(`http://127.0.0.1:5000/quiz/question/retrieve/${this.qID}`)
                     .then(response => {
-                        if (response.code == 200) {
-                            this.qnList = response.data.data.result;
-                        }
+                        this.qnList = response.data.data.result
                     })
                     .catch(error => {
                         console.log(error);
