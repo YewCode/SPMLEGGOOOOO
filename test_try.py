@@ -1,8 +1,8 @@
 from main import *
-from unittest import TestCase
+import unittest
 
 
-class TestIntegrations(TestCase):
+class TestIntegrations(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
 
@@ -45,5 +45,8 @@ class TestIntegrations(TestCase):
                 ]
             }
         }
-        print(response)
-        self.assertEqual( response.get_json(),suppposedresult)
+        print(response.status)
+        # this is how u test the output of the response
+        # self.assertEqual( response.get_json(),suppposedresult)
+        # this is how u test the status of response eg. 200 for get, 201 for post 
+        self.assertEqual( response.status,'200 OK')

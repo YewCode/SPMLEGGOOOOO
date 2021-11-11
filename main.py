@@ -19,6 +19,7 @@ import time
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/spmproject'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:password@localhost:3306/spmproject'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -485,16 +486,18 @@ def createSectionsByCid(sectionid, cid, classid):
 @app.route("/course_trainer/cid/<int:cid>")
 def getCourseTrainerByCid(cid):
 
-    coursetrainerlist = Course_Trainer.query.filter_by(cid=cid)
-    if len(coursetrainerlist):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "courses": [coursetrainer.json() for coursetrainer in coursetrainerlist]
+    coursetrainerlist = db.session.query(Course_Trainer).filter_by(cid=cid).all()
+    print(coursetrainerlist)
+    if coursetrainerlist != None:
+        if len(coursetrainerlist):
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": {
+                        "courses": [coursetrainer.json() for coursetrainer in coursetrainerlist]
+                    }
                 }
-            }
-        )
+            )
     return jsonify(
         {
             "code": 404,
@@ -1141,3 +1144,4 @@ def retrieveEligibleCourseByEid(i_eid):
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
+    # app.run(host='0.0.0.0',port=5000, debug=True)
