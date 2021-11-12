@@ -26,7 +26,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 db = SQLAlchemy(app)
 CORS(app)
 
-uploads_dir = os.path.join('uploadfiles')
+uploads_dir = os.path.join('../../../var/www/html/uploadfiles')
 
 
 class Engineer(db.Model):
@@ -265,6 +265,9 @@ class Quiz (db.Model):
         }
     def getSectionId(self):
         return self.sectionid
+    
+    def getQuizId(self):
+        return self.quizid
 
 
 class Question (db.Model):
@@ -351,6 +354,41 @@ class Pre_Requisites (db.Model):
     def getPreRequisite(self):
         return self.prerequisites_cid
 
+
+    def getAttemptID(self):
+        return self.attemptID
+
+
+class Progress (db.Model):
+    __tablename__ = 'progress'
+
+    progressID = db.Column(db.Integer, primary_key=True)
+    engineerID = db.Column(db.Integer)
+    quizID = db.Column(db.Integer)
+    materialid = db.Column(db.Integer)
+    progressStatus = db.Column(db.String(50))
+    quizScore = db.Column(db.Float(precision=2))
+
+    def __init__(self, progressID,engineerID,quizID,materialid,progressStatus,quizScore):
+        self.progressID = progressID
+        self.engineerID = engineerID
+        self.quizID = quizID
+        self.materialid = materialid
+        self.progressStatus = progressStatus
+        self.quizScore = quizScore
+
+    def json(self):
+        return {
+            "progressID": self.progressID,
+            "engineerID": self.engineerID,
+            "quizID": self.quizID,
+            "materialid": self.materialid,
+            "progressStatus": self.progressStatus,
+            "quizScore": self.quizScore
+        }
+        
+    def getMaterialID(self):
+        return self.materialid
 # all routes
 
 
@@ -633,7 +671,7 @@ def getclassByCourseID(i_courseid):
 def getLearnerClassByCourseID(i_eid, i_courseid):
     classlist = db.session.query(Classes)\
         .filter(and_(Classes.courseid==i_courseid,Classes.courseid == Course_Enrolled.cid,\
-                     Engineer.engineerid==Course_Enrolled.eid, Engineer.engineerid==i_eid)).all()
+                    Course_Enrolled.classid==Classes.classid, Course_Enrolled.eid==i_eid)).all()
     print(classlist)
     if len(classlist):
         return jsonify(
@@ -684,7 +722,7 @@ def getPendingEnrollmentByCourseID(i_courseid):
 
 @app.route("/Course_Enrolled/pending/eid/<int:eid>/cid/<int:cid>", methods=['GET', 'POST'])
 def approveLearnersEnrollment(eid, cid):
-    courseenrolling = Course_Enrolled(cid, eid, 1, None)
+    courseenrolling = Course_Enrolled(cid, eid, 1, 1)
     pending = Course_EnrollmentPending.query\
         .filter(and_(cid == cid, eid == eid, Course_EnrollmentPending.active == 1)).first()
 
@@ -765,10 +803,59 @@ def addPendingEnrollment(eid, cid):
             "enrolled":  pending.json()
         }
     )
+    
+# create new progress by materialid
+@app.route("/add/progress/<int:materialid>/engineer/<int:eid>", methods=['GET'])
+def addProgressByMaterialID(materialid,eid):
+    progress = Progress(None,eid,None,materialid,'Open',None)
+    try:
+        db.session.add(progress)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while adding to progress :" + str(e)
+            }
+        ), 500
 
+    newlyadded = db.session.query(Progress).order_by(Progress.progressID.desc()).first()
+    if newlyadded != None:
+        return jsonify(
+            {
+                "code": 200,
+                "message": 'added successfully',
+                "result":  newlyadded.json()
+            }
+        ), 201
+
+@app.route("/get/progress/material/<int:materialid>/engineer/<int:eid>")
+def getProgressByMaterialID(materialid,eid):
+    progress1 =  db.session.query(Progress)\
+        .filter(and_(Progress.materialid==materialid,\
+            Progress.engineerID==eid)).first()
+    print(progress1)
+    if progress1 != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": progress1.json()
+                }
+            }
+        ), 200
+    else:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": []
+                }
+            }
+        ), 200
+    
 # upload material
-
-
 @app.route("/upload/material", methods=['GET', 'POST'])
 def uploadMaterials():
     formData = request.form
@@ -784,9 +871,8 @@ def uploadMaterials():
     timestr = time.strftime("%Y%m%d-%H%M%S")
     finalfilename = str(timestr)+'_'+' '.join(namewoext) + '.'+fileext
     # save file
-    material1['material'].save(os.path.join(
-        uploads_dir, secure_filename(finalfilename)))
-
+    material1['material'].save(os.path.join(uploads_dir, secure_filename(finalfilename)))
+    os.open(uploads_dir+secure_filename(finalfilename), os.O_RDWR | os.O_CREAT, 0o666)
     addtodb = Material(0, finalfilename, None, False,
                        classid, courseid, sectionid)
 
@@ -968,7 +1054,7 @@ def retrieveQuizBysectionid(courseid,classid):
 # retreive quiz by id
 @app.route("/quiz/retrieve/<int:quizid>")
 def retrieveQuiz(quizid):
-    result = db.session.query(Quiz).filter(quizid == quizid).first()
+    result = db.session.query(Quiz).filter(Quiz.quizid == quizid).first()
     if result != None:
         return jsonify(
             {
@@ -984,6 +1070,26 @@ def retrieveQuiz(quizid):
             "message": "There are no results for quiz id: "+str(quizid) + '.'
         }
     ), 404
+    
+# retreive latest quiz id
+@app.route("/quiz/latest")
+def retrieveLatestQuiz():
+    result = db.session.query(Quiz).order_by(Quiz.quizid.desc()).first()
+    if result != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": result.getQuizId()
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 200,
+            "message": "There are no results."
+        }
+    ), 200
 
 # retreive quiz question
 @app.route("/quiz/question/retrieve/<int:quizid>")
@@ -1100,6 +1206,28 @@ def retrieveCompletedByEid(eid):
                 "code": 200,
                 "data": {
                     "result": [({"prereqs": pre.json(), "completed": coursecompleted.json()}) for (coursecompleted, pre) in result]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Engineer " + str(eid) + " has not completed any courses which have pre-requisites."
+        }
+    ), 404
+    
+@app.route("/coursecompleted/courseinfo/<int:eid>")
+def retrieveCompletedCourseinfoByEid(eid):
+    result = db.session.query(Course)\
+        .join(Course_Completed, Course.cid == Course_Completed.cid)\
+        .filter(Course_Completed.eid == eid).all()
+    # print(result)
+    if result != None:
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "result": [ course.json() for course in result]
                 }
             }
         )

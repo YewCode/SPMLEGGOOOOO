@@ -104,10 +104,9 @@
           </div>
           <div class="col-6" id="faqlist">
             <div class="collapse multi-collapse" id="content">
-              <div class="accordion-group" id="accordionExample" v-for='(section,i) in sectionlist'
-                :id='section.sectionid'>
-                <div class="accordion-item" :id="section.sectionName">
-                  <h2 class="accordion-header">
+              <div class="accordion-group" id="accordionExample">
+                <div class="accordion-item" v-for='(section,i) in sectionlist'>
+                  <h2 class="accordion-header" :id="section.sectionName">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                       data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                       {{section.sectionName}}
@@ -136,8 +135,7 @@
                                 <p>Yet to Be Downloaded</p>
                               </div>
                             </div>
-                            <div v-else-if='showURL(materialdict.url)' class="row" style="padding-top: 2em;">
-                              <br /><br /><br />
+                            <div v-else-if='showURL(materialdict.url)' class="row">
                               <iframe width="420" height="315" :src="materialdict.url" title="YouTube video player"
                                 frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -156,12 +154,6 @@
                               <h4>{{quiz.quiz_name}}</h4>
                               <a :href="'QuizInterface_Learners.html?quizid='+quiz.quizid" class='btn btn-primary'> Take
                                 Quiz</a>
-                                <div v-if='attemptlist[section.sectionid-1] !=0' style="padding-top: 2em;">
-                                    <a class="btn btn-success" :href="'QuizResults_Learners.html?quizid='+quiz.quizid+'&attemptID='+attemptlist[section.sectionid-1]"> View Attempt {{attemptlist[section.sectionid-1]}}    </a> 
-                                </div>
-                                <div v-else style="padding-top: 2em;">
-                                  No Attempts.
-                                </div>
                             </div>
                           </div>
                           <div v-else>
@@ -205,9 +197,7 @@
         materiallist: {},
         changing: '',
         quizlist: {},
-        progresslist: {},
-        showattempt: false,
-        attemptlist: []
+        progresslist: {}
       },
       methods: {
         renameFilename: function (file_name) {
@@ -220,6 +210,7 @@
         },
         showFile: function (filename) {
           if (filename != null) {
+            // this.correct = true
             return true
           } else {
             // console.log('change to false')
@@ -241,8 +232,8 @@
           axios.get(`http://18.136.106.135:5000/add/progress/${materialid}/engineer/${this.eID}`)
             .then(response => {
               this.progress = response.data.data.result;
-              // console.log('progress')
-              // console.log(this.progress)
+              console.log('progress')
+              console.log(this.progress)
 
             })
             .catch(error => {
@@ -257,38 +248,23 @@
 
               progressofmaterial = response.data.data;
               this.progresslist[materialid] = progressofmaterial
-              // console.log(this.progresslist)
+              console.log(this.progresslist)
 
 
             })
-            
+            .catch(error => {
+              console.log(error);
+              alert("Error retrieving progress for " + this.courseNo);
+            })
         },
         gotProcess: function (materialid) {
-          // console.log(this.progresslist, materialid)
-          // console.log(this.progresslist.hasOwnProperty(parseInt(materialid)))
+          console.log(this.progresslist, materialid)
+          console.log(this.progresslist.hasOwnProperty(parseInt(materialid)))
           if (this.progresslist.hasOwnProperty(materialid)) {
             return true
           }
           return false
-        },
-        getQuizAttempts: function (quizid,sectionid) {
-          axios.get('http://18.136.106.135:5000/quiz_attempt/retrieve/noattemptid/'+quizid+'/engineer/' + this.eID)
-            .then(response => {
-              latestattemptid = response.data.data.attempt;
-              // console.log(latestattemptid)
-              if (latestattemptid == 0){
-                this.attemptlist.push(0);
-                return 0;
-              }else{
-                
-                this.attemptlist.push(latestattemptid);
-                // console.log('yes',this.attemptlist)
-                return latestattemptid;
-              }
-            })
-            
         }
-        
       },
       mounted: function () {
         // var usertype = sessionStorage.getItem('usertype');
@@ -326,17 +302,15 @@
             console.log(error)
             alert("Error retrieving sections for " + this.courseNo);
           })
-
-
         axios.get('http://18.136.106.135:5000/retrieve/materials/' + this.courseNo + '/class/' + this.classNo)
           .then(response => {
             this.materiallist = response.data.data.result;
 
-            // console.log('material')
-            // console.log(this.materiallist)
+            console.log('material')
+            console.log(this.materiallist)
             for (const [sectionname, materials] of Object.entries(this.materiallist)) {
               for (material of materials) {
-                // console.log(material)
+                console.log(material)
                 this.getProcess(material.materialid);
               }
 
@@ -352,21 +326,14 @@
         axios.get('http://18.136.106.135:5000/quiz/section/retrieve/' + this.courseNo + '/class/' + this.classNo)
           .then(response => {
             this.quizlist = response.data.data.result;
-            // console.log('this.quizlist')
-            // console.log(this.quizlist)
-            for(sectionname in this.quizlist){
-              // console.log(sectionname)
-              sectionNo = parseInt(sectionname)
-              this.getQuizAttempts(this.quizlist[sectionname][0].quizid,sectionname);
-              // console.log('a')
-            }
+
           })
           .catch(error => {
             console.log(error)
             alert("Error retrieving sections for " + this.courseNo);
           })
-        // console.log('material')
-        // console.log(this.materiallist)
+        console.log('material')
+        console.log(this.materiallist)
 
 
       }

@@ -104,8 +104,15 @@
                     <p>This quiz contains <u><b>{{questionslist.length}}</b></u> Questions</p>
                     <p>To Pass this quiz, you need to score at least <u><b>{{quizinfo.passing_requirements}}%</b></u>
                     </p>
-                    <p v-model='cal'></p>
+                    Score <input class="col-sm-2" type="text" disabled v-model='cal'>%
+                    <div class="col-sm-3">
+                        <p :class="stylePass">
+                            {{resultPass}} {{isPass(quizinfo.passing_requirements)}}
+                        </p>
+                    </div>
+                    
                 </div>
+
 
 
                 <form name='quizform' id="Quiz_Name" action="#" class="sectionPadding">
@@ -120,11 +127,11 @@
                                     checked>
                                 <label class="form-check-label" :for="question.qnNum">
                                     {{option}}
-                                    <!-- <span v-if="option[1]">
+                                    <span v-if="getFormat(question.answer)==getFormat(option)">
                                         <i class="bi bi-check-circle-fill"></i>
                                     </span>
                                     <span v-else>
-                                        <i class="bi bi-x-circle-fill"></i> -->
+                                        <i class="bi bi-x-circle-fill"></i>
                                     </span>
                                 </label>
                             </div>
@@ -171,7 +178,21 @@
                 attemptlist: {},
                 name: 'score',
                 correct: 0,
-                cal: 'Calculating in Progress'
+                cal: 'Calculating in Progress',
+                eID: 1,
+                stylePass: '',
+                resultPass: '',
+
+            },computed:{
+               
+                // isPassStyle: function(passing_requirements){
+                //     return 'text-success'? parseFloat(this.cal) >= parseFloat(passing_requirements): 'text-danger';
+                //     // if (parseFloat(this.cal) >= parseFloat(passing_requirements)){
+                //     //     return 'text-success';
+                //     // }else{
+                //     //     return 'text-danger';
+                //     // }
+                // }
             },
             methods: {
                 getscore: function () {
@@ -188,7 +209,20 @@
                     } else {
                         return false
                     }
+                }, isPass: function (passing_requirements){
+                    console.log('test')
+                    // return 'Passed'? parseFloat(this.cal) >= parseFloat(passing_requirements): 'Failed';
+
+                    if (parseFloat(this.cal) >= parseFloat(passing_requirements)){
+                        this.resultPass =  'Passed';
+                        this.stylePass  = 'text-success';
+                    }else{
+                        this.resultPass =  'Failed';
+                        this.stylePass  = 'text-danger';
+                    }
                 }
+                
+                
 
 
             },
@@ -198,6 +232,10 @@
                 const urlParams = new URLSearchParams(queryString);
                 this.quizid = parseInt(urlParams.get('quizid'))
                 this.attemptID = parseInt(urlParams.get('attemptID'))
+                if (engineerid){
+                    this.eID = engineerid;
+                }
+                
                 // console.log(this.quizid)
                 // console.log(this.attemptID)
                 // quiz retrieval
@@ -210,7 +248,7 @@
 
                         this.quizinfo = []; // Error handling for no response retrieve not done
                     });
-                axios.get('http://18.136.106.135:5000/quiz_attempt/retrieve/' + this.quizid + '/engineer/' + engineerid + '/attempt/' + this.attemptID)
+                axios.get('http://18.136.106.135:5000/quiz_attempt/retrieve/' + this.quizid + '/engineer/' + this.eID + '/attempt/' + this.attemptID)
                     .then(response => {
                         console.log(response.data.data.attempt);
                         tempattemptlist = response.data.data.attempt;
@@ -239,21 +277,27 @@
                                     this.optionlist[qnNo] = options
 
                                     attemptans = "'" + this.attemptlist[qnNo] + "'";
-                                    if (attemptans == question.answer) {
+                                    console.log(attemptans)
+                                    if (this.getFormat(attemptans) == this.getFormat(question.answer)) {
                                         this.correct += 1;
 
-                                    } 
+                                    }
                                 }
-                                this.cal = this.correct / Object.keys(this.questionslist).length;
-                                this.cal = (this.cal * 100).toFixed(2);
-                                console.log(this.cal)
+                                if (this.correct == 0 && Object.keys(this.questionslist).length == 0) {
+                                    //pass                                
+                                } else {
+                                    this.cal = this.correct / Object.keys(this.questionslist).length;
+                                    this.cal = (this.cal * 100).toFixed(2);
+                                    console.log(this.cal)
+                                }
+
                             } else {
                                 alert('No Questions in this quiz')
                             }
 
                         })
                         .catch(error => {
-
+                            console.log(error)
                             alert(error)// Error handling for no response retrieve not done
 
                         });
