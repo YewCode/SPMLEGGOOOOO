@@ -121,8 +121,10 @@
                         <b v-else></b>
                     </div>
                     <div class="col-3"></div>
-
+                    {{getEnrolledClasses}}
+                    <!--to get engineers and their enrolled class numbers for the course-->
                 </div>
+
 
                 <div class="row">
                     <div class="col-12">
@@ -166,23 +168,34 @@
                 classList: [],
                 chosenClass: "",
                 classCapacity: "",
-                trainer: ''
+                trainer: '',
+                classLearnerList: [],
             },
             methods: {
                 hrAssignL: function (id) {
                     // alert(typeof(id));
-                    console.log(this.chosenClass)
+                    // console.log(this.chosenClass)
                     if (this.chosenClass != '') {
-                        let confirmation = confirm("Are you sure you want to enroll this learner into Class ID " + this.chosenClass + "?");
+                        let confirmation = confirm(
+                            "Are you sure you want to enroll this learner into Class ID " + this
+                            .chosenClass + "?");
 
                         if (confirmation == true) {
-                            axios.get('http://18.136.106.135:5000/Course_Enrolled/assign/eid/' + id + '/cid/' + this.courseNo + '/class/' + this.chosenClass); // For now this assigns engineer to course, need to handle api for class
+                            if (this.classCapacity <= 0) {
+                                alert(
+                                    `Unable to assign engineer ${id} into ${this.chosenClass} because it is at max capacity. Please try another class.`)
+                            } else {
+                                axios.get('http://18.136.106.135:5000/Course_Enrolled/assign/eid/' + id +
+                                    '/cid/' + this.courseNo + '/class/' + this.chosenClass
+                                ); // For now this assigns engineer to course, need to handle api for class
 
-                            alert("Engineer has been enrolled successfully to " + this.courseName); // Works but if use catch method it returns code 500
+                                alert("Engineer has been enrolled successfully to " + this
+                                    .courseName); // Works but if use catch method it returns code 500
 
-                            location.reload();
-                        }
-                        else {
+                                location.reload();
+                            }
+
+                        } else {
                             alert("Engineer " + id + " was not enrolled into " + this.courseName);
                         }
                     } else {
@@ -197,22 +210,52 @@
                     }
                     for (classes of this.classList) {
                         if (this.chosenClass == classes.classdetails.classid) {
-                            this.classCapacity = classes.classdetails.capacity;
+                            this.classCapacity = parseInt(classes.classdetails.capacity);
                             break;
                         }
                     }
+                    let counter = 0;
+
+                    for (cls in this.classLearnerList) {
+                        for (i of this.classLearnerList[cls]) {
+                            if (i.classid == this.chosenClass) {
+                                counter += 1;
+                            }
+                        }
+                    }
+                    this.classCapacity = this.classCapacity - counter;
+
+
 
                 },
                 isTrainer: function (eid) {
-                    
-                    for (tr of this.trainer){
-                        if (tr.eid == eid){
+
+                    for (tr of this.trainer) {
+                        if (tr.eid == eid) {
                             return true
                         }
                     }
                     return false
 
-                }
+                },
+            },
+            computed: {
+                getEnrolledClasses: function () {
+                    for (i in this.enrollmentList) {
+                        if (this.enrollmentList[i].isenrolled == "enrolled") {
+                            axios.get(
+                                    `http://18.136.106.135:5000/class/engineer/${this.enrollmentList[i].engineer.engineerid}/course/${this.courseNo}`
+                                    )
+                                .then(response => {
+                                    this.classLearnerList.push(response.data.data.classes)
+                                })
+                                .catch(error => {
+                                    alert(error);
+                                })
+                        }
+                    }
+                },
+
             },
             mounted: function () {
                 axios.get('http://18.136.106.135:5000/course')
@@ -258,18 +301,19 @@
                 axios.get('http://18.136.106.135:5000/course_trainer/cid/' + this.courseNo)
                     .then(response => {
                         this.trainer = response.data.data.courses;
-                        console.log(this.trainer);
+                        // console.log(this.trainer);
                     })
                     .catch(error => {
                         alert("Error retrieving classes for " + this.courseName);
                     })
+
             }
         });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous">
-        </script>
+    </script>
 </body>
 
 
