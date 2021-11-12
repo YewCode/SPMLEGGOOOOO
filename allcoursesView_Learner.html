@@ -101,6 +101,11 @@
                     <div class="col-9">
                         <h4> {{course.coursename}} </h4>
                         <p> {{course.coursedescription}} </p>
+                        <p> Start Date: {{course.startdate}} </p>
+                        <p> End Date: {{course.enddate}} </p>
+                        <p v-if='prereqlist.prereqs.for_cid && prereqlist.prereqs.for_cid==course.id'>
+                            Prerequisites: Course ID {{prereqlist.prereqs.prerequisites_cid}} </p>
+
                         <button class="badge bg-warning" type="button">Enrolled</button>
                     </div>
                 </div>
@@ -113,11 +118,14 @@
                     <div class="col-9">
                         <h4> {{course.coursename}} </h4>
                         <p> {{course.coursedescription}} </p>
+                        <p> Start Date: {{course.startdate}} </p>
+                        <p> End Date: {{course.enddate}} </p>
                         <button v-if="enrollCheck == false" type="button" class="badge bg-primary"
                             @click="enrollCourse(course.cid, course.coursename)">Enroll Now</button>
                         <button v-else type="button" class="badge bg-primary">Pending</button>
                     </div>
                 </div>
+
                 <div v-for="course in finishedList[0]" class="row py-3">
                     <div class="col-3">
                         <!-- <div class="rect" style="height: 150px;width: 250px;background-color: #555;"></div> -->
@@ -127,6 +135,9 @@
                     <div class="col-9">
                         <h4> {{course.coursename}} </h4>
                         <p> {{course.coursedescription}} </p>
+                        <p> Start Date: {{course.startdate}} </p>
+                        <p> End Date: {{course.enddate}} </p>
+
                         <button class="badge bg-success">Completed</button>
                     </div>
                 </div>
@@ -158,6 +169,7 @@
                 eName: "",
                 availableList: [], // returns the courses that should be viewable by eid
                 completedList: [],
+                prereqlist: [],
                 finishedList: [],
                 enrolledList: [],
                 enrollCheck: false
@@ -239,8 +251,13 @@
                             for (course in this.completedList) {
                                 if (this.availableList[d].cid == this.completedList[course].completed.cid) {
                                     let toPush = this.availableList.splice(d, 1);
+                                    console.log(this.completedList[course]);
+
+                                    this.prereqlist.push(this.completedList[course]);
                                     // console.log(toPush);
                                     this.finishedList.push(toPush);
+                                    this.prereqCourseInfo.push(this.availableList)
+                                    console.log(this.prereqCourseInfo)
                                     // console.log(this.finishedList)
                                 }
                             }

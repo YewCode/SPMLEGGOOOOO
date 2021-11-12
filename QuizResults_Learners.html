@@ -104,7 +104,7 @@
                     <p>This quiz contains <u><b>{{questionslist.length}}</b></u> Questions</p>
                     <p>To Pass this quiz, you need to score at least <u><b>{{quizinfo.passing_requirements}}%</b></u>
                     </p>
-                    <p><b>Score : {{ cal }} %</b></p>
+                    <p v-model='cal'></p>
                 </div>
 
 
@@ -114,17 +114,17 @@
                         <h6>{{question.qnNum}}. {{question.qn_Description}}</h6>
                         <br>
                         <div class="form-check" v-for='(option,index) in optionlist[question.qnNum]'>
+                            <div v-if='getSelected(option,attemptlist[question.qnNum])'>
 
-                            <div v-if='option==attemptlist[question.qnNum]'>
                                 <input class="form-check-input" type="radio" :name="question.qnNum" :value="option"
                                     checked>
                                 <label class="form-check-label" :for="question.qnNum">
                                     {{option}}
-                                    <span v-if="getMarking(attemptlist[question.qnNum],question.answer)">
+                                    <!-- <span v-if="option[1]">
                                         <i class="bi bi-check-circle-fill"></i>
                                     </span>
                                     <span v-else>
-                                        <i class="bi bi-x-circle-fill"></i>
+                                        <i class="bi bi-x-circle-fill"></i> -->
                                     </span>
                                 </label>
                             </div>
@@ -171,7 +171,7 @@
                 attemptlist: {},
                 name: 'score',
                 correct: 0,
-                cal: 0
+                cal: 'Calculating in Progress'
             },
             methods: {
                 getscore: function () {
@@ -182,15 +182,13 @@
                     formatted = answer.replace(/[']+/g, '').toString();
                     return formatted
                 },
-                getMarking: function (attempt, correctanswer) {
-                    attempt = this.getFormat(attempt);
-                    correctanswer = this.getFormat(correctanswer);
-                    if (attempt == correctanswer) {
-                        return true;
+                getSelected: function (option, chosen) {
+                    if (option == chosen) {
+                        return true
+                    } else {
+                        return false
                     }
-                    return false;
-
-                },
+                }
 
 
             },
@@ -243,11 +241,11 @@
                                     attemptans = "'" + this.attemptlist[qnNo] + "'";
                                     if (attemptans == question.answer) {
                                         this.correct += 1;
-                                    }
+
+                                    } 
                                 }
-                                console.log(this.correct);
-                                console.log(Object.keys(this.attemptlist).length);
-                                this.cal = this.correct / Object.keys(this.attemptlist).length;
+                                this.cal = this.correct / Object.keys(this.questionslist).length;
+                                this.cal = (this.cal * 100).toFixed(2);
                                 console.log(this.cal)
                             } else {
                                 alert('No Questions in this quiz')

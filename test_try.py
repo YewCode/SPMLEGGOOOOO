@@ -50,3 +50,9 @@ class TestIntegrations(unittest.TestCase):
         # self.assertEqual( response.get_json(),suppposedresult)
         # this is how u test the status of response eg. 200 for get, 201 for post 
         self.assertEqual( response.status,'200 OK')
+        
+        
+    def testAother(self):
+        newCourse = Course(1,'SPM','Awesome course','01/12/2021','03/12/2021','images/printerclass.png')
+        newCourseEnrolled = Course_Enrolled(1,1,1,1)
+         

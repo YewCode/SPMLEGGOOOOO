@@ -84,9 +84,9 @@
         </nav>
 
         <section id="header" class="pageTitlePad">
-            <h1>My Enrolled Courses</h1>
+            <h1>My Courses</h1>
         </section>
-
+        <h1>Enrolled Courses</h1>
         <section id="subHeader" class="sectionPadding">
             <div class="container">
                 <!-- need to fetch data here? -->
@@ -113,7 +113,27 @@
                             <h4>{{course.coursename}}</h4>
                             <p>{{course.coursedescription}}</p>
                             <a class="btn btn-primary" @click='getClassApi(course.cid,eID)'>View course material</a>
-                            
+
+                            <!-- href='ContentView_Learner.html' -->
+                        </div>
+                    </div><!-- end of row -->
+                    <br />
+                    <br />
+                </div>
+                <!-- end of loop -->
+                <h1>Completed Courses</h1>
+                <!--    loop this part -->
+                <div v-for="(completedcourse,i) in completedList">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-12">
+                            <img :src='completedcourse.courseimg' style="height: 150px;width: 250px;background-color: #555;">
+                        </div>
+                        <!-- NEed to loop this part too  -->
+                        <div class="col-8">
+                            <h4>{{completedcourse.coursename}}</h4>
+                            <p>{{completedcourse.coursedescription}}</p>
+                            <a class="btn btn-primary" @click='getClassApi(completedcourse.cid,eID)'>View course material</a>
+
                             <!-- href='ContentView_Learner.html' -->
                         </div>
                     </div><!-- end of row -->
@@ -142,7 +162,7 @@
                 eName: "",
                 classdict: {},
                 availableList: [],
-
+                completedList: []
             },
             computed: {
                 getName: function () {
@@ -166,11 +186,11 @@
                             console.log('test');
                             if (resultlist.length == 0) {
                                 alert('No class enrolled. Please enroll into a class first.');
-                                window.location.href ='classEnrollment.html?eid='+ eid +'&courseNum='+courseID
+                                window.location.href = 'classEnrollment.html?eid=' + eid + '&courseNum=' + courseID
                             } else {
                                 console.log(resultlist);
-                                
-                                window.location.href = 'ContentView_Learner.html?courseNum='+courseID+'&classNum='+ resultlist[0].classid;
+
+                                window.location.href = 'ContentView_Learner.html?courseNum=' + courseID + '&classNum=' + resultlist[0].classid;
 
                             }
 
@@ -218,6 +238,18 @@
                         alert("Error retrieving engineer information")
                     });
 
+                // Get Completed Courses
+                axios.get('http://18.136.106.135:5000/coursecompleted/courseinfo/' + this.eID)
+                    .then(response => {
+                        this.completedList = response.data.data.result;
+                        console.log(this.completedList)
+                        // for (completedcourse of completedList){
+                        //     console.log (this.courseList.includes(completedcourse));
+                        // }
+                    })
+                    .catch(error => {
+                        alert("Error retrieving Engineer " + this.eID + "'s completed courses")
+                    })
 
 
             }
